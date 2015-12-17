@@ -21,20 +21,17 @@
 						<li class="dropdown-header">Настройки</li>
 						<li class=""></li>
 						<li class="">
-							<spring:url value="/promo/list" var="promoUrl" htmlEscape="true" />
-							<a href="${promoUrl}">Акции</a>
+							<a href="<spring:url value="/promo/list" htmlEscape="true" />">Акции</a>
 						</li>
 						<li class="">
-							<spring:url value="/region/list" var="regionUrl" htmlEscape="true" />
-							<a href="${regionUrl}">Регионы</a>
+							<a href="<spring:url value="/region/list" htmlEscape="true" />">Регионы</a>
 						</li>
 						<li class="">
-							<spring:url value="/city/list" var="cityUrl" htmlEscape="true" />
-							<a href="${cityUrl}">Города</a>
+							<a href="<spring:url value="/city/list" htmlEscape="true" />">Города</a>
 						</li>
 						<li class="divider"></li>
 						<li>
-							<a href="/exit">Выход</a>
+							<a href="<spring:url value="/exit" htmlEscape="true" />">Выход</a>
 						</li>
 					</ul>
 				</li>

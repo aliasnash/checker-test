@@ -73,14 +73,6 @@ public class MainController {
         return m;
     }
     
-    @RequestMapping("/category/list")
-    public ModelAndView categoryList() {
-        log.info("CategoryList page !");
-        ModelAndView m = new ModelAndView("home");
-        m.addObject("pageName", "category");
-        return m;
-    }
-    
     @RequestMapping("/exit")
     public ModelAndView exit() {
         log.info("exit page !");
@@ -88,13 +80,4 @@ public class MainController {
         m.addObject("pageName", "home");
         return m;
     }
-    // @RequestMapping(value = "/about", method = RequestMethod.POST)
-    // public ModelAndView about(@RequestParam("data") String data) {
-    // log.info("About page POST!");
-    //
-    // ModelAndView m = new ModelAndView("otherPage");
-    // m.addObject("data", data);
-    //
-    // return m;
-    // }
 }

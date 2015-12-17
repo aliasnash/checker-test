@@ -52,8 +52,7 @@
 								</button>
 								<h4 class="modal-title">Регион</h4>
 							</div>
-							<spring:url value="/region/update" var="regionUpdateUrl" htmlEscape="true" />
-							<form class="form-horizontal" role="form" action="${regionUpdateUrl}" method="post">
+							<form class="form-horizontal" role="form" action="<spring:url value="/region/update" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
 
 								<div class="modal-body">

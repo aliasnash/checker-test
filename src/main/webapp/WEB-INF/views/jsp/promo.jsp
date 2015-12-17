@@ -51,8 +51,7 @@
 								</button>
 								<h4 class="modal-title">Акция</h4>
 							</div>
-							<spring:url value="/promo/update" var="promoUpdateUrl" htmlEscape="true" />
-							<form class="form-horizontal" role="form" action="${promoUpdateUrl}" method="post">
+							<form class="form-horizontal" role="form" action="<spring:url value="/promo/update" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
 
 								<div class="modal-body">

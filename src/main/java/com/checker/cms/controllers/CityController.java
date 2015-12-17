@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,60 +21,48 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping("city")
 public class CityController {
     
     @Resource
     private CheckerService checkerService;
-    
-    @RequestMapping("/region/list")
-    public ModelAndView regionList() {
-        log.info("#RegionList method()#");
-        List<Region> regionList = checkerService.findRegionsByIdCompany(1);
-        ModelAndView m = new ModelAndView("region");
-        m.addObject("pageName", "region");
+                           
+    private Integer        idCompany = 1;
+                                     
+    @RequestMapping("list")
+    public ModelAndView cityList() {
+        log.info("#CityList method(" + idCompany + ")#");
+        List<Region> regionList = checkerService.findRegionsByIdCompany(idCompany);
+        List<City> cityList = checkerService.findCitiesByIdCompany(idCompany);
+        ModelAndView m = new ModelAndView("city");
+        m.addObject("pageName", "city");
+        m.addObject("cityList", cityList);
         m.addObject("regionList", regionList);
         return m;
     }
     
-    @RequestMapping(value = "/region/update", method = RequestMethod.POST)
-    public String regionUpdate(@RequestParam("id") Integer id, @RequestParam("name") String caption) {
-        log.info("#RegionUpdate method(" + id + "," + caption + ")#");
-        if (StringUtils.isNotEmpty(caption))
-            checkerService.updateRegion(1, id, caption);
-        return "redirect:/region/list";
-    }
-    
-    @RequestMapping("/region/delete/{id}")
-    public String regionDelete(@PathVariable Integer id) {
-        log.info("#RegionDelete method(" + id + ")#");
-        if (id != null && id > 0)
-            checkerService.deleteRegion(1, id);
-        return "redirect:/region/list";
-    }
-    
-    @RequestMapping("/city/list")
-    public ModelAndView cityList() {
-        log.info("#CityList method()#");
-        List<City> cityList = checkerService.findCitiesByIdCompany(1);
-        ModelAndView m = new ModelAndView("city");
-        m.addObject("pageName", "city");
-        m.addObject("cityList", cityList);
-        return m;
-    }
-    
-    @RequestMapping(value = "/city/update", method = RequestMethod.POST)
-    public String cityUpdate(@RequestParam("idregion") Integer idRegion, @RequestParam("idcity") Integer idCity, @RequestParam("name") String caption) {
-        log.info("#CityUpdate method(" + idRegion + ", " + idCity + ")#");
-        if (StringUtils.isNotEmpty(caption))
-            checkerService.updateCity(1, idRegion, idCity, caption);
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    public String cityUpdate(@RequestParam("idregion") Integer idRegion, @RequestParam("id") Integer idCity, @RequestParam("name") String caption) {
+        log.info("#CityUpdate method(" + idCompany + "," + idRegion + "," + idCity + "," + caption + ")#");
+        if (idRegion != null && idRegion > 0 && StringUtils.isNotEmpty(caption)) {
+            if (idCity != null && idCity > 0) {
+                checkerService.updateCity(idCompany, idRegion, idCity, caption);
+            } else {
+                City city = new City();
+                city.setIdRegion(idRegion);
+                city.setCaption(caption);
+                city.setDateAdded(DateTime.now());
+                checkerService.save(city);
+            }
+        }
         return "redirect:/city/list";
     }
     
-    @RequestMapping("/city/delete/{idRegion}/{idCity}")
-    public String cityDelete(@PathVariable Integer idRegion, @PathVariable Integer idCity) {
-        log.info("#CityDelete method(" + idRegion + ", " + idCity + ")#");
+    @RequestMapping("delete/{idRegion}/{idCity}")
+    public String cityDelete(@PathVariable("idRegion") Integer idRegion, @PathVariable("idCity") Integer idCity) {
+        log.info("#CityDelete method(" + idCompany + "," + idRegion + ", " + idCity + ")#");
         if (idRegion != null && idRegion > 0 && idCity != null && idCity > 0)
-            checkerService.deleteCity(1, idRegion, idCity);
+            checkerService.deleteCity(idCompany, idRegion, idCity);
         return "redirect:/city/list";
     }
     

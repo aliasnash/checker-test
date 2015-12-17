@@ -19,34 +19,37 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
+@RequestMapping("promo")
 public class PromoController {
     
     @Resource
     private CheckerService checkerService;
-    
-    @RequestMapping("/promo/list")
+                           
+    private Integer        idCompany = 1;
+                                     
+    @RequestMapping("list")
     public ModelAndView promoList() {
-        log.info("#PromoList method()#");
-        List<Promo> promoList = checkerService.findPromosByIdCompany(1);
+        log.info("#PromoList method(" + idCompany + ")#");
+        List<Promo> promoList = checkerService.findPromosByIdCompany(idCompany);
         ModelAndView m = new ModelAndView("promo");
         m.addObject("pageName", "promo");
         m.addObject("promoList", promoList);
         return m;
     }
     
-    @RequestMapping(value = "/promo/update", method = RequestMethod.POST)
+    @RequestMapping(value = "update", method = RequestMethod.POST)
     public String promoUpdate(@RequestParam("id") Integer id, @RequestParam("name") String caption) {
-        log.info("#promoUpdate method(" + id + "," + caption + ")#");
+        log.info("#promoUpdate method(" + idCompany + "," + id + "," + caption + ")#");
         if (StringUtils.isNotEmpty(caption))
-            checkerService.updatePromo(1, id, caption);
+            checkerService.updatePromo(idCompany, id, caption);
         return "redirect:/promo/list";
     }
     
-    @RequestMapping("/promo/delete/{id}")
-    public String promoDelete(@PathVariable Integer id) {
-        log.info("#promoDelete method(" + id + ")#");
+    @RequestMapping("delete/{id}")
+    public String promoDelete(@PathVariable("id") Integer id) {
+        log.info("#promoDelete method(" + idCompany + "," + id + ")#");
         if (id != null && id > 0)
-            checkerService.deletePromo(1, id);
+            checkerService.deletePromo(idCompany, id);
         return "redirect:/promo/list";
     }
 }
