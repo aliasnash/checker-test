@@ -66,7 +66,7 @@ public class CategoryController {
                 category.setIdCompany(idCompany);
                 category.setCaption(caption);
                 category.setDateAdded(DateTime.now());
-                checkerService.save(category);
+                checkerService.saveCategory(category);
             }
         }
         return "redirect:/category/list";
@@ -106,7 +106,7 @@ public class CategoryController {
                 goods.setIdCategory(idCategory);
                 goods.setCaption(caption);
                 goods.setDateAdded(DateTime.now());
-                checkerService.save(goods);
+                checkerService.saveGoods(goods);
             }
         }
         return "redirect:/category/{idc}/goods/list";
@@ -140,7 +140,7 @@ public class CategoryController {
                 article.setCaption(caption);
                 article.setTopProduct(topProduct);
                 article.setDateAdded(DateTime.now());
-                checkerService.save(article);
+                checkerService.saveArticle(article);
             }
         }
         return "redirect:/category/{idc}/{idg}/article/list";

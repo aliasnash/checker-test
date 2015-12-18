@@ -52,7 +52,7 @@ public class CityController {
                 city.setIdRegion(idRegion);
                 city.setCaption(caption);
                 city.setDateAdded(DateTime.now());
-                checkerService.save(city);
+                checkerService.saveCity(city);
             }
         }
         return "redirect:/city/list";

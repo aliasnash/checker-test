@@ -49,7 +49,7 @@ public class RegionController {
                 region.setIdCompany(idCompany);
                 region.setCaption(caption);
                 region.setDateAdded(DateTime.now());
-                checkerService.save(region);
+                checkerService.saveRegion(region);
             }
         }
         return "redirect:/region/list";

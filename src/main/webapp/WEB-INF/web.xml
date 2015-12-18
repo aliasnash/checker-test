@@ -8,7 +8,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>com.checker.core.config.SpringRootConfig</param-value>
+		<param-value>com.checker.core.config.RootApplicationContextConfig</param-value>
 	</context-param>
 
 	<listener>
@@ -25,11 +25,10 @@
 		</init-param>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
-			<param-value>com.checker.cms.config.SpringWebConfig</param-value>
+			<param-value>com.checker.cms.config.MvcCoreConfig</param-value>
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-
 	<servlet-mapping>
 		<servlet-name>checker</servlet-name>
 		<url-pattern>/</url-pattern>
@@ -47,7 +46,6 @@
 			<param-value>true</param-value>
 		</init-param>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -58,9 +56,13 @@
 		<filter-name>httpMethodFilter</filter-name>
 		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>httpMethodFilter</filter-name>
 		<servlet-name>checker</servlet-name>
 	</filter-mapping>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404</location>
+	</error-page>
 </web-app>
