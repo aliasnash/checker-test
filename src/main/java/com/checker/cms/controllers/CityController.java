@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -13,11 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.checker.core.dao.service.CheckerService;
+import com.checker.core.dao.service.CityService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.Region;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -25,15 +25,15 @@ import lombok.extern.slf4j.Slf4j;
 public class CityController {
     
     @Resource
-    private CheckerService checkerService;
-                           
-    private Integer        idCompany = 1;
-                                     
+    private CityService cityService;
+    
+    private Integer     idCompany = 1;
+    
     @RequestMapping("list")
     public ModelAndView cityList() {
-        log.info("#CityList method(" + idCompany + ")#");
-        List<Region> regionList = checkerService.findRegionsByIdCompany(idCompany);
-        List<City> cityList = checkerService.findCitiesByIdCompany(idCompany);
+        log.info("#CityList method(idCompany:" + idCompany + ")#");
+        List<Region> regionList = cityService.findRegionsByIdCompany(idCompany);
+        List<City> cityList = cityService.findCitiesByIdCompany(idCompany);
         ModelAndView m = new ModelAndView("city");
         m.addObject("pageName", "city");
         m.addObject("cityList", cityList);
@@ -43,16 +43,16 @@ public class CityController {
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public String cityUpdate(@RequestParam("idregion") Integer idRegion, @RequestParam("id") Integer idCity, @RequestParam("name") String caption) {
-        log.info("#CityUpdate method(" + idCompany + "," + idRegion + "," + idCity + "," + caption + ")#");
+        log.info("#CityUpdate method(idCompany:" + idCompany + ",idRegion:" + idRegion + ",idCity:" + idCity + ",caption:" + caption + ")#");
         if (idRegion != null && idRegion > 0 && StringUtils.isNotEmpty(caption)) {
             if (idCity != null && idCity > 0) {
-                checkerService.updateCity(idCompany, idRegion, idCity, caption);
+                cityService.updateCity(idCompany, idRegion, idCity, caption);
             } else {
                 City city = new City();
                 city.setIdRegion(idRegion);
                 city.setCaption(caption);
                 city.setDateAdded(DateTime.now());
-                checkerService.saveCity(city);
+                cityService.saveCity(city);
             }
         }
         return "redirect:/city/list";
@@ -60,9 +60,9 @@ public class CityController {
     
     @RequestMapping("delete/{idRegion}/{idCity}")
     public String cityDelete(@PathVariable("idRegion") Integer idRegion, @PathVariable("idCity") Integer idCity) {
-        log.info("#CityDelete method(" + idCompany + "," + idRegion + ", " + idCity + ")#");
+        log.info("#CityDelete method(idCompany:" + idCompany + ",idRegion:" + idRegion + ",idCity:" + idCity + ")#");
         if (idRegion != null && idRegion > 0 && idCity != null && idCity > 0)
-            checkerService.deleteCity(idCompany, idRegion, idCity);
+            cityService.deleteCity(idCompany, idRegion, idCity);
         return "redirect:/city/list";
     }
     

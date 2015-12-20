@@ -4,7 +4,8 @@
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#"> <strong>[COMPANY]</strong>
+			<a class="navbar-brand" href="#">
+				<strong>[COMPANY]</strong>
 			</a>
 		</div>
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -15,19 +16,24 @@
 					<a href="${pageName eq 'home' ? '#' : homeUrl}">Dashboard</a>
 				</li>
 				<li class="dropdown ">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> Настройки <span class="caret"></span>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+						Настройки
+						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li class="dropdown-header">Настройки</li>
 						<li class=""></li>
 						<li class="">
-							<a href="<spring:url value="/promo/list" htmlEscape="true" />">Акции</a>
-						</li>
-						<li class="">
 							<a href="<spring:url value="/region/list" htmlEscape="true" />">Регионы</a>
 						</li>
 						<li class="">
 							<a href="<spring:url value="/city/list" htmlEscape="true" />">Города</a>
+						</li>
+						<li class="">
+							<a href="<spring:url value="/market/list" htmlEscape="true" />">Магазины</a>
+						</li>
+						<li class="">
+							<a href="<spring:url value="/promo/list" htmlEscape="true" />">Акции</a>
 						</li>
 						<li class="divider"></li>
 						<li>

@@ -24,9 +24,13 @@
 							<th style="vertical-align: middle">TOP</th>
 							<th class="text-right">
 								<spring:url value="/category/${goods.idCategory}/goods/list" htmlEscape="true" var="goodsListUrl" />
-								<a class="btn btn-default btn-sm" href="${goodsListUrl}"><span class="glyphicon glyphicon-arrow-left"></span> Назад</a> <a data-element-id=""
-									data-element-name="" data-toggle="modal" data-target="#modal-edit-articul" class="btn btn-sm btn-success"> <span
-										class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>&nbsp;Добавить
+								<a class="btn btn-default btn-sm" href="${goodsListUrl}">
+									<span class="glyphicon glyphicon-arrow-left"></span>
+									Назад
+								</a>
+								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-articul" class="btn btn-sm btn-success">
+									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									&nbsp;Добавить
 								</a>
 							</th>
 						</tr>
@@ -41,14 +45,13 @@
 								<td><span class="${article.topProduct?'glyphicon glyphicon-ok':''}" aria-hidden="true"></span></td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
-										<a data-element-id="${article.id}" data-element-name="${article.caption}" data-element-code="${article.articleCode}"
-											data-element-subcategory-id="${article.idGood}" data-toggle="modal" data-target="#modal-edit-articul"
-											data-element-top-product="${article.topProduct?1:0}" class=" btn btn-sm btn-primary"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+										<a data-element-id="${article.id}" data-element-name="${article.caption}" data-element-code="${article.articleCode}" data-element-subcategory-id="${article.idGood}"
+											data-toggle="modal" data-target="#modal-edit-articul" data-element-top-product="${article.topProduct?1:0}" class=" btn btn-sm btn-primary">
+											<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										</a>
 										<spring:url value="/category/${goods.idCategory}/${article.idGood}/${article.id}/delete" var="articleDeleteUrl" htmlEscape="true" />
-										<a class="btn btn-sm btn-danger" href="${articleDeleteUrl}"
-											onclick="return confirm('Вы действительно хотите удалить артикул \'${article.caption}\'?')"> <span class="glyphicon glyphicon-remove"
-												aria-hidden="true"></span>
+										<a class="btn btn-sm btn-danger" href="${articleDeleteUrl}" onclick="return confirm('Вы действительно хотите удалить артикул \'${article.caption}\'?')">
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</a>
 									</div>
 								</td>
@@ -66,8 +69,7 @@
 								</button>
 								<h4 class="modal-title">Артикул</h4>
 							</div>
-							<form class="form-horizontal" role="form" action="<spring:url value="/category/${goods.idCategory}/${goods.id}/article/update" htmlEscape="true" />"
-								method="post">
+							<form class="form-horizontal" role="form" action="<spring:url value="/category/${goods.idCategory}/${goods.id}/article/update" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
 
 								<div class="modal-body">

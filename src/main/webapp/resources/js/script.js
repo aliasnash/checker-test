@@ -3,13 +3,20 @@ $(window).on('load', function() {
 	$('select').selectpicker();
 	$('#date').datepicker({ format : "yyyy-mm-dd", language : "ru", weekStart : 1, autoclose : true });
 
-	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region').on('show.bs.modal', function(e) {
+	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
 		var elementId = $(e.relatedTarget).data('element-id');
 		var elementName = $(e.relatedTarget).data('element-name');
+		var owner = $(e.relatedTarget).data('element-owner');
 		// populate the textbox
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
 		$(e.currentTarget).find('input[name="name"]').val(elementName);
+		
+		if (owner) {
+			$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
+		} else {
+			$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
+		}
 	});
 
 	// triggered when modal is about to be shown

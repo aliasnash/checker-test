@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -13,10 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.checker.core.dao.service.CheckerService;
+import com.checker.core.dao.service.CityService;
 import com.checker.core.entity.Region;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -24,14 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 public class RegionController {
     
     @Resource
-    private CheckerService checkerService;
-                           
-    private Integer        idCompany = 1;
-                                     
+    private CityService cityService;
+    
+    private Integer     idCompany = 1;
+    
     @RequestMapping("list")
     public ModelAndView regionList() {
-        log.info("#RegionList method(" + idCompany + ")#");
-        List<Region> regionList = checkerService.findRegionsByIdCompany(idCompany);
+        log.info("#RegionList method(idCompany:" + idCompany + ")#");
+        List<Region> regionList = cityService.findRegionsByIdCompany(idCompany);
         ModelAndView m = new ModelAndView("region");
         m.addObject("pageName", "region");
         m.addObject("regionList", regionList);
@@ -40,16 +40,16 @@ public class RegionController {
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public String regionUpdate(@RequestParam("id") Integer id, @RequestParam("name") String caption) {
-        log.info("#RegionUpdate method(" + idCompany + "," + id + "," + caption + ")#");
+        log.info("#RegionUpdate method(idCompany:" + idCompany + ",id:" + id + ",caption:" + caption + ")#");
         if (StringUtils.isNotEmpty(caption)) {
             if (id != null && id > 0) {
-                checkerService.updateRegion(idCompany, id, caption);
+                cityService.updateRegion(idCompany, id, caption);
             } else {
                 Region region = new Region();
                 region.setIdCompany(idCompany);
                 region.setCaption(caption);
                 region.setDateAdded(DateTime.now());
-                checkerService.saveRegion(region);
+                cityService.saveRegion(region);
             }
         }
         return "redirect:/region/list";
@@ -57,9 +57,9 @@ public class RegionController {
     
     @RequestMapping("delete/{id}")
     public String regionDelete(@PathVariable Integer id) {
-        log.info("#RegionDelete method(" + idCompany + "," + id + ")#");
+        log.info("#RegionDelete method(idCompany:" + idCompany + ",id:" + id + ")#");
         if (id != null && id > 0)
-            checkerService.deleteRegion(idCompany, id);
+            cityService.deleteRegion(idCompany, id);
         return "redirect:/region/list";
     }
 }
