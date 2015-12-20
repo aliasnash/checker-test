@@ -39,7 +39,7 @@ public class PromoController {
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
     public String promoUpdate(@RequestParam("id") Integer id, @RequestParam("name") String caption) {
-        log.info("#promoUpdate method(idCompany:" + idCompany + ",id:" + id + ",caption:" + caption + ")#");
+        log.info("#PromoUpdate method(idCompany:" + idCompany + ",id:" + id + ",caption:" + caption + ")#");
         if (StringUtils.isNotEmpty(caption))
             promoService.updatePromo(idCompany, id, caption);
         return "redirect:/promo/list";
@@ -47,7 +47,7 @@ public class PromoController {
     
     @RequestMapping("delete/{id}")
     public String promoDelete(@PathVariable("id") Integer id) {
-        log.info("#promoDelete method(idCompany:" + idCompany + ",id" + id + ")#");
+        log.info("#PromoDelete method(idCompany:" + idCompany + ",id:" + id + ")#");
         if (id != null && id > 0)
             promoService.deletePromo(idCompany, id);
         return "redirect:/promo/list";

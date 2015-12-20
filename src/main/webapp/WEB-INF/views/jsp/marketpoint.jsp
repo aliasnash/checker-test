@@ -41,7 +41,8 @@
 								<td>${point.description}</td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
-										<a data-element-id="${point.id}" data-element-name="${point.description}" data-toggle="modal" data-target="#modal-edit-market-point" class=" btn btn-sm btn-primary">
+										<a data-element-id="${point.id}" data-element-name="${point.description}" data-element-id-city="${point.city.id}" data-toggle="modal"
+											data-target="#modal-edit-market-point" class=" btn btn-sm btn-primary">
 											<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										</a>
 										<spring:url value="/market/${point.idMarket}/point/${point.id}/delete" var="pointDeleteUrl" htmlEscape="true" />
@@ -66,6 +67,7 @@
 							</div>
 							<form class="form-horizontal" role="form" action="<spring:url value="/market/${market.id}/point/update" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
+								<input value="" name="idcity" type="hidden">
 
 								<div class="modal-body">
 									<div class="form-group">
@@ -93,7 +95,7 @@
 
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
-									<button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+									<button type="submit" class="btn btn-primary btn-sm" id="save-market-point">Сохранить</button>
 								</div>
 							</form>
 						</div>

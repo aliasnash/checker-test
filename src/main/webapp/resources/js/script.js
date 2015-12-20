@@ -39,6 +39,30 @@ $(window).on('load', function() {
 			$(e.currentTarget).find('input[name="top_product"]').prop('checked', false);
 		}
 	});
+	
+	$('#modal-edit-market-point').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+		var elementCity = $(e.relatedTarget).data('element-id-city');
+		var citySelector = $('select[name="city_id"]');
+
+		// populate the textbox
+		$('input[name="id"]').val(elementId);
+		$('input[name="name"]').val(elementName);
+		$('input[name="idcity"]').val(elementCity);
+
+		if (elementId) {
+			citySelector.prop('disabled', true);
+			citySelector.val(elementCity);
+		} else {
+			citySelector.prop('disabled', false);
+			citySelector.val("-1");
+		}
+
+		citySelector.selectpicker('render');
+		citySelector.selectpicker('refresh');
+	});
 
 	$('#modal-edit-city').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
@@ -64,6 +88,17 @@ $(window).on('load', function() {
 		regionSelector.selectpicker('refresh');
 	});
 
+	$('#save-market-point').on('click', function(e) {
+		var cityValue = $('select[name="city_id"]').val();
+
+		if (cityValue) {
+			$('input[name="idcity"]').val(cityValue);
+			return true;
+		} else {
+			return false;
+		}
+	});
+	
 	$('#save-city').on('click', function(e) {
 		var regionValue = $('select[name="region_id"]').val();
 
@@ -73,7 +108,6 @@ $(window).on('load', function() {
 		} else {
 			return false;
 		}
-
 	});
 
 	$('#top-product').change(function(e) {

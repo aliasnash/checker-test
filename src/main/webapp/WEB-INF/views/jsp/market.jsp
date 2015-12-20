@@ -31,7 +31,7 @@
 								<td><span class="${market.owner?'glyphicon glyphicon-ok':'glyphicon glyphicon-remove'}" aria-hidden="true"></span></td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
-										<spring:url value="/market/${market.id}/points/list" var="marketPointsUrl" htmlEscape="true" />
+										<spring:url value="/market/${market.id}/point/list" var="marketPointsUrl" htmlEscape="true" />
 										<a class=" btn btn-sm btn-default" href="${marketPointsUrl}">
 											<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
 											Адреса

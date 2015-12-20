@@ -93,8 +93,8 @@ public class MarketController {
     }
     
     @RequestMapping("{idm}/point/{idmp}/delete")
-    public String goodsDelete(@PathVariable("idm") Long idMarket, @PathVariable("idmp") Long idMarketPoint) {
-        log.info("#GoodsDelete method(idCompany:" + idCompany + ",idMarket:" + idMarket + ",idMarketPoint:" + idMarketPoint + ")#");
+    public String marketPointDelete(@PathVariable("idm") Long idMarket, @PathVariable("idmp") Long idMarketPoint) {
+        log.info("#MarketPointDelete method(idCompany:" + idCompany + ",idMarket:" + idMarket + ",idMarketPoint:" + idMarketPoint + ")#");
         if (idMarket != null && idMarket > 0 && idMarketPoint != null && idMarketPoint > 0) {
             marketPointService.deleteMarketPoint(idCompany, idMarket, idMarketPoint);
             return "redirect:/market/{idm}/point/list";
@@ -104,17 +104,18 @@ public class MarketController {
     }
     
     @RequestMapping(value = "{idm}/point/update", method = RequestMethod.POST)
-    public String goodsUpdate(@PathVariable("idm") Long idMarket, @RequestParam("id") Long idMarketPoint, @RequestParam("name") String description) {
-        log.info("#GoodsUpdate method(idCompany:" + idCompany + ",idMarket:" + idMarket + ",idMarketPoint:" + idMarketPoint + ",description:" + description + ")#");
-        if (StringUtils.isNotEmpty(description)) {
+    public String marketUpdate(@PathVariable("idm") Long idMarket, @RequestParam("idcity") Integer idCity, @RequestParam("id") Long idMarketPoint, @RequestParam("name") String description) {
+        log.info("#MarketUpdate method(idCompany:" + idCompany + ",idCity:" + idCity + ",idMarketPoint:" + idMarketPoint + ",description:" + description + ")#");
+        if (idCity != null && idCity > 0 && StringUtils.isNotEmpty(description)) {
             if (idMarketPoint != null && idMarketPoint > 0) {
-                // goodsService.updateGoods(idCompany, idCategory, idGoods, caption);
+                marketPointService.updateMarketPoint(idCompany, idCity, idMarketPoint, description);
             } else {
-                // Good goods = new Good();
-                // goods.setIdCategory(idCategory);
-                // goods.setCaption(caption);
-                // goods.setDateAdded(DateTime.now());
-                // goodsService.saveGoods(goods);
+                MarketPoint marketPoint = new MarketPoint();
+                marketPoint.setIdMarket(idMarket);
+                marketPoint.setIdCity(idCity);
+                marketPoint.setDescription(description);
+                marketPoint.setDateAdded(DateTime.now());
+                marketPointService.saveMarketPoint(marketPoint);
             }
         }
         return "redirect:/market/{idm}/point/list";
