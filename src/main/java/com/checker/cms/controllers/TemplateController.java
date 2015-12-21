@@ -2,10 +2,12 @@ package com.checker.cms.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -28,8 +30,6 @@ import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.Params;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @RequestMapping("template")
@@ -43,14 +43,9 @@ public class TemplateController {
     private TemplateParser    templateParser;
     @Resource
     private FileUtilz         fileUtilz;
-                              
+    
     private DateTimeFormatter fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private Integer           idCompany = 1;
-                                        
-    @PostConstruct
-    public void init() {
-        System.out.println("pathForTemplate:" + params.getPathForTemplate());
-    }
     
     @RequestMapping("list")
     public ModelAndView templateList() {
@@ -88,20 +83,48 @@ public class TemplateController {
         return "redirect:/template/list";
     }
     
+    @RequestMapping(value = "file/upload", method = RequestMethod.GET)
+    public String templateFileAddDone() throws IllegalStateException, IOException {
+        log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ")#");
+        return "redirect:/template/file/add/form";
+    }
+    
     @RequestMapping(value = "file/upload", headers = "content-type=multipart/*", method = RequestMethod.POST)
-    public ModelAndView templateFileAddDone(@RequestParam("name") String caption, @RequestParam("templates") MultipartFile mFile) throws IllegalStateException, IOException {
-        log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ",caption:" + caption + ",file:" + mFile.getOriginalFilename() + ")#");
+    public ModelAndView templateFileAddDone(@RequestParam(value = "name", required = false) String caption, @RequestParam(value = "usefilename", required = false) Boolean useFileName,
+            @RequestParam(value = "useprice", required = false) Boolean usePrice, @RequestParam("templates[]") List<MultipartFile> mFileList) throws IllegalStateException, IOException {
+        log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ",caption:" + caption + ",useFileName:" + useFileName + ",usePrice:" + usePrice + ",file:" + mFileList.size() + ")#");
         
+        List<ParsingResult> results = new ArrayList<>();
         DateTime dt = new DateTime();
         
+        if (useFileName == null)
+            useFileName = false;
+        if (usePrice == null)
+            usePrice = false;
+        
+        String originalCaption = caption;
         File dir = fileUtilz.createDirectory(params.getPathForTemplate() + LocalDate.now().toString());
-        File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());
-        mFile.transferTo(file);
-        ParsingResult result = templateParser.process(idCompany, file, caption);
+        int index = 0;
+        for (MultipartFile mFile : mFileList) {
+            File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());
+            mFile.transferTo(file);
+            
+            if (StringUtils.isEmpty(caption) || useFileName)
+                caption = mFile.getOriginalFilename().substring(0, mFile.getOriginalFilename().lastIndexOf('.') - 1);
+            else if (mFileList.size() > 1)
+                caption = (index++) + "_" + originalCaption;
+            
+            if (caption.length() > 128)
+                caption = caption.substring(0, 127);
+            
+            ParsingResult result = templateParser.process(idCompany, file, caption, usePrice);
+            result.setFileName(mFile.getOriginalFilename());
+            results.add(result);
+        }
         
         ModelAndView m = new ModelAndView("templateadd");
         m.addObject("pageName", "template");
-        m.addObject("result", result);
+        m.addObject("results", results);
         return m;
     }
     

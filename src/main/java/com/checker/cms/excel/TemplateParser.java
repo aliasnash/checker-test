@@ -11,6 +11,12 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -32,12 +38,6 @@ import com.checker.core.entity.Good;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Component
 public class TemplateParser {
@@ -52,7 +52,7 @@ public class TemplateParser {
     private CategoryService categoryService;
     @Resource
     private TemplateService templateService;
-                            
+    
     @Getter
     @Setter
     @ToString
@@ -65,7 +65,7 @@ public class TemplateParser {
         private Double price;
     }
     
-    public ParsingResult process(Integer idCompany, File file, String caption) throws IOException {
+    public ParsingResult process(Integer idCompany, File file, String caption, boolean usePrice) throws IOException {
         ParsingResult result = new ParsingResult();
         String filePath = file.getAbsolutePath();
         String fileName = file.getName();
@@ -81,7 +81,7 @@ public class TemplateParser {
                 workbook = new XSSFWorkbook(buffer);
             else
                 workbook = new HSSFWorkbook(buffer);
-                
+            
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
@@ -93,20 +93,22 @@ public class TemplateParser {
                 String desc = convertToString(row.getCell(3));
                 Double price = convertToDouble(row.getCell(4));
                 
-                Product p = null;
                 try {
                     Integer.valueOf(articul);
                     if (category != null && good != null && desc != null) {
-                        p = new Product(category.trim(), good.trim(), articul, desc.trim(), price);
-                        if (price == null) {
+                        Product p = new Product(category.trim(), good.trim(), articul, desc.trim(), price);
+                        if (price == null)
                             result.withoutPriceAdded();
-                        }
-                        added.add(p);
+                        
+                        if (usePrice && price == null)
+                            result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ОШИБКА:не указана цена (артикул:" + articul + ",категория:" + category + ")");
+                        else
+                            added.add(p);
                     } else {
-                        result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ERROR:not enough info (category:" + category + ",good:" + good + ",desc:" + desc + ")");
+                        result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ОШИБКА:не заполненые данные (категория:" + category + ",товар:" + good + ",описание:" + desc + ")");
                     }
                 } catch (Exception e) {
-                    result.addNotAdded("Строка:" + (row.getRowNum() + 1) + " ERROR:" + e.getMessage());
+                    result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ОШИБКА:" + e.getMessage());
                 }
             }
         } finally {
@@ -114,7 +116,10 @@ public class TemplateParser {
             workbook.close();
         }
         
-        generateTemplate(idCompany, filePath, fileName, caption, added, result);
+        if ((!usePrice || (usePrice && result.getWithoutPriceAdded() == 0)) && added.size() > 0) {
+            generateTemplate(idCompany, filePath, fileName, caption, added, result);
+        }
+        
         log.info(String.valueOf(result));
         return result;
     }

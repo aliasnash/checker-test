@@ -11,8 +11,10 @@
 				<div class="row">
 					<div class="col-md-6">Добавление файла шаблона</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />"><span class="glyphicon glyphicon-arrow-left"></span>
-							&nbsp;Назад</a>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />">
+							<span class="glyphicon glyphicon-arrow-left"></span>
+							&nbsp;Назад
+						</a>
 					</div>
 				</div>
 			</div>
@@ -20,53 +22,68 @@
 			<form class="form-horizontal" role="form" action="<spring:url value="/template/file/upload" htmlEscape="true" />" method="post" enctype="multipart/form-data">
 				<div class="panel-body">
 					<div class="form-group">
+						<label for="template-usefilename" class="col-md-2 control-label">Название из имени файла:</label>
+						<div class="col-md-1">
+							<input name="usefilename" class="form-control" id="template-usefilename" placeholder="Имя из файла..." type="checkbox">
+						</div>
+
+						<label for="template-useprice" class="col-md-2 control-label">Загружать файл с ценами:</label>
+						<div class="col-md-1">
+							<input name="useprice" class="form-control" id="template-useprice" placeholder="Файл с ценами..." type="checkbox">
+						</div>
+					</div>
+					<div class="form-group">
 						<label for="template-name" class="col-md-2 control-label">Название:</label>
 						<div class="col-md-3">
-							<input name="name" maxlength="50" class="form-control" id="template-name" placeholder="Название шаблона..." type="text">
+							<input name="name" maxlength="128" class="form-control" id="template-name" placeholder="Название шаблона..." type="text">
 						</div>
 					</div>
 					<div class="form-group">
 						<label for="template-upload" class="col-md-2 control-label">Файл:</label>
 						<div class="col-md-6">
-							<input name="templates" class="file-loading" id="template-upload" placeholder="Файл шаблона..." type="file">
+							<input name="templates[]" class="file-loading" id="template-upload" placeholder="Файл шаблона..." multiple type="file">
 							<div id="errorBlock" class="help-block"></div>
 						</div>
 					</div>
 
-					<div class="col-md-12" style="margin-top: 10px; ${empty result?'display: none;':''}">
-						<div class="panel panel-success fade in">
-							<div class="panel-heading">
-								<h3 class="panel-title">Файл успешно загружен</h3>
+					<div class="col-md-12" style="margin-top: 10px; ${empty results?'display: none;':''}">
+						<c:forEach items="${results}" var="result" varStatus="status">
+							<div class="panel ${result.totalAdded > 0 ? 'panel-success' : 'panel-danger' } fade in">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										#${status.index + 1} Файл <strong>[${result.fileName}]</strong> успешно загружен ${result.totalAdded > 0 ? '' : 'но не обработан' }
+									</h3>
+								</div>
+								<table class="table">
+									<tr>
+										<td class="text-right" style="width:40%;"><strong>Всего добавлено:</strong></td>
+										<td class="text-left">${result.totalAdded}</td>
+									</tr>
+									<tr>
+										<td class="text-right"><strong>В том числе без цены:</strong></td>
+										<td class="text-left">${result.withoutPriceAdded}</td>
+									</tr>
+									<tr>
+										<td class="text-right"><strong>Создано категорий:</strong></td>
+										<td class="text-left">${result.categoryAdded}</td>
+									</tr>
+									<tr>
+										<td class=" text-right"><strong>Создано продуктов:</strong></td>
+										<td class="text-left">${result.goodAdded}</td>
+									</tr>
+									<tr>
+										<td class="text-right"><strong>Создано артикулов:</strong></td>
+										<td class="text-left">${result.articleAdded}</td>
+									</tr>
+									<tr>
+										<td class="text-right alert-warning"><strong>Необработанные строки: </strong></td>
+										<td class="text-left alert-warning"><c:forEach items="${result.notAdded}" var="notAdded">
+												<div>${notAdded}</div>
+											</c:forEach></td>
+									</tr>
+								</table>
 							</div>
-							<table class="table">
-								<tr>
-									<td class="text-right"><strong>Всего добавлено:</strong></td>
-									<td class="">${result.totalAdded}</td>
-								</tr>
-								<tr>
-									<td class="text-right"><strong>В том числе без цены:</strong></td>
-									<td class="">${result.withoutPriceAdded}</td>
-								</tr>
-								<tr>
-									<td class="text-right"><strong>Создано категорий:</strong></td>
-									<td class="">${result.categoryAdded}</td>
-								</tr>
-								<tr>
-									<td class=" text-right"><strong>Создано продуктов:</strong></td>
-									<td class="">${result.goodAdded}</td>
-								</tr>
-								<tr>
-									<td class="text-right"><strong>Создано артикулов:</strong></td>
-									<td class="">${result.articleAdded}</td>
-								</tr>
-								<tr>
-									<td class=" text-right"><strong>Необработанные строки: </strong></td>
-									<td class=""><c:forEach items="${result.notAdded}" var="notAdded">
-											<div>${notAdded}</div>
-										</c:forEach></td>
-								</tr>
-							</table>
-						</div>
+						</c:forEach>
 					</div>
 
 

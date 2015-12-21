@@ -28,7 +28,7 @@
 							<tr>
 								<td>${status.index + 1}</td>
 								<td>${market.caption}</td>
-								<td><span class="${market.owner?'glyphicon glyphicon-ok':'glyphicon glyphicon-remove'}" aria-hidden="true"></span></td>
+								<td><span class="${market.owner?'glyphicon glyphicon-ok':''}" aria-hidden="true"></span></td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<spring:url value="/market/${market.id}/point/list" var="marketPointsUrl" htmlEscape="true" />

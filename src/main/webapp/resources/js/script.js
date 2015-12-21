@@ -144,4 +144,12 @@ $(window).on('load', function() {
 			$('#articul-listing tr.articul:not(.top-product)').show();
 		}
 	});
+	
+	$('#template-usefilename').change(function(e) {
+		if ($(this).prop('checked')) {
+			$('#template-name').prop('disabled', true);
+		} else {
+			$('#template-name').prop('disabled', false);
+		}
+	});
 });
