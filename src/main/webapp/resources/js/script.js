@@ -3,21 +3,29 @@ $(window).on('load', function() {
 	$('select').selectpicker();
 	$('#date').datepicker({ format : "yyyy-mm-dd", language : "ru", weekStart : 1, autoclose : true });
 
-	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var owner = $(e.relatedTarget).data('element-owner');
-		// populate the textbox
-		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="name"]').val(elementName);
-		
-		if (owner) {
-			$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
-		} else {
-			$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
-		}
+	$("#template-upload").fileinput({
+	    language: "ru",
+	    showPreview: false,
+	    elErrorContainer: "#errorBlock",
+	    allowedFileExtensions: ["xls", "xlsx"]
 	});
+	
+	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market')
+			.on('show.bs.modal', function(e) {
+				// get data-id attribute of the clicked element
+				var elementId = $(e.relatedTarget).data('element-id');
+				var elementName = $(e.relatedTarget).data('element-name');
+				var owner = $(e.relatedTarget).data('element-owner');
+				// populate the textbox
+				$(e.currentTarget).find('input[name="id"]').val(elementId);
+				$(e.currentTarget).find('input[name="name"]').val(elementName);
+
+				if (owner) {
+					$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
+				} else {
+					$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
+				}
+			});
 
 	// triggered when modal is about to be shown
 	$('#modal-edit-articul').on('show.bs.modal', function(e) {
@@ -39,7 +47,26 @@ $(window).on('load', function() {
 			$(e.currentTarget).find('input[name="top_product"]').prop('checked', false);
 		}
 	});
-	
+
+	// triggered when modal is about to be shown
+	$('#modal-edit-template').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+		var elementDate = $(e.relatedTarget).data('element-date');
+		var elementFile = $(e.relatedTarget).data('element-file');
+
+		// populate the textbox
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="name"]').val(elementName);
+
+		$(e.currentTarget).find('input[name="date"]').val(elementDate);
+		$(e.currentTarget).find('input[name="file"]').val(elementFile);
+
+		$(e.currentTarget).find('input[name="date"]').prop('disabled', true);
+		$(e.currentTarget).find('input[name="file"]').prop('disabled', true);
+	});
+
 	$('#modal-edit-market-point').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
 		var elementId = $(e.relatedTarget).data('element-id');
@@ -98,7 +125,7 @@ $(window).on('load', function() {
 			return false;
 		}
 	});
-	
+
 	$('#save-city').on('click', function(e) {
 		var regionValue = $('select[name="region_id"]').val();
 

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -36,5 +37,12 @@ public class MvcViewConfig {
         viewResolver.setPrefix("/WEB-INF/views/jsp/");
         viewResolver.setSuffix(".jsp");
         return viewResolver;
+    }
+    
+    @Bean
+    public CommonsMultipartResolver multipartResolver() {
+        CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+        multipartResolver.setMaxUploadSize(10485760L);
+        return multipartResolver;
     }
 }

@@ -4,8 +4,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -22,6 +20,8 @@ import com.checker.core.entity.Article;
 import com.checker.core.entity.Category;
 import com.checker.core.entity.Good;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 @RequestMapping("category")
@@ -33,9 +33,9 @@ public class CategoryController {
     private GoodsService    goodsService;
     @Resource
     private ArticleService  articleService;
-    
+                            
     private Integer         idCompany = 1;
-    
+                                      
     @RequestMapping("list")
     public ModelAndView categoryList() {
         log.info("#CategoryList method(idCompany:" + idCompany + ")#");
@@ -152,7 +152,6 @@ public class CategoryController {
         return "redirect:/category/{idc}/{idg}/article/list";
     }
     
-    // /{idc}/{idg}/{ida}/delete
     @RequestMapping("{idc}/{idg}/{ida}/delete")
     public String articleDelete(@PathVariable("idc") Long idCategory, @PathVariable("idg") Long idGoods, @PathVariable("ida") Long idArticle) {
         log.info("#ArticleDelete method(idCompany:" + idCompany + ",idCategory:" + idCategory + ",idGoods:" + idGoods + ")#");

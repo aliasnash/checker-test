@@ -20,13 +20,9 @@
 							<th style="vertical-align: middle">Адрес</th>
 							<th class="text-right">
 								<spring:url value="/market/list" htmlEscape="true" var="marketListUrl" />
-								<a class="btn btn-default btn-sm" href="${marketListUrl}">
-									<span class="glyphicon glyphicon-arrow-left"></span>
-									Назад
-								</a>
-								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-market-point" class="btn btn-sm btn-success">
-									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-									&nbsp;Добавить
+								<a class="btn btn-default btn-sm" href="${marketListUrl}"> <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;Назад
+								</a> <a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-market-point" class="btn btn-sm btn-success"> <span
+										class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> &nbsp;Добавить
 								</a>
 							</th>
 						</tr>
@@ -42,12 +38,11 @@
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<a data-element-id="${point.id}" data-element-name="${point.description}" data-element-id-city="${point.city.id}" data-toggle="modal"
-											data-target="#modal-edit-market-point" class=" btn btn-sm btn-primary">
-											<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+											data-target="#modal-edit-market-point" class=" btn btn-sm btn-primary"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										</a>
 										<spring:url value="/market/${point.idMarket}/point/${point.id}/delete" var="pointDeleteUrl" htmlEscape="true" />
-										<a class="btn btn-sm btn-danger" href="${pointDeleteUrl}" onclick="return confirm('Вы действительно хотите удалить \'${point.description}\'?')">
-											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+										<a class="btn btn-sm btn-danger" href="${pointDeleteUrl}" onclick="return confirm('Вы действительно хотите удалить \'${point.description}\'?')"> <span
+												class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</a>
 									</div>
 								</td>
