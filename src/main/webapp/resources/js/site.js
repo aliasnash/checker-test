@@ -1,21 +1,5 @@
-/**
- * Created by Sergei on 12.05.15.
- * 
- * 
- * var DELAY = 700, clicks = 0, timer = null;
- */
 $(window).on('load', function() {
 
-	// triggered when modal is about to be shown
-	// $('#modal-add-network, #modal-add-category,
-	// #modal-add-subcategory').on('show.bs.modal', function (e) {
-	// //get data-id attribute of the clicked element
-	// var elementId = $(e.relatedTarget).data('element-id');
-	// var elementName = $(e.relatedTarget).data('element-name');
-	// //populate the textbox
-	// $(e.currentTarget).find('input[name="id"]').val(elementId);
-	// $(e.currentTarget).find('input[name="name"]').val(elementName);
-	// });
 	$('#modal-add-network').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
 		var elementId = $(e.relatedTarget).data('element-id');
@@ -40,7 +24,7 @@ $(window).on('load', function() {
 		if (elementId) {
 			citySelector.prop('disabled', true);
 			citySelector.find('option').prop('checked', false);
-			citySelector.val(elementCity)
+			citySelector.val(elementCity);
 			// ---
 			typeSelector.prop('disabled', true);
 			typeSelector.find('option').prop('checked', false);
@@ -55,64 +39,6 @@ $(window).on('load', function() {
 		typeSelector.selectpicker('refresh');
 	});
 
-	// //triggered when modal is about to be shown
-	// $('#modal-add-articul').on('show.bs.modal', function (e) {
-	// //get data-id attribute of the clicked element
-	// var elementId = $(e.relatedTarget).data('element-id');
-	// var elementName = $(e.relatedTarget).data('element-name');
-	// var elementCategoryId = $(e.relatedTarget).data('element-category-id');
-	// var elementCode = $(e.relatedTarget).data('element-code');
-	// var topProduct = $(e.relatedTarget).data('element-top-product');
-	// var categoryIdSelector =
-	// $(e.currentTarget).find('select[name="category_id"]');
-	// //populate the textbox
-	// $(e.currentTarget).find('input[name="id"]').val(elementId);
-	// $(e.currentTarget).find('input[name="name"]').val(elementName);
-	// $(e.currentTarget).find('input[name="code"]').val(elementCode);
-	// if (topProduct) {
-	// $(e.currentTarget).find('input[name="top_product"]').prop('checked',
-	// true);
-	// } else {
-	// $(e.currentTarget).find('input[name="top_product"]').prop('checked',
-	// false);
-	// }
-	// if (elementId) {
-	// categoryIdSelector.val(elementCategoryId);
-	// categoryIdSelector.prop('disabled', true);
-	// } else {
-	// categoryIdSelector.val('');
-	// categoryIdSelector.prop('disabled', false);
-	// }
-	// categoryIdSelector.selectpicker('refresh');
-	// });
-	// // triggered when modal is about to be shown
-	// $('#modal-add-special').on('show.bs.modal', function (e) {
-	// //get data-id attribute of the clicked element
-	// var elementId = $(e.relatedTarget).data('element-id');
-	// var elementName = $(e.relatedTarget).data('element-name');
-	// //populate the textbox
-	// $(e.currentTarget).find('input[name="id"]').val(elementId);
-	// $(e.currentTarget).find('input[name="name"]').val(elementName);
-	// });
-	// //triggered when modal is about to be shown
-	// $('#modal-add-city').on('show.bs.modal', function (e) {
-	// //get data-id attribute of the clicked element
-	// var elementId = $(e.relatedTarget).data('element-id');
-	// var elementName = $(e.relatedTarget).data('element-name');
-	// var elementZone = $(e.relatedTarget).data('element-zone');
-	// var zoneSelector = $(e.currentTarget).find('select[name="zone_id"]');
-	// //populate the textbox
-	// $(e.currentTarget).find('input[name="id"]').val(elementId);
-	// $(e.currentTarget).find('input[name="name"]').val(elementName);
-	// if (elementId) {
-	// zoneSelector.prop('disabled', true);
-	// zoneSelector.find('option').prop('checked', false);
-	// zoneSelector.val(elementZone);
-	// } else {
-	// zoneSelector.prop('disabled', false);
-	// }
-	// zoneSelector.selectpicker('refresh');
-	// });
 	// triggered when modal is about to be shown
 	$('#modal-add-task').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
@@ -133,12 +59,12 @@ $(window).on('load', function() {
 
 	$('.table-select tr:not(.disabled)').on('click', function(e) {
 		if ($(this).hasClass('selected')) {
-			$(this).removeClass('selected')
+			$(this).removeClass('selected');
 		} else {
 			// $(this).parent().find('.selected').removeClass('selected')
-			$(this).addClass('selected')
+			$(this).addClass('selected');
 		}
-	})
+	});
 
 	$('#btn-move-left').on('click', function(e) {
 		var rows = $('#right-table tr.selected').detach();
@@ -155,14 +81,6 @@ $(window).on('load', function() {
 	$('#table-select-submit').on('click', function(e) {
 		$('#table-select-form').submit();
 	});
-
-	// $('#top-product').change(function(e) {
-	// if ($(this).prop('checked')) {
-	// $('#articul-listing tr.articul:not(.top-product)').hide();
-	// } else {
-	// $('#articul-listing tr.articul:not(.top-product)').show();
-	// }
-	// });
 
 	/* REPORT FILTER LOGIC */
 	$('#report-filter select[name=zone_id]').on('change', function(e) {
@@ -214,11 +132,6 @@ $(window).on('load', function() {
 	});
 
 	/* REPORT FILTER LOGIC END */
-	/*
-	 * $('#date').datepicker({ format: "yyyy-mm-dd", language: "ru", weekStart:
-	 * 1, autoclose: true })
-	 */
-	// $('select').selectpicker();
 	$('.sortable-tbody').sortable();
 
 	$('.close-button').on('click', function() {
@@ -231,14 +144,12 @@ $(window).on('load', function() {
 
 	$('.selector-button').on('click', function() {
 		if ($(this).find('.glyphicon').hasClass('glyphicon-ok-sign')) {
-			$(this).parent().parent().find('.selector-button .glyphicon').removeClass("glyphicon-ok-sign")
-					.addClass("glyphicon-remove-sign");
+			$(this).parent().parent().find('.selector-button .glyphicon').removeClass("glyphicon-ok-sign").addClass("glyphicon-remove-sign");
 			// $(this).parent().addClass('white');
 			$(this).parent().parent().find('.panel-heading').addClass('white');
 			$(this).parent().parent().find('input[type=hidden]').prop('disabled', true);
 		} else {
-			$(this).parent().parent().find('.selector-button .glyphicon').removeClass("glyphicon-remove-sign")
-					.addClass("glyphicon-ok-sign");
+			$(this).parent().parent().find('.selector-button .glyphicon').removeClass("glyphicon-remove-sign").addClass("glyphicon-ok-sign");
 			// $(this).parent().removeClass('white');
 			$(this).parent().parent().find('.panel-heading').removeClass('white');
 			$(this).parent().parent().find('input[type=hidden]').prop('disabled', false);

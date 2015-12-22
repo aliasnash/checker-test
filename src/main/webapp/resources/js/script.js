@@ -1,31 +1,36 @@
 $(window).on('load', function() {
 
 	$('select').selectpicker();
-	$('#date').datepicker({ format : "yyyy-mm-dd", language : "ru", weekStart : 1, autoclose : true });
+
+	$('#date').datepicker({
+		format : "yyyy-mm-dd",
+		language : "ru",
+		weekStart : 1,
+		autoclose : true
+	});
 
 	$("#template-upload").fileinput({
-	    language: "ru",
-	    showPreview: false,
-	    elErrorContainer: "#errorBlock",
-	    allowedFileExtensions: ["xls", "xlsx"]
+		language : "ru",
+		showPreview : false,
+		elErrorContainer : "#errorBlock",
+		allowedFileExtensions : [ "xls", "xlsx" ]
 	});
-	
-	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market')
-			.on('show.bs.modal', function(e) {
-				// get data-id attribute of the clicked element
-				var elementId = $(e.relatedTarget).data('element-id');
-				var elementName = $(e.relatedTarget).data('element-name');
-				var owner = $(e.relatedTarget).data('element-owner');
-				// populate the textbox
-				$(e.currentTarget).find('input[name="id"]').val(elementId);
-				$(e.currentTarget).find('input[name="name"]').val(elementName);
 
-				if (owner) {
-					$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
-				} else {
-					$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
-				}
-			});
+	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+		var owner = $(e.relatedTarget).data('element-owner');
+		// populate the textbox
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="name"]').val(elementName);
+
+		if (owner) {
+			$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
+		} else {
+			$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
+		}
+	});
 
 	// triggered when modal is about to be shown
 	$('#modal-edit-articul').on('show.bs.modal', function(e) {
@@ -144,12 +149,149 @@ $(window).on('load', function() {
 			$('#articul-listing tr.articul:not(.top-product)').show();
 		}
 	});
-	
+
 	$('#template-usefilename').change(function(e) {
 		if ($(this).prop('checked')) {
 			$('#template-name').prop('disabled', true);
 		} else {
 			$('#template-name').prop('disabled', false);
+		}
+	});
+
+	var denisData = [ {
+		text : 'Алкоголь',
+		idcategory : 10,
+		tags : [ 'товаров 2', 'артикулов 2' ],
+		nodes : [ {
+			text : 'Вина',
+			idgood : 20,
+			tags : [ 'артикулов 2' ],
+			nodes : [ {
+				text : 'красное',
+				idarticle : 30,
+			}, {
+				text : 'белое',
+				idarticle : 31,
+			} ]
+		}, {
+			text : 'Водка',
+			idgood : 21,
+			tags : [ 'артикулов 0' ]
+		} ]
+	}, {
+		text : 'Бакалея',
+		idcategory : 11,
+		tags : [ 'товаров 0' ]
+	}, {
+		text : 'Химия',
+		idcategory : 12,
+		tags : [ 'товаров 0' ]
+	}, {
+		text : 'Фрукты овощи',
+		idcategory : 13,
+		tags : [ 'товаров 0' ]
+	}, {
+		text : 'Хуета',
+		idcategory : 14,
+		tags : [ 'товаров 0' ]
+	} ];
+
+	var selectedArticles = [];
+
+	var $tree = $('#templatetree').treeview({
+		showTags : true,
+		selectedIcon : "glyphicon glyphicon-ok",
+		multiSelect : true,
+		levels : 3,
+		// showCheckbox: true,
+		// enableLinks : true,
+		data : denisData,
+
+		onNodeSelected : function(event, node) {
+			// var idcategory = node.idcategory;
+			// var idgood = node.idgood;
+			var idarticle = node.idarticle;
+			var info = "";
+			// if (idcategory) info = "idcategory:" + idcategory;
+			// if (idgood) info = "idgood:" + idgood;
+			if (idarticle) {
+				// alert(selectedArticles);
+				selectedArticles.push(idarticle);
+				// alert(selectedArticles);
+				info = "idarticle:" + idarticle;
+			}
+
+			$('#output').prepend('<p>' + node.text + ' was + selected [' + info + ']</p>');
+		},
+
+		onNodeUnselected : function(event, node) {
+			// var idcategory = node.idcategory;
+			// var idgood = node.idgood;
+			var idarticle = node.idarticle;
+			var info = "";
+			// if (idcategory) info = "idcategory:" + idcategory;
+			// if (idgood) info = "idgood:" + idgood;
+			if (idarticle) {
+				delete selectedArticles[selectedArticles.indexOf(idarticle)];
+				info = "idarticle:" + idarticle;
+			}
+
+			$('#output').prepend('<p>' + node.text + ' was - unselected [' + info + ']</p>');
+		}
+	});
+
+	$('#dataclick').on('click', function(e) {
+		alert(selectedArticles);
+		// $('#output').text(selectedArticles);
+	});
+
+	// var findDisabledNodes = function() {
+	// return $disabledTree.treeview('search', [ $('#input-disable-node').val(),
+	// {
+	// ignoreCase : false,
+	// exactMatch : false
+	// } ]);
+	// };
+	// var disabledNodes = findDisabledNodes();
+	//
+	// // Expand/collapse/toggle nodes
+	// $('#input-disable-node').on('keyup', function(e) {
+	// disabledNodes = findDisabledNodes();
+	// $('.disable-node').prop('disabled', !(disabledNodes.length >= 1));
+	// });
+
+	$tree.on('nodeSelected', function(ev, node) {
+		// var idcategory = node.idcategory;
+		// var idgood = node.idgood;
+		var idarticle = node.idarticle;
+
+		// if (idcategory) console.log("idcategory:" + idcategory);
+		// if (idgood) console.log("idgood:" + idgood);
+		if (idarticle) {
+			console.log("idarticle:" + idarticle);
+		}
+		console.log("--------------");
+
+		for ( var i in node.nodes) {
+			var child = node.nodes[i];
+			$(this).treeview(true).selectNode(child.nodeId);
+
+		}
+	});
+
+	$tree.on('nodeUnselected', function(ev, node) {
+		// var idcategory = node.idcategory;
+		// var idgood = node.idgood;
+		var idarticle = node.idarticle;
+
+		// if (idcategory) console.log("UN idcategory:" + idcategory);
+		// if (idgood) console.log("UN idgood:" + idgood);
+		if (idarticle) console.log("UN idarticle:" + idarticle);
+		console.log("--------------");
+
+		for ( var i in node.nodes) {
+			var child = node.nodes[i];
+			$(this).treeview(true).unselectNode(child.nodeId);
 		}
 	});
 });

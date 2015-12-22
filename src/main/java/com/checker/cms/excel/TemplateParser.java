@@ -11,12 +11,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -38,6 +32,12 @@ import com.checker.core.entity.Good;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Component
 public class TemplateParser {
@@ -52,7 +52,7 @@ public class TemplateParser {
     private CategoryService categoryService;
     @Resource
     private TemplateService templateService;
-    
+                            
     @Getter
     @Setter
     @ToString
@@ -81,7 +81,7 @@ public class TemplateParser {
                 workbook = new XSSFWorkbook(buffer);
             else
                 workbook = new HSSFWorkbook(buffer);
-            
+                
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
             while (rowIterator.hasNext()) {
@@ -99,7 +99,7 @@ public class TemplateParser {
                         Product p = new Product(category.trim(), good.trim(), articul, desc.trim(), price);
                         if (price == null)
                             result.withoutPriceAdded();
-                        
+                            
                         if (usePrice && price == null)
                             result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ОШИБКА:не указана цена (артикул:" + articul + ",категория:" + category + ")");
                         else
@@ -117,7 +117,7 @@ public class TemplateParser {
         }
         
         if ((!usePrice || (usePrice && result.getWithoutPriceAdded() == 0)) && added.size() > 0) {
-            generateTemplate(idCompany, filePath, fileName, caption, added, result);
+            generateTemplate(idCompany, filePath, fileName, caption, usePrice, added, result);
         }
         
         log.info(String.valueOf(result));
@@ -125,7 +125,7 @@ public class TemplateParser {
     }
     
     @Transactional
-    private void generateTemplate(Integer idCompany, String filepath, String filename, String caption, List<Product> products, ParsingResult result) {
+    private void generateTemplate(Integer idCompany, String filepath, String filename, String caption, boolean usePrice, List<Product> products, ParsingResult result) {
         TaskTemplate template = new TaskTemplate();
         template.setIdCompany(idCompany);
         template.setCaption(caption);
@@ -133,6 +133,7 @@ public class TemplateParser {
         template.setFilePath(filepath);
         template.setDateAdded(DateTime.now());
         template.setCurrentDate(LocalDate.now());
+        template.setPriceExist(usePrice);
         templateService.saveTemplate(template);
         
         for (Product p : products) {

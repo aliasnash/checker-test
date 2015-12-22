@@ -2,13 +2,13 @@ package com.checker.cms.controllers;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.core.dao.service.CheckerService;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -25,13 +25,13 @@ public class MainController {
         return m;
     }
     
-//    @RequestMapping("/report")
-//    public ModelAndView report() {
-//        log.info("Report page !");
-//        ModelAndView m = new ModelAndView("report");
-//        m.addObject("pageName", "report");
-//        return m;
-//    }
+    @RequestMapping("/report")
+    public ModelAndView report() {
+        log.info("Report page !");
+        ModelAndView m = new ModelAndView("report");
+        m.addObject("pageName", "report");
+        return m;
+    }
 //    
 //    @RequestMapping("/check")
 //    public ModelAndView check() {
