@@ -1,386 +1,271 @@
-// Add ECMA262-5 method binding if not supported natively
-//
-if (!('bind' in Function.prototype)) {
-	Function.prototype.bind = function(owner) {
-		var that = this;
-		if (arguments.length <= 1) {
-			return function() {
-				return that.apply(owner, arguments);
-			};
-		} else {
-			var args = Array.prototype.slice.call(arguments, 1);
-			return function() {
-				return that.apply(owner, arguments.length === 0 ? args : args.concat(Array.prototype.slice.call(arguments)));
-			};
-		}
-	};
-}
+$(window)
+		.on(
+				'load',
+				function() {
 
-// Add ECMA262-5 string trim if not supported natively
-//
-if (!('trim' in String.prototype)) {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+/, '').replace(/\s+$/, '');
-	};
-}
+					$('select').selectpicker();
 
-// Add ECMA262-5 Array methods if not supported natively
-//
-if (!('indexOf' in Array.prototype)) {
-	Array.prototype.indexOf = function(find, i /* opt */) {
-		if (i === undefined) i = 0;
-		if (i < 0) i += this.length;
-		if (i < 0) i = 0;
-		for (var n = this.length; i < n; i++)
-			if (i in this && this[i] === find) return i;
-		return -1;
-	};
-}
-if (!('lastIndexOf' in Array.prototype)) {
-	Array.prototype.lastIndexOf = function(find, i /* opt */) {
-		if (i === undefined) i = this.length - 1;
-		if (i < 0) i += this.length;
-		if (i > this.length - 1) i = this.length - 1;
-		for (i++; i-- > 0;)
-			/* i++ because from-argument is sadly inclusive */
-			if (i in this && this[i] === find) return i;
-		return -1;
-	};
-}
-if (!('forEach' in Array.prototype)) {
-	Array.prototype.forEach = function(action, that /* opt */) {
-		for (var i = 0, n = this.length; i < n; i++)
-			if (i in this) action.call(that, this[i], i, this);
-	};
-}
-if (!('map' in Array.prototype)) {
-	Array.prototype.map = function(mapper, that /* opt */) {
-		var other = new Array(this.length);
-		for (var i = 0, n = this.length; i < n; i++)
-			if (i in this) other[i] = mapper.call(that, this[i], i, this);
-		return other;
-	};
-}
-if (!('filter' in Array.prototype)) {
-	Array.prototype.filter = function(filter, that /* opt */) {
-		var other = [], v;
-		for (var i = 0, n = this.length; i < n; i++)
-			if (i in this && filter.call(that, v = this[i], i, this)) other.push(v);
-		return other;
-	};
-}
-if (!('every' in Array.prototype)) {
-	Array.prototype.every = function(tester, that /* opt */) {
-		for (var i = 0, n = this.length; i < n; i++)
-			if (i in this && !tester.call(that, this[i], i, this)) return false;
-		return true;
-	};
-}
-if (!('some' in Array.prototype)) {
-	Array.prototype.some = function(tester, that /* opt */) {
-		for (var i = 0, n = this.length; i < n; i++)
-			if (i in this && tester.call(that, this[i], i, this)) return true;
-		return false;
-	};
-}
+					$('#date').datepicker({
+						format : "yyyy-mm-dd",
+						language : "ru",
+						weekStart : 1,
+						autoclose : true
+					});
 
-$(window).on('load', function() {
+					$("#template-upload").fileinput({
+						language : "ru",
+						showPreview : false,
+						elErrorContainer : "#errorBlock",
+						allowedFileExtensions : [ "xls", "xlsx" ]
+					});
 
-	$('select').selectpicker();
+					$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
+						// get data-id attribute of the clicked element
+						var elementId = $(e.relatedTarget).data('element-id');
+						var elementName = $(e.relatedTarget).data('element-name');
+						var owner = $(e.relatedTarget).data('element-owner');
+						// populate the textbox
+						$(e.currentTarget).find('input[name="id"]').val(elementId);
+						$(e.currentTarget).find('input[name="name"]').val(elementName);
 
-	$('#date').datepicker({
-		format : "yyyy-mm-dd",
-		language : "ru",
-		weekStart : 1,
-		autoclose : true
-	});
+						if (owner) {
+							$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
+						} else {
+							$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
+						}
+					});
 
-	$("#template-upload").fileinput({
-		language : "ru",
-		showPreview : false,
-		elErrorContainer : "#errorBlock",
-		allowedFileExtensions : [ "xls", "xlsx" ]
-	});
+					// triggered when modal is about to be shown
+					$('#modal-edit-articul').on('show.bs.modal', function(e) {
+						// get data-id attribute of the clicked element
+						var elementId = $(e.relatedTarget).data('element-id');
+						var elementName = $(e.relatedTarget).data('element-name');
+						var elementCode = $(e.relatedTarget).data('element-code');
+						// var elementSubCategoryId =
+						// $(e.relatedTarget).data('element-subcategory-id');
+						var topProduct = $(e.relatedTarget).data('element-top-product');
+						// populate the textbox
+						$(e.currentTarget).find('input[name="id"]').val(elementId);
+						$(e.currentTarget).find('input[name="name"]').val(elementName);
+						$(e.currentTarget).find('input[name="code"]').val(elementCode);
 
-	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var owner = $(e.relatedTarget).data('element-owner');
-		// populate the textbox
-		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="name"]').val(elementName);
+						if (topProduct) {
+							$(e.currentTarget).find('input[name="top_product"]').prop('checked', true);
+						} else {
+							$(e.currentTarget).find('input[name="top_product"]').prop('checked', false);
+						}
+					});
 
-		if (owner) {
-			$(e.currentTarget).find('input[name="owner"]').prop('checked', true);
-		} else {
-			$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
-		}
-	});
+					// triggered when modal is about to be shown
+					$('#modal-edit-template').on('show.bs.modal', function(e) {
+						// get data-id attribute of the clicked element
+						var elementId = $(e.relatedTarget).data('element-id');
+						var elementName = $(e.relatedTarget).data('element-name');
+						var elementDate = $(e.relatedTarget).data('element-date');
+						var elementFile = $(e.relatedTarget).data('element-file');
 
-	// triggered when modal is about to be shown
-	$('#modal-edit-articul').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var elementCode = $(e.relatedTarget).data('element-code');
-		// var elementSubCategoryId =
-		// $(e.relatedTarget).data('element-subcategory-id');
-		var topProduct = $(e.relatedTarget).data('element-top-product');
-		// populate the textbox
-		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="name"]').val(elementName);
-		$(e.currentTarget).find('input[name="code"]').val(elementCode);
+						// populate the textbox
+						$(e.currentTarget).find('input[name="id"]').val(elementId);
+						$(e.currentTarget).find('input[name="name"]').val(elementName);
 
-		if (topProduct) {
-			$(e.currentTarget).find('input[name="top_product"]').prop('checked', true);
-		} else {
-			$(e.currentTarget).find('input[name="top_product"]').prop('checked', false);
-		}
-	});
+						$(e.currentTarget).find('input[name="date"]').val(elementDate);
+						$(e.currentTarget).find('input[name="file"]').val(elementFile);
 
-	// triggered when modal is about to be shown
-	$('#modal-edit-template').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var elementDate = $(e.relatedTarget).data('element-date');
-		var elementFile = $(e.relatedTarget).data('element-file');
+						$(e.currentTarget).find('input[name="date"]').prop('disabled', true);
+						$(e.currentTarget).find('input[name="file"]').prop('disabled', true);
+					});
 
-		// populate the textbox
-		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="name"]').val(elementName);
+					$('#modal-edit-market-point').on('show.bs.modal', function(e) {
+						// get data-id attribute of the clicked element
+						var elementId = $(e.relatedTarget).data('element-id');
+						var elementName = $(e.relatedTarget).data('element-name');
+						var elementCity = $(e.relatedTarget).data('element-id-city');
+						var citySelector = $('select[name="city_id"]');
 
-		$(e.currentTarget).find('input[name="date"]').val(elementDate);
-		$(e.currentTarget).find('input[name="file"]').val(elementFile);
+						// populate the textbox
+						$('input[name="id"]').val(elementId);
+						$('input[name="name"]').val(elementName);
+						$('input[name="idcity"]').val(elementCity);
 
-		$(e.currentTarget).find('input[name="date"]').prop('disabled', true);
-		$(e.currentTarget).find('input[name="file"]').prop('disabled', true);
-	});
+						if (elementId) {
+							citySelector.prop('disabled', true);
+							citySelector.val(elementCity);
+						} else {
+							citySelector.prop('disabled', false);
+							citySelector.val("-1");
+						}
 
-	$('#modal-edit-market-point').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var elementCity = $(e.relatedTarget).data('element-id-city');
-		var citySelector = $('select[name="city_id"]');
+						citySelector.selectpicker('render');
+						citySelector.selectpicker('refresh');
+					});
 
-		// populate the textbox
-		$('input[name="id"]').val(elementId);
-		$('input[name="name"]').val(elementName);
-		$('input[name="idcity"]').val(elementCity);
+					$('#modal-edit-city').on('show.bs.modal', function(e) {
+						// get data-id attribute of the clicked element
+						var elementId = $(e.relatedTarget).data('element-id');
+						var elementName = $(e.relatedTarget).data('element-name');
+						var elementRegion = $(e.relatedTarget).data('element-region');
+						var regionSelector = $('select[name="region_id"]');
 
-		if (elementId) {
-			citySelector.prop('disabled', true);
-			citySelector.val(elementCity);
-		} else {
-			citySelector.prop('disabled', false);
-			citySelector.val("-1");
-		}
+						// populate the textbox
+						$('input[name="id"]').val(elementId);
+						$('input[name="name"]').val(elementName);
+						$('input[name="idregion"]').val(elementRegion);
 
-		citySelector.selectpicker('render');
-		citySelector.selectpicker('refresh');
-	});
+						if (elementId) {
+							regionSelector.prop('disabled', true);
+							regionSelector.val(elementRegion);
+						} else {
+							regionSelector.prop('disabled', false);
+							regionSelector.val("-1");
+						}
 
-	$('#modal-edit-city').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var elementName = $(e.relatedTarget).data('element-name');
-		var elementRegion = $(e.relatedTarget).data('element-region');
-		var regionSelector = $('select[name="region_id"]');
+						regionSelector.selectpicker('render');
+						regionSelector.selectpicker('refresh');
+					});
 
-		// populate the textbox
-		$('input[name="id"]').val(elementId);
-		$('input[name="name"]').val(elementName);
-		$('input[name="idregion"]').val(elementRegion);
+					$('#save-market-point').on('click', function(e) {
+						var cityValue = $('select[name="city_id"]').val();
 
-		if (elementId) {
-			regionSelector.prop('disabled', true);
-			regionSelector.val(elementRegion);
-		} else {
-			regionSelector.prop('disabled', false);
-			regionSelector.val("-1");
-		}
+						if (cityValue) {
+							$('input[name="idcity"]').val(cityValue);
+							return true;
+						} else {
+							return false;
+						}
+					});
 
-		regionSelector.selectpicker('render');
-		regionSelector.selectpicker('refresh');
-	});
+					$('#save-city').on('click', function(e) {
+						var regionValue = $('select[name="region_id"]').val();
 
-	$('#save-market-point').on('click', function(e) {
-		var cityValue = $('select[name="city_id"]').val();
+						if (regionValue) {
+							$('input[name="idregion"]').val(regionValue);
+							return true;
+						} else {
+							return false;
+						}
+					});
 
-		if (cityValue) {
-			$('input[name="idcity"]').val(cityValue);
-			return true;
-		} else {
-			return false;
-		}
-	});
+					$('#top-product').change(function(e) {
+						if ($(this).prop('checked')) {
+							$('#articul-listing tr.articul:not(.top-product)').hide();
+						} else {
+							$('#articul-listing tr.articul:not(.top-product)').show();
+						}
+					});
 
-	$('#save-city').on('click', function(e) {
-		var regionValue = $('select[name="region_id"]').val();
+					$('#only-price').change(function(e) {
+						if ($(this).prop('checked')) {
+							$('#template-listing tr.template-data:not(.with-price)').hide();
+						} else {
+							$('#template-listing tr.template-data:not(.with-price)').show();
+						}
+					});
 
-		if (regionValue) {
-			$('input[name="idregion"]').val(regionValue);
-			return true;
-		} else {
-			return false;
-		}
-	});
+					$('#template-usefilename').change(function(e) {
+						if ($(this).prop('checked')) {
+							$('#template-name').prop('disabled', true);
+						} else {
+							$('#template-name').prop('disabled', false);
+						}
+					});
 
-	$('#top-product').change(function(e) {
-		if ($(this).prop('checked')) {
-			$('#articul-listing tr.articul:not(.top-product)').hide();
-		} else {
-			$('#articul-listing tr.articul:not(.top-product)').show();
-		}
-	});
+					var denisData = [ {
+						text : 'Алкоголь',
+						idcategory : 10,
+						tags : [ 'товаров 2', 'артикулов 2' ],
+						nodes : [ {
+							text : 'Вина',
+							idgood : 20,
+							tags : [ 'артикулов 2' ],
+							nodes : [ {
+								text : 'красное',
+								idarticle : 30,
+							}, {
+								text : 'белое',
+								idarticle : 31,
+							} ]
+						}, {
+							text : 'Водка',
+							idgood : 21,
+							tags : [ 'артикулов 0' ]
+						} ]
+					}, {
+						text : 'Бакалея',
+						idcategory : 11,
+						tags : [ 'товаров 0' ]
+					}, {
+						text : 'Химия',
+						idcategory : 12,
+						tags : [ 'товаров 0' ]
+					}, {
+						text : 'Фрукты овощи',
+						idcategory : 13,
+						tags : [ 'товаров 0' ]
+					}, {
+						text : 'Хуета',
+						idcategory : 14,
+						tags : [ 'товаров 0' ]
+					} ];
 
-	$('#template-usefilename').change(function(e) {
-		if ($(this).prop('checked')) {
-			$('#template-name').prop('disabled', true);
-		} else {
-			$('#template-name').prop('disabled', false);
-		}
-	});
+					var json = '[' + '{' + '"text": "Алкоголь",' + '"idcategory": 10,' + '"tags": ["товаров 2", "артикулов 2"],' + '"nodes": [' + '{' + '"text": "Вина",' + '"idgood": 20,' + '"tags": ["артикулов 2"],' + '"nodes": [' + '{' + '"text": "красное",' + '"state": {"selected": true},' + '"idarticle": 30' + '},' + '{' + '"text": "белое",' + '"idarticle": 31' + '}' + ']' + '},' + '{' + '"text": "Водка",' + '"idgood": 21,' + '"tags": ["артикулов 0"]' + '}' + ']' + '},' + '{' + '"text": "Бакалея",' + '"idcategory": 11,' + '"tags": ["товаров 0"]' + '},' + '{' + '"text": "Химия",' + '"idcategory": 12,' + '"tags": ["товаров 0"]' + '},' + '{' + '"text": "Фрукты овощи",' + '"idcategory": 13,' + '"tags": ["товаров 0"]' + '},' + '{' + '"text": "Хуета",' + '"idcategory": 14,' + '"tags": ["товаров 0"]' + '}' + ']';
 
-	var denisData = [ {
-		text : 'Алкоголь',
-		idcategory : 10,
-		tags : [ 'товаров 2', 'артикулов 2' ],
-		nodes : [ {
-			text : 'Вина',
-			idgood : 20,
-			tags : [ 'артикулов 2' ],
-			nodes : [ {
-				text : 'красное',
-				idarticle : 30,
-			}, {
-				text : 'белое',
-				idarticle : 31,
-			} ]
-		}, {
-			text : 'Водка',
-			idgood : 21,
-			tags : [ 'артикулов 0' ]
-		} ]
-	}, {
-		text : 'Бакалея',
-		idcategory : 11,
-		tags : [ 'товаров 0' ]
-	}, {
-		text : 'Химия',
-		idcategory : 12,
-		tags : [ 'товаров 0' ]
-	}, {
-		text : 'Фрукты овощи',
-		idcategory : 13,
-		tags : [ 'товаров 0' ]
-	}, {
-		text : 'Хуета',
-		idcategory : 14,
-		tags : [ 'товаров 0' ]
-	} ];
+					// var selectedArticles = [];
 
-	var selectedArticles = [];
+					var $tree = $('#templatetree').treeview({
+						showTags : true,
+						selectedIcon : "glyphicon glyphicon-ok",
+						multiSelect : true,
+						levels : 3,
+						data : templateTree,
 
-	var $tree = $('#templatetree').treeview({
-		showTags : true,
-		selectedIcon : "glyphicon glyphicon-ok",
-		multiSelect : true,
-		levels : 3,
-		// showCheckbox: true,
-		// enableLinks : true,
-		data : denisData,
+						onNodeSelected : function(event, node) {
+							var idarticle = node.idarticle;
+							var info = "";
+							if (idarticle) {
+								selectedArticles.push(idarticle);
+								info = "idarticle:" + idarticle;
+							}
 
-		onNodeSelected : function(event, node) {
-			// var idcategory = node.idcategory;
-			// var idgood = node.idgood;
-			var idarticle = node.idarticle;
-			var info = "";
-			// if (idcategory) info = "idcategory:" + idcategory;
-			// if (idgood) info = "idgood:" + idgood;
-			if (idarticle) {
-				// alert(selectedArticles);
-				selectedArticles.push(idarticle);
-				// alert(selectedArticles);
-				info = "idarticle:" + idarticle;
-			}
+							$('#output').prepend('<p>' + node.text + ' was + selected [' + info + ']</p>');
+						},
 
-			$('#output').prepend('<p>' + node.text + ' was + selected [' + info + ']</p>');
-		},
+						onNodeUnselected : function(event, node) {
+							var idarticle = node.idarticle;
+							var info = "";
+							if (idarticle) {
+								delete selectedArticles[selectedArticles.indexOf(idarticle)];
+								info = "idarticle:" + idarticle;
+							}
 
-		onNodeUnselected : function(event, node) {
-			// var idcategory = node.idcategory;
-			// var idgood = node.idgood;
-			var idarticle = node.idarticle;
-			var info = "";
-			// if (idcategory) info = "idcategory:" + idcategory;
-			// if (idgood) info = "idgood:" + idgood;
-			if (idarticle) {
-				delete selectedArticles[selectedArticles.indexOf(idarticle)];
-				info = "idarticle:" + idarticle;
-			}
+							$('#output').prepend('<p>' + node.text + ' was - unselected [' + info + ']</p>');
+						}
+					});
 
-			$('#output').prepend('<p>' + node.text + ' was - unselected [' + info + ']</p>');
-		}
-	});
+					$('#dataclick').on('click', function(e) {
+						// var $a = $('#tree').treeview('getSelected');
+						// console.log($a);
 
-	$('#dataclick').on('click', function(e) {
-		selectedArticles = selectedArticles.filter(function(e) {
-			return e;
-		});
-		alert(JSON.stringify(selectedArticles));
-		// $('#output').text(selectedArticles);
-	});
+						selectedArticles = selectedArticles.filter(function(e) {
+							return e;
+						});
+						alert(JSON.stringify(selectedArticles));
+					});
 
-	// var findDisabledNodes = function() {
-	// return $disabledTree.treeview('search', [ $('#input-disable-node').val(),
-	// {
-	// ignoreCase : false,
-	// exactMatch : false
-	// } ]);
-	// };
-	// var disabledNodes = findDisabledNodes();
-	//
-	// // Expand/collapse/toggle nodes
-	// $('#input-disable-node').on('keyup', function(e) {
-	// disabledNodes = findDisabledNodes();
-	// $('.disable-node').prop('disabled', !(disabledNodes.length >= 1));
-	// });
+					$tree.on('nodeSelected', function(ev, node) {
+						var idarticle = node.idarticle;
+						if (idarticle) console.log("idarticle:" + idarticle);
+						for ( var i in node.nodes) {
+							var child = node.nodes[i];
+							$(this).treeview(true).selectNode(child.nodeId);
+						}
+					});
 
-	$tree.on('nodeSelected', function(ev, node) {
-		// var idcategory = node.idcategory;
-		// var idgood = node.idgood;
-		var idarticle = node.idarticle;
-
-		// if (idcategory) console.log("idcategory:" + idcategory);
-		// if (idgood) console.log("idgood:" + idgood);
-		if (idarticle) {
-			console.log("idarticle:" + idarticle);
-		}
-		console.log("--------------");
-
-		for ( var i in node.nodes) {
-			var child = node.nodes[i];
-			$(this).treeview(true).selectNode(child.nodeId);
-
-		}
-	});
-
-	$tree.on('nodeUnselected', function(ev, node) {
-		// var idcategory = node.idcategory;
-		// var idgood = node.idgood;
-		var idarticle = node.idarticle;
-
-		// if (idcategory) console.log("UN idcategory:" + idcategory);
-		// if (idgood) console.log("UN idgood:" + idgood);
-		if (idarticle) console.log("UN idarticle:" + idarticle);
-		console.log("--------------");
-
-		for ( var i in node.nodes) {
-			var child = node.nodes[i];
-			$(this).treeview(true).unselectNode(child.nodeId);
-		}
-	});
-});
+					$tree.on('nodeUnselected', function(ev, node) {
+						var idarticle = node.idarticle;
+						if (idarticle) console.log("UN idarticle:" + idarticle);
+						for ( var i in node.nodes) {
+							var child = node.nodes[i];
+							$(this).treeview(true).unselectNode(child.nodeId);
+						}
+					});
+				});

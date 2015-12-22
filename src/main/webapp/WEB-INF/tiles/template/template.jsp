@@ -30,6 +30,8 @@
 			<tiles:insertAttribute name="body" />
 		</div>
 	</div>
+	
+	<script src="<spring:url htmlEscape="true" value="/resources/js/components.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-1.11.3.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-ui.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery.mjs.nestedSortable.js" />"></script>

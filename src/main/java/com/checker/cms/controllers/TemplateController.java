@@ -24,6 +24,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.cms.excel.ParsingResult;
 import com.checker.cms.excel.TemplateParser;
+import com.checker.cms.utils.JsonTransformer;
 import com.checker.core.dao.service.TemplateService;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
@@ -43,6 +44,8 @@ public class TemplateController {
     private TemplateParser    templateParser;
     @Resource
     private FileUtilz         fileUtilz;
+    @Resource
+    private JsonTransformer   jsonTransformer;
     
     private DateTimeFormatter fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private Integer           idCompany = 1;
@@ -109,7 +112,7 @@ public class TemplateController {
             File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());
             mFile.transferTo(file);
             
-            if (StringUtils.isEmpty(caption) || useFileName)
+            if (StringUtils.isEmpty(originalCaption) || useFileName)
                 caption = mFile.getOriginalFilename().substring(0, mFile.getOriginalFilename().lastIndexOf('.') - 1);
             else if (mFileList.size() > 1)
                 caption = (index++) + "_" + originalCaption;
@@ -140,10 +143,17 @@ public class TemplateController {
     public ModelAndView templateArticleList(@PathVariable("id") Long idTemplate) {
         log.info("#TemplateArticleList method(idCompany:" + idCompany + ")#");
         List<TaskTemplateArticle> templateArticleList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
-        ModelAndView m = new ModelAndView("templatearticle");
+        
+        System.out.println("templateArticleList:" + templateArticleList);
+        
+        String jsonResult = jsonTransformer.process(templateArticleList);
+        
+        System.out.println("jsonResult:" + jsonResult);
+        
+        ModelAndView m = new ModelAndView("templatearticles");
         m.addObject("pageName", "template");
-        m.addObject("templateArticleList", templateArticleList);
+        // m.addObject("testSelected", getSelected());
+        m.addObject("templateTree", jsonResult);
         return m;
     }
-    
 }

@@ -7,45 +7,58 @@
 	<tiles:putAttribute name="title" value="Checker Template" />
 	<tiles:putAttribute name="body">
 		<div class="panel panel-default">
-			<div class="panel-heading">Редактор шаблонов</div>
-			<div class="panel-body">
+			<div class="panel-heading">
+				Редактор шаблонов
+				<span class="pull-right">
+					Только с ценой:&nbsp;
+					<input id="only-price" type="checkbox">
+				</span>
+			</div>
+			<div class="panel-body" id="template-listing">
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="vertical-align: middle" class="col-md-1">#</th>
+							<th style="vertical-align: middle" class="col-sd-1">#</th>
 							<th style="vertical-align: middle" class="col-md-1">Дата создания</th>
-							<th style="vertical-align: middle" class="col-md-2">Название шаблона</th>
-							<th style="vertical-align: middle" class="col-md-5">Имя загруженного файла</th>
+							<th style="vertical-align: middle" class="col-md-3">Название шаблона</th>
+							<th style="vertical-align: middle" class="col-sd-1">Цена</th>
+							<th style="vertical-align: middle" class="col-md-3">Имя загруженного файла</th>
 							<th class="text-right col-md-3">
-								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-template" class="btn btn-sm btn-success"> <span
-										class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> &nbsp;Добавить шаблон
+								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-template" class="btn btn-sm btn-success">
+									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									&nbsp;Добавить шаблон
 								</a>
 								<spring:url value="/template/file/add/form" var="addTemplateFileUrl" htmlEscape="true" />
-								<a class="btn btn-sm btn-success" href="${addTemplateFileUrl}"> <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>&nbsp;Добавить
-									файл
+								<a class="btn btn-sm btn-success" href="${addTemplateFileUrl}">
+									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
+									&nbsp;Добавить файл
 								</a>
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach items="${templateList}" var="template" varStatus="status">
-							<tr>
+							<tr class="template-data ${template.priceExist?'with-price':''}">
 								<td>${status.index + 1}</td>
 								<td>${template.currentDate}</td>
 								<td>${template.caption}</td>
+								<td><span class="${template.priceExist?'glyphicon glyphicon-ok':''}" aria-hidden="true"></span></td>
 								<td>${template.fileName}</td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<spring:url value="/template/${template.id}/list" var="templateUrl" htmlEscape="true" />
-										<a class=" btn btn-sm btn-default" href="${templateUrl}"> <span class="glyphicon glyphicon-list" aria-hidden="true"></span> Артикулы
-										</a> <a data-element-id="${template.id}" data-element-name="${template.caption}" data-element-date="${template.currentDate}"
-											data-element-file="${template.fileName}" data-toggle="modal" data-target="#modal-edit-template" class=" btn btn-sm btn-primary"> <span
-												class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+										<a class=" btn btn-sm btn-default" href="${templateUrl}">
+											<span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+											Артикулы
+										</a>
+										<a data-element-id="${template.id}" data-element-name="${template.caption}" data-element-date="${template.currentDate}" data-element-file="${template.fileName}"
+											data-toggle="modal" data-target="#modal-edit-template" class=" btn btn-sm btn-primary">
+											<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										</a>
 										<spring:url value="/template/${template.id}/delete" var="templateDeleteUrl" htmlEscape="true" />
 										<a class="btn btn-sm btn-danger" href="${templateDeleteUrl}"
-											onclick="return confirm('Вы действительно хотите удалить шаблон \'${template.caption}\' со всеми артикулами?')"> <span
-												class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+											onclick="return confirm('Вы действительно хотите удалить шаблон \'${template.caption}\' со всеми артикулами?')">
+											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</a>
 									</div>
 								</td>

@@ -36,7 +36,6 @@
 						</tr>
 					</thead>
 					<tbody>
-
 						<c:forEach items="${articleList}" var="article" varStatus="status">
 							<tr class="${article.topProduct?'top-product':''} articul">
 								<td>${status.index + 1}</td>
