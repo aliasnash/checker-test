@@ -11,8 +11,7 @@
 				<div class="row">
 					<div class="col-md-6">Добавление файла шаблона</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />">
-							<span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />"> <span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>
 					</div>
@@ -56,19 +55,23 @@
 								</div>
 								<table class="table">
 									<tr>
-										<td class="text-right" style="width:40%;"><strong>Всего добавлено:</strong></td>
+										<td class="text-right" style="width: 40%;"><strong>Всего добавлено:</strong></td>
 										<td class="text-left">${result.totalAdded}</td>
 									</tr>
-									<tr>
-										<td class="text-right"><strong>В том числе без цены:</strong></td>
-										<td class="text-left">${result.withoutPriceAdded}</td>
-									</tr>
+                                    <tr>
+                                        <td class="text-right"><strong>В том числе без цены:</strong></td>
+                                        <td class="text-left">${result.withoutPriceAdded}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-right"><strong>Топов:</strong></td>
+                                        <td class="text-left">${result.topProduct}</td>
+                                    </tr>                                    
 									<tr>
 										<td class="text-right"><strong>Создано категорий:</strong></td>
 										<td class="text-left">${result.categoryAdded}</td>
 									</tr>
 									<tr>
-										<td class=" text-right"><strong>Создано продуктов:</strong></td>
+										<td class=" text-right"><strong>Создано подкатегорий:</strong></td>
 										<td class="text-left">${result.goodAdded}</td>
 									</tr>
 									<tr>

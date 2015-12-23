@@ -13,7 +13,7 @@
 					<thead>
 						<tr>
 							<th style="vertical-align: middle">#</th>
-							<th style="vertical-align: middle">Название категории</th>
+							<th style="vertical-align: middle">Категория</th>
 							<th class="text-right">
 								<a class="btn btn-default btn-sm" href="<spring:url value="/category/top/reset" htmlEscape="true" />"><span class="glyphicon glyphicon-flag"></span>
 									Сброс ТОП артикулов</a> <a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-category" class="btn btn-sm btn-success">
@@ -36,7 +36,7 @@
 										</a>
 										<spring:url value="/category/${category.id}/delete" var="categoryDeleteUrl" htmlEscape="true" />
 										<a class="btn btn-sm btn-danger" href="${categoryDeleteUrl}"
-											onclick="return confirm('Вы действительно хотите удалить категорию \'${category.caption }\' и все товары?')"> <span
+											onclick="return confirm('Вы действительно хотите удалить категорию \'${category.caption }\' и все подкатегории')"> <span
 												class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</a>
 									</div>
@@ -60,7 +60,7 @@
 
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="category-name" class="col-md-4 control-label">Название:</label>
+										<label for="category-name" class="col-md-4 control-label">Наименование:</label>
 
 										<div class="col-md-5">
 											<input name="name" maxlength="50" class="form-control" id="category-name" placeholder="Название категории..." type="text">

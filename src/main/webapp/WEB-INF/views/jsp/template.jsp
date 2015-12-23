@@ -18,20 +18,20 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="vertical-align: middle" class="col-sd-1">#</th>
+							<th style="vertical-align: middle" class="col-md-1">#</th>
 							<th style="vertical-align: middle" class="col-md-1">Дата создания</th>
 							<th style="vertical-align: middle" class="col-md-3">Название шаблона</th>
-							<th style="vertical-align: middle" class="col-sd-1">Цена</th>
-							<th style="vertical-align: middle" class="col-md-3">Имя загруженного файла</th>
-							<th class="text-right col-md-3">
+							<th style="vertical-align: middle" class="col-md-1">Цена</th>
+							<th style="vertical-align: middle" class="col-md-2">Имя загруженного файла</th>
+							<th class="text-right col-md-4">
 								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-template" class="btn btn-sm btn-success">
 									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-									&nbsp;Добавить шаблон
+									&nbsp;Шаблон
 								</a>
 								<spring:url value="/template/file/add/form" var="addTemplateFileUrl" htmlEscape="true" />
 								<a class="btn btn-sm btn-success" href="${addTemplateFileUrl}">
 									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
-									&nbsp;Добавить файл
+									&nbsp;Файл
 								</a>
 							</th>
 						</tr>

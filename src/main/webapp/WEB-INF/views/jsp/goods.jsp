@@ -8,14 +8,14 @@
 	<tiles:putAttribute name="body">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Редактор продуктов для категории <strong>${category.caption}</strong>
+				Редактор подкатегорий <strong>${category.caption}</strong>
 			</div>
 			<div class="panel-body">
 				<table class="table">
 					<thead>
 						<tr>
 							<th style="vertical-align: middle">#</th>
-							<th style="vertical-align: middle">Название продукта</th>
+							<th style="vertical-align: middle">Подкатегория</th>
 							<th class="text-right">
 								<a class="btn btn-default btn-sm" href="<spring:url value="/category/list" htmlEscape="true" />"><span class="glyphicon glyphicon-arrow-left"></span>
 									Назад</a> <a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-goods" class="btn btn-sm btn-success"> <span
@@ -38,7 +38,7 @@
 										</a>
 										<spring:url value="/category/${category.id}/${goods.id}/delete" var="categoryGoodsDeleteUrl" htmlEscape="true" />
 										<a class="btn btn-sm btn-danger" href="${categoryGoodsDeleteUrl}"
-											onclick="return confirm('Вы действительно хотите удалить продукт \'${goods.caption}\' со всеми артикулами?')"> <span
+											onclick="return confirm('Вы действительно хотите удалить подкатегорию \'${goods.caption}\' со всеми артикулами?')"> <span
 												class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 										</a>
 									</div>
@@ -55,14 +55,14 @@
 								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 									<span aria-hidden="true">×</span>
 								</button>
-								<h4 class="modal-title">Продукт</h4>
+								<h4 class="modal-title">Подкатегория</h4>
 							</div>
 							<form class="form-horizontal" role="form" action="<spring:url value="/category/${category.id}/goods/update" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
 
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="subcategory-name" class="col-md-4 control-label">Название:</label>
+										<label for="subcategory-name" class="col-md-4 control-label">Наименование:</label>
 
 										<div class="col-md-5">
 											<input name="name" maxlength="50" class="form-control" id="subcategory-name" placeholder="Название подкатегории..." type="text">

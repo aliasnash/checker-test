@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -24,12 +22,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.cms.excel.ParsingResult;
 import com.checker.cms.excel.TemplateParser;
-import com.checker.cms.utils.JsonTransformer;
+import com.checker.core.dao.service.ArticleService;
 import com.checker.core.dao.service.TemplateService;
+import com.checker.core.entity.Article;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
+import com.checker.core.model.TupleHolder;
 import com.checker.core.utilz.FileUtilz;
+import com.checker.core.utilz.JsonTransformer;
 import com.checker.core.utilz.Params;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -41,15 +44,17 @@ public class TemplateController {
     @Resource
     private TemplateService   templateService;
     @Resource
+    private ArticleService    articleService;
+    @Resource
     private TemplateParser    templateParser;
     @Resource
     private FileUtilz         fileUtilz;
     @Resource
     private JsonTransformer   jsonTransformer;
-    
+                              
     private DateTimeFormatter fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private Integer           idCompany = 1;
-    
+                                        
     @RequestMapping("list")
     public ModelAndView templateList() {
         log.info("#TemplateList method(idCompany:" + idCompany + ")#");
@@ -96,30 +101,24 @@ public class TemplateController {
     public ModelAndView templateFileAddDone(@RequestParam(value = "name", required = false) String caption, @RequestParam(value = "usefilename", required = false) Boolean useFileName,
             @RequestParam(value = "useprice", required = false) Boolean usePrice, @RequestParam("templates[]") List<MultipartFile> mFileList) throws IllegalStateException, IOException {
         log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ",caption:" + caption + ",useFileName:" + useFileName + ",usePrice:" + usePrice + ",file:" + mFileList.size() + ")#");
-        
         List<ParsingResult> results = new ArrayList<>();
         DateTime dt = new DateTime();
-        
         if (useFileName == null)
             useFileName = false;
         if (usePrice == null)
             usePrice = false;
-        
         String originalCaption = caption;
         File dir = fileUtilz.createDirectory(params.getPathForTemplate() + LocalDate.now().toString());
         int index = 0;
         for (MultipartFile mFile : mFileList) {
             File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());
             mFile.transferTo(file);
-            
             if (StringUtils.isEmpty(originalCaption) || useFileName)
                 caption = mFile.getOriginalFilename().substring(0, mFile.getOriginalFilename().lastIndexOf('.') - 1);
             else if (mFileList.size() > 1)
                 caption = (index++) + "_" + originalCaption;
-            
             if (caption.length() > 128)
                 caption = caption.substring(0, 127);
-            
             ParsingResult result = templateParser.process(idCompany, file, caption, usePrice);
             result.setFileName(mFile.getOriginalFilename());
             results.add(result);
@@ -141,19 +140,23 @@ public class TemplateController {
     
     @RequestMapping("{id}/list")
     public ModelAndView templateArticleList(@PathVariable("id") Long idTemplate) {
-        log.info("#TemplateArticleList method(idCompany:" + idCompany + ")#");
+        log.info("#TemplateArticleList method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ")#");
+        List<Article> articleList = articleService.findArticles(idCompany);
         List<TaskTemplateArticle> templateArticleList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
-        
-        System.out.println("templateArticleList:" + templateArticleList);
-        
-        String jsonResult = jsonTransformer.process(templateArticleList);
-        
-        System.out.println("jsonResult:" + jsonResult);
-        
+        TaskTemplate taskTemplate = templateService.findTemplateByIdAndIdCompany(idCompany, idTemplate);
+        TupleHolder<String, List<Long>> result = jsonTransformer.process(templateArticleList, articleList);
         ModelAndView m = new ModelAndView("templatearticles");
         m.addObject("pageName", "template");
-        // m.addObject("testSelected", getSelected());
-        m.addObject("templateTree", jsonResult);
+        m.addObject("taskTemplate", taskTemplate);
+        m.addObject("templateTree", result.getValue1());
+        m.addObject("templateSelected", result.getValue2());
         return m;
+    }
+    
+    @RequestMapping("{id}/articule/update")
+    public String templateArticleUpdateList(@PathVariable("id") Long idTemplate, @RequestParam("idarticle[]") List<Long> idArticleList) {
+        log.info("#TemplateList method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idArticleList:" + idArticleList.size() + ")#");
+        templateService.reUpdateTemplateArticle(idCompany, idTemplate, idArticleList);
+        return "redirect:/template/{id}/list";
     }
 }

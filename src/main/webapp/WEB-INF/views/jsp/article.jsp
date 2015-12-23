@@ -8,7 +8,7 @@
 	<tiles:putAttribute name="body">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				Редактор артикулов продукта <strong>${goods.caption}</strong>
+				Редактор артикулов <strong>${goods.caption}</strong>
 				<span class="pull-right">
 					Top product:&nbsp;
 					<input id="top-product" type="checkbox">
@@ -20,7 +20,7 @@
 						<tr>
 							<th style="vertical-align: middle">#</th>
 							<th style="vertical-align: middle">Артикул</th>
-							<th style="vertical-align: middle">Описание</th>
+							<th style="vertical-align: middle">Наименование</th>
 							<th style="vertical-align: middle">TOP</th>
 							<th class="text-right">
 								<spring:url value="/category/${goods.idCategory}/goods/list" htmlEscape="true" var="goodsListUrl" />
@@ -73,14 +73,14 @@
 
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="articul-name" class="col-md-4 control-label">Название:</label>
+										<label for="articul-name" class="col-md-4 control-label">Наименование:</label>
 
 										<div class="col-md-5">
 											<input name="name" maxlength="50" class="form-control" id="articul-name" placeholder="Название артикула..." type="text">
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="articul-code" class="col-md-4 control-label">Код:</label>
+										<label for="articul-code" class="col-md-4 control-label">Артикул:</label>
 
 										<div class="col-md-5">
 											<input name="code" maxlength="50" class="form-control" id="articul-code" placeholder="Код артикула..." type="text">

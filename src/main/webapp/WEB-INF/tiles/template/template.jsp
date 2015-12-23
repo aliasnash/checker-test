@@ -20,6 +20,9 @@
 <link href="<spring:url htmlEscape="true" value="/resources/css/fileinput.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site2.css" />" rel="stylesheet">
+
+<script src="<spring:url htmlEscape="true" value="/resources/js/variables.js" />"></script>
+<script src="<spring:url htmlEscape="true" value="/resources/js/components.js" />"></script>
 </head>
 
 <body style="">
@@ -30,8 +33,7 @@
 			<tiles:insertAttribute name="body" />
 		</div>
 	</div>
-	
-	<script src="<spring:url htmlEscape="true" value="/resources/js/components.js" />"></script>
+
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-1.11.3.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-ui.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery.mjs.nestedSortable.js" />"></script>

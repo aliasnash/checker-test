@@ -13,18 +13,23 @@ import lombok.ToString;
 public class ParsingResult {
     
     private String       fileName;
-    
+                         
     private int          totalAdded        = 0;
     private int          withoutPriceAdded = 0;
-    
+    private int          topProduct        = 0;
+                                           
     private int          categoryAdded     = 0;
     private int          goodAdded         = 0;
     private int          articleAdded      = 0;
-    
+                                           
     private List<String> notAdded          = new ArrayList<>();
-    
+                                           
     public void totalAdded() {
         totalAdded++;
+    }
+    
+    public void topProduct() {
+        topProduct++;
     }
     
     public void withoutPriceAdded() {

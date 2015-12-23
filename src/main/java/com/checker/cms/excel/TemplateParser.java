@@ -11,6 +11,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -58,11 +59,12 @@ public class TemplateParser {
     @ToString
     @AllArgsConstructor
     private static class Product {
-        private String category;
-        private String good;
-        private String articul;
-        private String desc;
-        private Double price;
+        private String  category;
+        private String  good;
+        private String  articul;
+        private String  desc;
+        private Double  price;
+        private Boolean top;
     }
     
     public ParsingResult process(Integer idCompany, File file, String caption, boolean usePrice) throws IOException {
@@ -92,13 +94,17 @@ public class TemplateParser {
                 String articul = convertToString(row.getCell(2));
                 String desc = convertToString(row.getCell(3));
                 Double price = convertToDouble(row.getCell(4));
+                Integer top = convertToInteger(row.getCell(5));
                 
                 try {
                     Integer.valueOf(articul);
                     if (category != null && good != null && desc != null) {
-                        Product p = new Product(category.trim(), good.trim(), articul, desc.trim(), price);
+                        Product p = new Product(category.trim(), good.trim(), articul, desc.trim(), price, (top == null || top == 1));
                         if (price == null)
                             result.withoutPriceAdded();
+                            
+                        if (BooleanUtils.isTrue(p.getTop()))
+                            result.topProduct();
                             
                         if (usePrice && price == null)
                             result.addNotAdded("Строка:" + (row.getRowNum() + 1) + ", ОШИБКА:не указана цена (артикул:" + articul + ",категория:" + category + ")");
@@ -176,6 +182,7 @@ public class TemplateParser {
             art.setIdArticle(article.getId());
             art.setDescription(p.getDesc());
             art.setPrice(p.getPrice());
+            art.setTopProduct(BooleanUtils.isTrue(p.getTop()));
             templateService.saveTemplateArticle(art);
             result.totalAdded();
         }
@@ -208,6 +215,24 @@ public class TemplateParser {
                     break;
                 case Cell.CELL_TYPE_STRING:
                     res = Double.valueOf(c.getStringCellValue());
+                    break;
+            }
+        } catch (Exception e) {}
+        return res;
+    }
+    
+    private Integer convertToInteger(Cell c) {
+        Integer res = null;
+        try {
+            switch (c.getCellType()) {
+                case Cell.CELL_TYPE_BLANK:
+                    res = null;
+                    break;
+                case Cell.CELL_TYPE_NUMERIC:
+                    res = Integer.valueOf((int) c.getNumericCellValue());
+                    break;
+                case Cell.CELL_TYPE_STRING:
+                    res = Integer.valueOf(c.getStringCellValue());
                     break;
             }
         } catch (Exception e) {}

@@ -1,0 +1,2 @@
+var templateTree;
+var selectedArticles = [];
