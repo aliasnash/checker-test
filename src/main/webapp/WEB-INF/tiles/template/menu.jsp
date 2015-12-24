@@ -30,9 +30,9 @@
 							<a href="${pageName eq 'check' ? '#' : checkUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-camera"></span> Проверка
 							</a>
 						</li>
-						<li class="${pageName eq 'tasks' ? 'active' : ''}">
+						<li class="${pageName eq 'task' ? 'active' : ''}">
 							<spring:url value="/tasks/list" var="tasksUrl" htmlEscape="true" />
-							<a href="${pageName eq 'tasks' ? '#' : tasksUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-tasks"></span> Задачи
+							<a href="${pageName eq 'task' ? '#' : tasksUrl}"> <span class="glyphicon glyphicon-tasks"></span> Задачи
 							</a>
 						</li>
 						<li class="${pageName eq 'users' ? 'active' : ''}">
