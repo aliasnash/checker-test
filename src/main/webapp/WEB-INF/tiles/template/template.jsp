@@ -46,5 +46,7 @@
 	<script src="<spring:url htmlEscape="true" value="/resources/js/fileinput_locale_ru.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/site.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/script.js" />"></script>
+	<script src="<spring:url htmlEscape="true" value="/resources/js/tasktree.js" />"></script>
+	<script src="<spring:url htmlEscape="true" value="/resources/js/templatetree.js" />"></script>
 </body>
 </html>

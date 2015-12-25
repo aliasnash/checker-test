@@ -66,7 +66,7 @@
 
 								<div class="modal-body">
 									<div class="form-group">
-										<label for="city-zone" class="col-md-4 control-label">Город:</label>
+										<label for="city-region" class="col-md-4 control-label">Город:</label>
 										<div class="col-md-5">
 											<select name="city_id" class="selectpicker form-control" id="city-region" title="Выберите город">
 												<c:forEach items="${cityMap}" var="map">

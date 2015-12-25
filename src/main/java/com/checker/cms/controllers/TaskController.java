@@ -1,17 +1,35 @@
 package com.checker.cms.controllers;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.checker.cms.task.TaskUploadResult;
+import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskService;
+import com.checker.core.dao.service.TemplateService;
+import com.checker.core.dao.service.UserService;
+import com.checker.core.entity.MarketPoint;
 import com.checker.core.entity.Task;
+import com.checker.core.entity.TaskArticle;
+import com.checker.core.entity.TaskTemplate;
+import com.checker.core.entity.TaskTemplateArticle;
+import com.checker.core.entity.User;
+import com.checker.core.model.TupleHolder;
+import com.checker.core.utilz.JsonTaskTransformer;
+import com.checker.core.utilz.Transformer;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -19,92 +37,122 @@ import com.checker.core.entity.Task;
 public class TaskController {
     
     @Resource
-    private TaskService taskService;
-    
-    private Integer     idCompany = 1;
-    
+    private Transformer         transformer;
+    @Resource
+    private MarketPointService  marketPointService;
+                                
+    @Resource
+    private TaskService         taskService;
+    @Resource
+    private UserService         userService;
+    @Resource
+    private TemplateService     templateService;
+    @Resource
+    private JsonTaskTransformer jsonTaskTransformer;
+                                
+    private Integer             idCompany = 1;
+                                          
     @RequestMapping("list")
     public ModelAndView tasksList() {
         log.info("#TasksList method(idCompany:" + idCompany + ")#");
         List<Task> taskList = taskService.findTaskByIdCompany(idCompany);
+        List<User> userList = userService.findMobileUserByIdCompany(idCompany);
         ModelAndView m = new ModelAndView("task");
         m.addObject("pageName", "task");
+        m.addObject("userList", userList);
         m.addObject("taskList", taskList);
         return m;
     }
     
-    // @RequestMapping("{id}/delete")
-    // public String marketDelete(@PathVariable("id") Long idMarket) {
-    // log.info("#MarketDelete method(idCompany:" + idCompany + ",idMarket:" + idMarket + ")#");
-    // if (idMarket != null && idMarket > 0)
-    // marketService.deleteMarket(idCompany, idMarket);
-    // return "redirect:/market/list";
-    // }
-    //
-    // @RequestMapping(value = "update", method = RequestMethod.POST)
-    // public String marketUpdate(@RequestParam("id") Long idMarket, @RequestParam("name") String caption, @RequestParam(value = "owner", required =
-    // false) Boolean owner) {
-    // log.info("#MarketUpdate method(idCompany:" + idCompany + ",idMarket:" + idMarket + ",caption:" + caption + ",owner:" + owner + ")#");
-    // if (owner == null)
-    // owner = false;
-    // if (StringUtils.isNotEmpty(caption)) {
-    // if (idMarket != null && idMarket > 0) {
-    // marketService.updateMarket(idCompany, idMarket, caption, owner);
-    // } else {
-    // Market market = new Market();
-    // market.setIdCompany(idCompany);
-    // market.setCaption(caption);
-    // market.setOwner(owner);
-    // market.setDateAdded(DateTime.now());
-    // marketService.saveMarket(market);
-    // }
-    // }
-    // return "redirect:/market/list";
-    // }
-    //
-    // @RequestMapping("{id}/point/list")
-    // public ModelAndView marketPointsList(@PathVariable("id") Long idMarket) {
-    // log.info("#MarketPointsList method(idCompany:" + idCompany + ",idMarket:" + idMarket + ")#");
-    // List<MarketPoint> pointsList = marketPointService.findMarketPointByIdMarket(idMarket);
-    // Market market = marketService.findMarketByIdAndIdCompany(idCompany, idMarket);
-    // Map<String, List<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
-    // ModelAndView m = new ModelAndView("marketpoint");
-    // m.addObject("pageName", "marketpoint");
-    // m.addObject("market", market);
-    // m.addObject("pointsList", pointsList);
-    // m.addObject("cityMap", cityMap);
-    // return m;
-    // }
-    //
-    // @RequestMapping("{idm}/point/{idmp}/delete")
-    // public String marketPointDelete(@PathVariable("idm") Long idMarket, @PathVariable("idmp") Long idMarketPoint) {
-    // log.info("#MarketPointDelete method(idCompany:" + idCompany + ",idMarket:" + idMarket + ",idMarketPoint:" + idMarketPoint + ")#");
-    // if (idMarket != null && idMarket > 0 && idMarketPoint != null && idMarketPoint > 0) {
-    // marketPointService.deleteMarketPoint(idCompany, idMarket, idMarketPoint);
-    // return "redirect:/market/{idm}/point/list";
-    // } else {
-    // return "redirect:/market/list";
-    // }
-    // }
-    //
-    // @RequestMapping(value = "{idm}/point/update", method = RequestMethod.POST)
-    // public String marketUpdate(@PathVariable("idm") Long idMarket, @RequestParam("idcity") Integer idCity, @RequestParam("id") Long idMarketPoint,
-    // @RequestParam("name") String description) {
-    // log.info("#MarketUpdate method(idCompany:" + idCompany + ",idCity:" + idCity + ",idMarketPoint:" + idMarketPoint + ",description:" +
-    // description + ")#");
-    // if (idCity != null && idCity > 0 && StringUtils.isNotEmpty(description)) {
-    // if (idMarketPoint != null && idMarketPoint > 0) {
-    // marketPointService.updateMarketPoint(idCompany, idCity, idMarketPoint, description);
-    // } else {
-    // MarketPoint marketPoint = new MarketPoint();
-    // marketPoint.setIdMarket(idMarket);
-    // marketPoint.setIdCity(idCity);
-    // marketPoint.setDescription(description);
-    // marketPoint.setDateAdded(DateTime.now());
-    // marketPointService.saveMarketPoint(marketPoint);
-    // }
-    // }
-    // return "redirect:/market/{idm}/point/list";
-    // }
+    @RequestMapping("{id}/delete")
+    public String taskDelete(@PathVariable("id") Long idTask) {
+        log.info("#TaskDelete method(idCompany:" + idCompany + ",idTask:" + idTask + ")#");
+        if (idTask != null && idTask > 0)
+            taskService.deleteTask(idCompany, idTask);
+        return "redirect:/tasks/list";
+    }
     
+    @RequestMapping(value = "assign", method = RequestMethod.POST)
+    public String taskAssign(@RequestParam("id") Long idTask, @RequestParam("iduser") Integer idUser) {
+        log.info("#TaskAssign method(idCompany:" + idCompany + ",idTask:" + idTask + ",idUser:" + idUser + ")#");
+        
+        if (idUser != null && idUser > 0 && idTask != null && idTask > 0) {
+            taskService.assignTask(idCompany, idTask, idUser);
+        }
+        
+        return "redirect:/tasks/list";
+    }
+    
+    @RequestMapping("{id}/articles/list")
+    public ModelAndView taskArticleList(@PathVariable("id") Long idTask) {
+        log.info("#TaskArticleList method(idCompany:" + idCompany + ",idTask:" + idTask + ")#");
+        
+        Task task = taskService.findTaskByIdAndIdCompany(idCompany, idTask);
+        List<TaskArticle> taskArticle = taskService.findTaskArticleByIdCompanyAndIdTemplate(idCompany, idTask);
+        TupleHolder<String, List<Long>> result = jsonTaskTransformer.process(taskArticle);
+        
+        ModelAndView m = new ModelAndView("taskarticles");
+        m.addObject("pageName", "task");
+        m.addObject("task", task);
+        m.addObject("taskTree", result.getValue1());
+        m.addObject("taskSelected", result.getValue2());
+        return m;
+    }
+    
+    @RequestMapping("add/form")
+    public ModelAndView taskAddForm() {
+        log.info("#TaskAddForm method(idCompany:" + idCompany + ")#");
+        List<User> userList = userService.findMobileUserByIdCompany(idCompany);
+        List<TaskTemplate> templateList = templateService.findTemplatesByIdCompany(idCompany);
+        Map<String, List<MarketPoint>> marketPointMap = transformer.doMarketTransformer(marketPointService.findMarketPointByIdCompany(idCompany));
+        ModelAndView m = new ModelAndView("taskadd");
+        m.addObject("pageName", "task");
+        m.addObject("userList", userList);
+        m.addObject("templateList", templateList);
+        m.addObject("marketPointMap", marketPointMap);
+        return m;
+    }
+    
+    @RequestMapping(value = "upload", method = RequestMethod.GET)
+    public String taskAddDone() throws IllegalStateException, IOException {
+        log.info("#TaskAddDone method(idCompany:" + idCompany + ")#");
+        return "redirect:/tasks/add/form";
+    }
+    
+    @RequestMapping(value = "upload", method = RequestMethod.POST)
+    public ModelAndView taskAddDone(@RequestParam(value = "template_id", required = false) Long idTemplate, @RequestParam(value = "marketpoint_id[]", required = false) List<Long> idMarketPointList,
+            @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser) throws IllegalStateException, IOException {
+        log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointList:" + idMarketPointList + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
+        TaskUploadResult results = new TaskUploadResult();
+        
+        if (idTemplate == null)
+            results.templateError();
+        if (idMarketPointList == null || idMarketPointList.size() == 0)
+            results.marketError();
+        if (BooleanUtils.isTrue(useUser) && idUser == null)
+            results.userError();
+            
+        if (!results.isHasError()) {
+            List<TaskTemplateArticle> templateList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
+            List<MarketPoint> marketPointList = marketPointService.findMarketPointByIdCompanyAndIds(idCompany, idMarketPointList);
+            if (idUser != null) {
+                User user = userService.findUserByIdAndIdCompany(idCompany, idUser);
+            }
+            
+            // create task
+            
+        }
+        
+        List<User> userList = userService.findMobileUserByIdCompany(idCompany);
+        List<TaskTemplate> templateList = templateService.findTemplatesByIdCompany(idCompany);
+        Map<String, List<MarketPoint>> marketPointMap = transformer.doMarketTransformer(marketPointService.findMarketPointByIdCompany(idCompany));
+        
+        ModelAndView m = new ModelAndView("taskadd");
+        m.addObject("pageName", "task");
+        m.addObject("userList", userList);
+        m.addObject("templateList", templateList);
+        m.addObject("marketPointMap", marketPointMap);
+        m.addObject("results", results);
+        return m;
+    }
 }

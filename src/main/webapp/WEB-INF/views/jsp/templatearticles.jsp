@@ -5,7 +5,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 
 <tiles:insertDefinition name="defaultTemplate">
-	<tiles:putAttribute name="title" value="Checker Report" />
+	<tiles:putAttribute name="title" value="Checker Template Articles" />
 	<tiles:putAttribute name="body">
 		<script>
 			templateTree = '${templateTree}';

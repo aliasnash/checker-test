@@ -29,7 +29,7 @@ import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.model.TupleHolder;
 import com.checker.core.utilz.FileUtilz;
-import com.checker.core.utilz.JsonTransformer;
+import com.checker.core.utilz.JsonTemplateTransformer;
 import com.checker.core.utilz.Params;
 
 import lombok.extern.slf4j.Slf4j;
@@ -40,21 +40,21 @@ import lombok.extern.slf4j.Slf4j;
 public class TemplateController {
     
     @Resource
-    private Params            params;
+    private Params                  params;
     @Resource
-    private TemplateService   templateService;
+    private TemplateService         templateService;
     @Resource
-    private ArticleService    articleService;
+    private ArticleService          articleService;
     @Resource
-    private TemplateParser    templateParser;
+    private TemplateParser          templateParser;
     @Resource
-    private FileUtilz         fileUtilz;
+    private FileUtilz               fileUtilz;
     @Resource
-    private JsonTransformer   jsonTransformer;
-                              
-    private DateTimeFormatter fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-    private Integer           idCompany = 1;
-                                        
+    private JsonTemplateTransformer jsonTemplateTransformer;
+                                    
+    private DateTimeFormatter       fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
+    private Integer                 idCompany = 1;
+                                              
     @RequestMapping("list")
     public ModelAndView templateList() {
         log.info("#TemplateList method(idCompany:" + idCompany + ")#");
@@ -144,7 +144,7 @@ public class TemplateController {
         List<Article> articleList = articleService.findArticles(idCompany);
         List<TaskTemplateArticle> templateArticleList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
         TaskTemplate taskTemplate = templateService.findTemplateByIdAndIdCompany(idCompany, idTemplate);
-        TupleHolder<String, List<Long>> result = jsonTransformer.process(templateArticleList, articleList);
+        TupleHolder<String, List<Long>> result = jsonTemplateTransformer.process(templateArticleList, articleList);
         ModelAndView m = new ModelAndView("templatearticles");
         m.addObject("pageName", "template");
         m.addObject("taskTemplate", taskTemplate);

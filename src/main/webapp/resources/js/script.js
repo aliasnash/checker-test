@@ -16,6 +16,22 @@ $(window).on('load', function() {
 		allowedFileExtensions : [ "xls", "xlsx" ]
 	});
 
+	// triggered when modal is about to be shown
+	$('#modal-assign-task').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+		var elementMarket = $(e.relatedTarget).data('element-market');
+
+		// populate the textbox
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="name"]').val(elementName);
+		$(e.currentTarget).find('input[name="market"]').val(elementMarket);
+
+		$(e.currentTarget).find('input[name="name"]').prop('disabled', true);
+		$(e.currentTarget).find('input[name="market"]').prop('disabled', true);
+	});
+
 	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
 		var elementId = $(e.relatedTarget).data('element-id');
@@ -142,6 +158,17 @@ $(window).on('load', function() {
 		}
 	});
 
+	$('#save-assign-user').on('click', function(e) {
+		var userId = $('select[name="user-id"]').val();
+
+		if (userId) {
+			$('input[name="iduser"]').val(userId);
+			return true;
+		} else {
+			return false;
+		}
+	});
+
 	$('#top-product').change(function(e) {
 		if ($(this).prop('checked')) {
 			$('#articul-listing tr.articul:not(.top-product)').hide();
@@ -165,91 +192,12 @@ $(window).on('load', function() {
 			$('#template-name').prop('disabled', false);
 		}
 	});
-
-	// var json = '[' + '{' + '"text": "Алкоголь",' + '"idcategory": 10,' +
-	// '"tags": ["товаров 2", "артикулов 2"],' + '"nodes": [' + '{' + '"text":
-	// "Вина",' + '"idgood": 20,' + '"tags": ["артикулов 2"],' + '"nodes": [' +
-	// '{' + '"text": "красное",' + '"state": {"selected": true},' +
-	// '"idarticle": 30' + '},' + '{' + '"text": "белое",' + '"idarticle": 31' +
-	// '}' + ']' + '},' + '{' + '"text": "Водка",' + '"idgood": 21,' + '"tags":
-	// ["артикулов 0"]' + '}' + ']' + '},' + '{' + '"text": "Бакалея",' +
-	// '"idcategory": 11,' + '"tags": ["товаров 0"]' + '},' + '{' + '"text":
-	// "Химия",' + '"idcategory": 12,' + '"tags": ["товаров 0"]' + '},' + '{' +
-	// '"text": "Фрукты овощи",' + '"idcategory": 13,' + '"tags": ["товаров 0"]'
-	// + '},' + '{' + '"text": "Хуета",' + '"idcategory": 14,' + '"tags":
-	// ["товаров 0"]' + '}' + ']';
-
-	var $tree = $('#templatetree').treeview({
-		showTags : true,
-		selectedIcon : "glyphicon glyphicon-ok",
-		multiSelect : true,
-		levels : 3,
-		data : templateTree,
-
-		onNodeSelected : function(event, node) {
-			var idarticle = node.idarticle;
-			if (idarticle) {
-				selectedArticles.push(idarticle);
-			}
-			selectedArticles = selectedArticles.filter(function(e) {
-				return e;
-			});
-			$('#selected_articul_count').text(selectedArticles.length);
-		},
-
-		onNodeUnselected : function(event, node) {
-			var idarticle = node.idarticle;
-			if (idarticle) {
-				delete selectedArticles[selectedArticles.indexOf(idarticle)];
-			}
-			selectedArticles = selectedArticles.filter(function(e) {
-				return e;
-			});
-			$('#selected_articul_count').text(selectedArticles.length);
+	
+	$('#select-user-name').change(function(e) {
+		if ($(this).prop('checked')) {
+			$('#block-user-name').show();
+		} else {
+			$('#block-user-name').hide();
 		}
-	});
-
-	$tree.on('nodeSelected', function(ev, node) {
-		for ( var i in node.nodes) {
-			var child = node.nodes[i];
-			$(this).treeview(true).selectNode(child.nodeId);
-		}
-	});
-
-	$tree.on('nodeUnselected', function(ev, node) {
-		for ( var i in node.nodes) {
-			var child = node.nodes[i];
-			$(this).treeview(true).unselectNode(child.nodeId);
-		}
-	});
-
-	$('#expand_category').on('click', function(e) {
-		$tree.treeview('expandAll', {
-			levels : 3,
-			silent : true
-		});
-	});
-
-	$('#collapse_category').on('click', function(e) {
-		$tree.treeview('collapseAll', {
-			silent : true
-		});
-	});
-
-	// $('#dataclick').on('click', function(e) {
-	// // var $a = $('#tree').treeview('getSelected');
-	// // console.log($a);
-	// selectedArticles = selectedArticles.filter(function(e) {
-	// return e;
-	// });
-	// alert(JSON.stringify(selectedArticles));
-	// });
-
-	$('#tree-submit').on('click', function(e) {
-		selectedArticles = selectedArticles.filter(function(e) {
-			return e;
-		});
-		$('input[id="template_selected_articles"]').val(selectedArticles);
-		$('#template_form').submit();
 	});
 });
