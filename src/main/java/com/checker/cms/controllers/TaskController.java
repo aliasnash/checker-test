@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.cms.task.TaskUploadResult;
+import com.checker.core.dao.service.CheckerService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskService;
 import com.checker.core.dao.service.TemplateService;
@@ -25,6 +27,7 @@ import com.checker.core.entity.TaskArticle;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.entity.User;
+import com.checker.core.enums.TaskStatus;
 import com.checker.core.model.TupleHolder;
 import com.checker.core.utilz.JsonTaskTransformer;
 import com.checker.core.utilz.Transformer;
@@ -43,6 +46,8 @@ public class TaskController {
                                 
     @Resource
     private TaskService         taskService;
+    @Resource
+    private CheckerService      checkerService;
     @Resource
     private UserService         userService;
     @Resource
@@ -133,14 +138,35 @@ public class TaskController {
             results.userError();
             
         if (!results.isHasError()) {
+            User user = null;
             List<TaskTemplateArticle> templateList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
             List<MarketPoint> marketPointList = marketPointService.findMarketPointByIdCompanyAndIds(idCompany, idMarketPointList);
             if (idUser != null) {
-                User user = userService.findUserByIdAndIdCompany(idCompany, idUser);
+                user = userService.findUserByIdAndIdCompany(idCompany, idUser);
             }
             
-            // create task
-            
+            for (MarketPoint marketPoint : marketPointList) {
+                Task task = new Task();
+                task.setIdCompany(idCompany);
+                task.setIdMarketPoint(marketPoint.getId());
+                if (user == null) {
+                    task.setTaskStatus(TaskStatus.ACTIVED);
+                } else {
+                    task.setTaskStatus(TaskStatus.ASSIGNED);
+                    task.setIdUser(user.getId());
+                }
+                task.setCaption("Task:" + marketPoint.getMarket().getCaption() + " (" + marketPoint.getDescription() + ")");
+                task.setDateAdded(DateTime.now());
+                checkerService.save(task);
+                
+                for (TaskTemplateArticle template : templateList) {
+                    TaskArticle taskArticle = new TaskArticle();
+                    taskArticle.setIdTask(task.getId());
+                    taskArticle.setIdArticle(template.getIdArticle());
+                    taskArticle.setDateAdded(DateTime.now());
+                    checkerService.save(taskArticle);
+                }
+            }
         }
         
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);
