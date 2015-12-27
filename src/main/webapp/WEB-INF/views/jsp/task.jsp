@@ -87,13 +87,13 @@
 									<div class="form-group">
 										<label for="task-name" class="col-md-4 control-label">Задача:</label>
 										<div class="col-md-5">
-											<input name="name" maxlength="128" class="form-control" id="task-name" placeholder="Название задачи..." type="text">
+											<input name="name-task" maxlength="128" class="form-control" id="task-name" placeholder="Название задачи..." type="text">
 										</div>
 									</div>
 									<div class="form-group">
 										<label for="task-market" class="col-md-4 control-label">Магазин:</label>
 										<div class="col-md-5">
-											<input name="name" maxlength="128" class="form-control" id="task-market" placeholder="Название сети..." type="text">
+											<input name="name-market" maxlength="128" class="form-control" id="task-market" placeholder="Название сети..." type="text">
 										</div>
 									</div>
 									<div class="form-group">

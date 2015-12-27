@@ -6,8 +6,9 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.BooleanUtils;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,14 +26,10 @@ import com.checker.core.entity.MarketPoint;
 import com.checker.core.entity.Task;
 import com.checker.core.entity.TaskArticle;
 import com.checker.core.entity.TaskTemplate;
-import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.entity.User;
-import com.checker.core.enums.TaskStatus;
 import com.checker.core.model.TupleHolder;
 import com.checker.core.utilz.JsonTaskTransformer;
 import com.checker.core.utilz.Transformer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -43,7 +40,7 @@ public class TaskController {
     private Transformer         transformer;
     @Resource
     private MarketPointService  marketPointService;
-                                
+    
     @Resource
     private TaskService         taskService;
     @Resource
@@ -54,9 +51,9 @@ public class TaskController {
     private TemplateService     templateService;
     @Resource
     private JsonTaskTransformer jsonTaskTransformer;
-                                
+    
     private Integer             idCompany = 1;
-                                          
+    
     @RequestMapping("list")
     public ModelAndView tasksList() {
         log.info("#TasksList method(idCompany:" + idCompany + ")#");
@@ -80,11 +77,9 @@ public class TaskController {
     @RequestMapping(value = "assign", method = RequestMethod.POST)
     public String taskAssign(@RequestParam("id") Long idTask, @RequestParam("iduser") Integer idUser) {
         log.info("#TaskAssign method(idCompany:" + idCompany + ",idTask:" + idTask + ",idUser:" + idUser + ")#");
-        
         if (idUser != null && idUser > 0 && idTask != null && idTask > 0) {
             taskService.assignTask(idCompany, idTask, idUser);
         }
-        
         return "redirect:/tasks/list";
     }
     
@@ -136,37 +131,9 @@ public class TaskController {
             results.marketError();
         if (BooleanUtils.isTrue(useUser) && idUser == null)
             results.userError();
-            
+        
         if (!results.isHasError()) {
-            User user = null;
-            List<TaskTemplateArticle> templateList = templateService.findArticleTemplatesByIdCompanyAndIdTemplate(idCompany, idTemplate);
-            List<MarketPoint> marketPointList = marketPointService.findMarketPointByIdCompanyAndIds(idCompany, idMarketPointList);
-            if (idUser != null) {
-                user = userService.findUserByIdAndIdCompany(idCompany, idUser);
-            }
-            
-            for (MarketPoint marketPoint : marketPointList) {
-                Task task = new Task();
-                task.setIdCompany(idCompany);
-                task.setIdMarketPoint(marketPoint.getId());
-                if (user == null) {
-                    task.setTaskStatus(TaskStatus.ACTIVED);
-                } else {
-                    task.setTaskStatus(TaskStatus.ASSIGNED);
-                    task.setIdUser(user.getId());
-                }
-                task.setCaption("Task:" + marketPoint.getMarket().getCaption() + " (" + marketPoint.getDescription() + ")");
-                task.setDateAdded(DateTime.now());
-                checkerService.save(task);
-                
-                for (TaskTemplateArticle template : templateList) {
-                    TaskArticle taskArticle = new TaskArticle();
-                    taskArticle.setIdTask(task.getId());
-                    taskArticle.setIdArticle(template.getIdArticle());
-                    taskArticle.setDateAdded(DateTime.now());
-                    checkerService.save(taskArticle);
-                }
-            }
+            taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList);
         }
         
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);

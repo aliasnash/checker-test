@@ -25,11 +25,11 @@ $(window).on('load', function() {
 
 		// populate the textbox
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="name"]').val(elementName);
-		$(e.currentTarget).find('input[name="market"]').val(elementMarket);
+		$(e.currentTarget).find('input[name="name-task"]').val(elementName);
+		$(e.currentTarget).find('input[name="name-market"]').val(elementMarket);
 
-		$(e.currentTarget).find('input[name="name"]').prop('disabled', true);
-		$(e.currentTarget).find('input[name="market"]').prop('disabled', true);
+		$(e.currentTarget).find('input[name="name-task"]').prop('disabled', true);
+		$(e.currentTarget).find('input[name="name-market"]').prop('disabled', true);
 	});
 
 	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
@@ -46,6 +46,32 @@ $(window).on('load', function() {
 		} else {
 			$(e.currentTarget).find('input[name="owner"]').prop('checked', false);
 		}
+	});
+
+	// triggered when modal is about to be shown
+	$('#modal-add-user-tasks').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+
+		// populate the textbox
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$('#user-title').text(elementName);
+	});
+
+	// triggered when modal is about to be shown
+	$('#modal-edit-user').on('show.bs.modal', function(e) {
+		// get data-id attribute of the clicked element
+		var elementId = $(e.relatedTarget).data('element-id');
+		var elementName = $(e.relatedTarget).data('element-name');
+		var elementEmail = $(e.relatedTarget).data('element-email');
+		var elementPwd = $(e.relatedTarget).data('element-pwd');
+
+		// populate the textbox
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="title"]').val(elementName);
+		$(e.currentTarget).find('input[name="email"]').val(elementEmail);
+		$(e.currentTarget).find('input[name="pwd"]').val(elementPwd);
 	});
 
 	// triggered when modal is about to be shown
@@ -192,7 +218,7 @@ $(window).on('load', function() {
 			$('#template-name').prop('disabled', false);
 		}
 	});
-	
+
 	$('#select-user-name').change(function(e) {
 		if ($(this).prop('checked')) {
 			$('#block-user-name').show();

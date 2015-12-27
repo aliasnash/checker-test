@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -32,8 +34,6 @@ import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.JsonTemplateTransformer;
 import com.checker.core.utilz.Params;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @RequestMapping("template")
@@ -51,10 +51,10 @@ public class TemplateController {
     private FileUtilz               fileUtilz;
     @Resource
     private JsonTemplateTransformer jsonTemplateTransformer;
-                                    
+    
     private DateTimeFormatter       fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private Integer                 idCompany = 1;
-                                              
+    
     @RequestMapping("list")
     public ModelAndView templateList() {
         log.info("#TemplateList method(idCompany:" + idCompany + ")#");
@@ -77,6 +77,7 @@ public class TemplateController {
                 template.setCaption(caption);
                 template.setDateAdded(DateTime.now());
                 template.setCurrentDate(LocalDate.now());
+                template.setPriceExist(false);
                 templateService.saveTemplate(template);
             }
         }
