@@ -6,7 +6,7 @@
 <%@taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 
 <tiles:insertDefinition name="defaultTemplate">
-	<tiles:putAttribute name="title" value="Checker Task" />
+	<tiles:putAttribute name="title" value="Checker User Task" />
 	<tiles:putAttribute name="body">
 		<div class="panel panel-default">
 			<div class="panel-heading">

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.checker.cms.task.TaskUploadResult;
 import com.checker.core.dao.service.CheckerService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskService;
@@ -28,8 +25,11 @@ import com.checker.core.entity.TaskArticle;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.User;
 import com.checker.core.model.TupleHolder;
+import com.checker.core.result.task.TaskUploadResult;
 import com.checker.core.utilz.JsonTaskTransformer;
 import com.checker.core.utilz.Transformer;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -133,7 +133,7 @@ public class TaskController {
             results.userError();
         
         if (!results.isHasError()) {
-            taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList);
+            results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList));
         }
         
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);

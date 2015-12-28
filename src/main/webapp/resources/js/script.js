@@ -226,4 +226,18 @@ $(window).on('load', function() {
 			$('#block-user-name').hide();
 		}
 	});
+
+//	$('#select-template-name').change(function(e) {
+//		var usePrice = $(this).find('option:selected').data('element-useprice');
+//		
+//		if (usePrice) {
+//			$('#market-point option .own-market').show();
+//		} else {
+//			$('#market-point option .own-market').hide();
+//		}
+//		
+//		$('#market-point').selectpicker('refresh');
+//		$('#market-point').selectpicker('render');
+//	});
+
 });

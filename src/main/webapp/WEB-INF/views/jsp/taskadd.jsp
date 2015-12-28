@@ -21,11 +21,11 @@
 			<form class="form-horizontal" role="form" action="<spring:url value="/tasks/upload" htmlEscape="true" />" method="post">
 				<div class="panel-body">
 					<div class="form-group">
-						<label for="template-name" class="col-md-4 control-label">Выбрать шаблон:</label>
+						<label for="select-template-name" class="col-md-4 control-label">Выбрать шаблон:</label>
 						<div class="col-md-7">
-							<select name="template_id" class="selectpicker form-control" id="template-name" title="Выберите шаблон">
+							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true">
 								<c:forEach items="${templateList}" var="template">
-									<option value="${template.id}">${template.caption}</option>
+									<option data-subtext="${template.priceExist?'(+цены)':'(без цен)'}" value="${template.id}">${template.caption}</option>
 								</c:forEach>
 							</select>
 						</div>
@@ -34,11 +34,11 @@
 					<div class="form-group">
 						<label for="market-point" class="col-md-4 control-label">Выбрать магазины:</label>
 						<div class="col-md-7">
-							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple>
+							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true">
 								<c:forEach items="${marketPointMap}" var="map">
 									<optgroup label="${map.key}">
 										<c:forEach items="${map.value}" var="marketpoint">
-											<option value="${marketpoint.id}">${marketpoint.market.caption}&nbsp;(${marketpoint.description})</option>
+											<option data-subtext="${marketpoint.market.owner?'своя сеть':''}" value="${marketpoint.id}">${marketpoint.market.caption}&nbsp;(${marketpoint.description})</option>
 										</c:forEach>
 									</optgroup>
 								</c:forEach>
@@ -98,6 +98,42 @@
 							</table>
 						</div>
 					</div>
+
+					<div class="col-md-12" style="margin-top: 10px; ${empty results.taskStatus?'display: none;':''}">
+						<c:forEach items="${results.taskStatus}" var="taskStatus" varStatus="status">
+							<div class="panel ${empty taskStatus.error ? 'panel-success' : 'panel-danger' } fade in">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										#${status.index + 1}&nbsp;
+										<c:if test="${not empty taskStatus.taskTemplate}">   
+                                          Шаблон: ${taskStatus.taskTemplate.caption}&nbsp;${taskStatus.taskTemplate.priceExist?'(+цены)':'(без цен)'}
+                                        </c:if>
+									</h3>
+								</div>
+								<table class="table">
+									<c:if test="${not empty taskStatus.marketPoint}">
+										<tr>
+											<td class="text-right" style="width: 40%;"><strong>Сеть:</strong></td>
+											<td class="text-left">${taskStatus.marketPoint.market.caption}&nbsp;(${taskStatus.marketPoint.description})</td>
+										</tr>
+									</c:if>
+									<c:if test="${not empty taskStatus.user}">
+										<tr>
+											<td class="text-right" style="width: 40%;"><strong>Пользователь:</strong></td>
+											<td class="text-left">${taskStatus.user.email}&nbsp;(${taskStatus.user.title})</td>
+										</tr>
+									</c:if>
+									<c:if test="${not empty taskStatus.error}">
+										<tr>
+											<td class="text-right alert-warning"><strong>Ошибка: </strong></td>
+											<td class="text-left alert-warning">${taskStatus.error}</td>
+										</tr>
+									</c:if>
+								</table>
+							</div>
+						</c:forEach>
+					</div>
+
 				</div>
 				<div class="panel-footer">
 					<span></span>
