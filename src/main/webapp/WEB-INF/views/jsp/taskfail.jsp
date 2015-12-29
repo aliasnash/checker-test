@@ -13,21 +13,23 @@
 				<table class="table">
 					<thead>
 						<tr>
-							<th style="vertical-align: middle" class="col-md-1">#</th>
+							<th style="vertical-align: middle" class="col-md-1"># (IDTA)</th>
 							<th style="vertical-align: middle" class="col-md-2">Пользователь</th>
-							<th style="vertical-align: middle" class="col-md-5">Описание</th>
+							<th style="vertical-align: middle" class="col-md-3">Наименование</th>
+							<th style="vertical-align: middle" class="col-md-3">Описание</th>
 							<th style="vertical-align: middle" class="col-md-2">Дата</th>
-							<th style="vertical-align: middle" class="col-md-2">Статус</th>
+							<th style="vertical-align: middle" class="col-md-1">Статус</th>
 						</tr>
 					</thead>
 					<tbody>
 						<c:forEach items="${taskFailList}" var="taskFail" varStatus="status">
 							<tr>
-								<td>${status.index + 1}</td>
-								<td>${taskFail.task.user.title}</td>
+								<td>${status.index + 1}&nbsp;(${taskFail.idTasksArticle})</td>
+								<td>${taskFail.taskArticle.tasks.user.title}</td>
+								<td>${taskFail.taskArticle.article.caption}</td>
 								<td>${taskFail.description}</td>
 								<td><joda:format value="${taskFail.dateAdded}" style="SM" /></td>
-								<td>${taskFail.taskStatus}</td>
+								<td>${taskFail.taskArticle.taskStatus.status}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

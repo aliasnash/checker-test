@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -20,8 +22,6 @@ import com.checker.core.entity.TaskArticleFail;
 import com.checker.core.enums.TaskStatus;
 import com.checker.core.utilz.CoreSettings;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @RequestMapping("taskcheck")
@@ -33,17 +33,24 @@ public class CheckController {
     private MainService  mainService;
     @Resource
     private CoreSettings coreSettings;
-                         
+    
     private Integer      idCompany = 1;
-                                   
+    
+    private Integer      pageSize  = 1;
+    
     @RequestMapping("list")
-    public ModelAndView tasksCheckList() {
-        log.info("#TasksCheckList method(idCompany:" + idCompany + ")#");
-        List<TaskArticle> taskArticleCheckList = checkService.findTaskArticleByIdCompanyAndStatus(idCompany, TaskStatus.CHECK);
+    public ModelAndView tasksCheckList(@RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        log.info("#TasksCheckList method(idCompany:" + idCompany + ",page:" + page + ")#");
+        if (page < 1)
+            page = 1;
+        List<TaskArticle> taskArticleCheckList = checkService.findTaskArticleByIdCompanyAndStatus(idCompany, TaskStatus.CHECK, page, pageSize);
         ModelAndView m = new ModelAndView("taskcheck");
         m.addObject("pageName", "taskcheck");
         m.addObject("taskArticleCheckList", taskArticleCheckList);
         m.addObject("rootUrl", coreSettings.getRootUrlPhoto());
+        m.addObject("pageCount", 15 / 3);
+        m.addObject("page", page);
+        
         return m;
     }
     
@@ -54,7 +61,7 @@ public class CheckController {
             if (idTaskArticle != null && idTaskArticle > 0) {
                 TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
                 if (taskArticle != null) {
-                    taskArticle.setTaskStatus(TaskStatus.FAIL.id());
+                    taskArticle.setTaskStatus(TaskStatus.FAIL);
                     taskArticle.setDateUpdate(DateTime.now());
                     mainService.update(taskArticle);
                     
@@ -75,7 +82,7 @@ public class CheckController {
         if (idTaskArticle != null && idTaskArticle > 0) {
             TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
             if (taskArticle != null) {
-                taskArticle.setTaskStatus(TaskStatus.COMPLETED.id());
+                taskArticle.setTaskStatus(TaskStatus.COMPLETED);
                 taskArticle.setDateUpdate(DateTime.now());
                 mainService.update(taskArticle);
             }

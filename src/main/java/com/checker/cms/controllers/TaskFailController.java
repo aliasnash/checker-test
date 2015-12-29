@@ -4,14 +4,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.core.dao.service.TaskFailService;
 import com.checker.core.entity.TaskArticleFail;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -20,9 +20,9 @@ public class TaskFailController {
     
     @Resource
     private TaskFailService taskFailService;
-                            
+    
     private Integer         idCompany = 1;
-                                      
+    
     @RequestMapping("list")
     public ModelAndView taskFailList() {
         log.info("#TaskFailList method(idCompany:" + idCompany + ")#");
