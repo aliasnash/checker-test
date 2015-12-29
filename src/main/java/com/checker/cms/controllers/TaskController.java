@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.checker.core.dao.service.CheckerService;
+import com.checker.core.dao.service.MainService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskService;
 import com.checker.core.dao.service.TemplateService;
@@ -44,7 +44,7 @@ public class TaskController {
     @Resource
     private TaskService         taskService;
     @Resource
-    private CheckerService      checkerService;
+    private MainService      checkerService;
     @Resource
     private UserService         userService;
     @Resource

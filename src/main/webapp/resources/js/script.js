@@ -32,6 +32,22 @@ $(window).on('load', function() {
 		$(e.currentTarget).find('input[name="name-market"]').prop('disabled', true);
 	});
 
+	// triggered when modal is about to be shown
+	$('#modal-add-task').on('show.bs.modal', function(e) {
+		var elementId = $(e.relatedTarget).data('element-id');
+		
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+	});
+
+	// triggered when modal is about to be shown
+	$('#modal-correct-price').on('show.bs.modal', function(e) {
+		var elementId = $(e.relatedTarget).data('element-id');
+		var price = $(e.relatedTarget).data('element-price');
+		
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="price"]').val(price);
+	});
+
 	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {
 		// get data-id attribute of the clicked element
 		var elementId = $(e.relatedTarget).data('element-id');
@@ -227,17 +243,17 @@ $(window).on('load', function() {
 		}
 	});
 
-//	$('#select-template-name').change(function(e) {
-//		var usePrice = $(this).find('option:selected').data('element-useprice');
-//		
-//		if (usePrice) {
-//			$('#market-point option .own-market').show();
-//		} else {
-//			$('#market-point option .own-market').hide();
-//		}
-//		
-//		$('#market-point').selectpicker('refresh');
-//		$('#market-point').selectpicker('render');
-//	});
+	// $('#select-template-name').change(function(e) {
+	// var usePrice = $(this).find('option:selected').data('element-useprice');
+	//		
+	// if (usePrice) {
+	// $('#market-point option .own-market').show();
+	// } else {
+	// $('#market-point option .own-market').hide();
+	// }
+	//		
+	// $('#market-point').selectpicker('refresh');
+	// $('#market-point').selectpicker('render');
+	// });
 
 });

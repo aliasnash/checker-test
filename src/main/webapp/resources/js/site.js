@@ -39,23 +39,6 @@ $(window).on('load', function() {
 		typeSelector.selectpicker('refresh');
 	});
 
-	// triggered when modal is about to be shown
-	$('#modal-add-task').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		// populate the textbox
-		$(e.currentTarget).find('input[name="report_id"]').val(elementId);
-	});
-
-	// triggered when modal is about to be shown
-	$('#modal-correct-price').on('show.bs.modal', function(e) {
-		// get data-id attribute of the clicked element
-		var elementId = $(e.relatedTarget).data('element-id');
-		var price = $(e.relatedTarget).data('element-price');
-		// populate the textbox
-		$(e.currentTarget).find('input[name="report_id"]').val(elementId);
-		$(e.currentTarget).find('input[name="price"]').val(price);
-	});
 
 	$('.table-select tr:not(.disabled)').on('click', function(e) {
 		if ($(this).hasClass('selected')) {

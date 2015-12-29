@@ -7,8 +7,6 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -30,9 +28,11 @@ import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.model.TupleHolder;
 import com.checker.core.parser.excel.TemplateParser;
 import com.checker.core.result.excel.ParsingResult;
+import com.checker.core.utilz.CoreSettings;
 import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.JsonTemplateTransformer;
-import com.checker.core.utilz.Params;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -40,7 +40,7 @@ import com.checker.core.utilz.Params;
 public class TemplateController {
     
     @Resource
-    private Params                  params;
+    private CoreSettings            coreSettings;
     @Resource
     private TemplateService         templateService;
     @Resource
@@ -51,10 +51,10 @@ public class TemplateController {
     private FileUtilz               fileUtilz;
     @Resource
     private JsonTemplateTransformer jsonTemplateTransformer;
-    
+                                    
     private DateTimeFormatter       fmt       = DateTimeFormat.forPattern("yyyyMMddHHmmss");
     private Integer                 idCompany = 1;
-    
+                                              
     @RequestMapping("list")
     public ModelAndView templateList() {
         log.info("#TemplateList method(idCompany:" + idCompany + ")#");
@@ -109,7 +109,7 @@ public class TemplateController {
         if (usePrice == null)
             usePrice = false;
         String originalCaption = caption;
-        File dir = fileUtilz.createDirectory(params.getPathForTemplate() + LocalDate.now().toString());
+        File dir = fileUtilz.createDirectory(coreSettings.getPathForTemplate() + LocalDate.now().toString());
         int index = 0;
         for (MultipartFile mFile : mFileList) {
             File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());

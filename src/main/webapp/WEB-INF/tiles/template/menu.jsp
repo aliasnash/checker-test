@@ -20,17 +20,18 @@
 							<a href="${pageName eq 'report' ? '#' : reportUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-info-sign"></span> Отчеты
 							</a>
 						</li>
-						<li class="${pageName eq 'goods' ? 'active' : ''}">
-							<spring:url value="/taskcomplete/list" var="goodsUrl" htmlEscape="true" />
-							<a href="${pageName eq 'goods' ? '#' : goodsUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-ok-sign"></span> Проверенные задачи
+						<li class="${pageName eq 'taskcomplete' ? 'active' : ''}">
+							<spring:url value="/taskcomplete/list" var="taskCompleteUrl" htmlEscape="true" />
+							<a href="${pageName eq 'taskcomplete' ? '#' : taskCompleteUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-ok-sign"></span>
+								Проверенные задачи
 							</a>
 						</li>
-						<li class="${pageName eq 'check' ? 'active' : ''}">
-							<spring:url value="/check/list" var="checkUrl" htmlEscape="true" />
-							<a href="${pageName eq 'check' ? '#' : checkUrl}"> <span class="glyphicon glyphicon-question-sign"></span> Проверка задач
+						<li class="${pageName eq 'taskcheck' ? 'active' : ''}">
+							<spring:url value="/taskcheck/list" var="taskCheckUrl" htmlEscape="true" />
+							<a href="${pageName eq 'taskcheck' ? '#' : taskCheckUrl}"> <span class="glyphicon glyphicon-question-sign"></span> Проверка задач
 							</a>
 						</li>
-						<li class="${pageName eq 'check' ? 'active' : ''}">
+						<li class="${pageName eq 'taskfail' ? 'active' : ''}">
 							<spring:url value="/tasksfail/list" var="taskFailUrl" htmlEscape="true" />
 							<a href="${pageName eq 'taskfail' ? '#' : taskFailUrl}"> <span class="glyphicon glyphicon-remove-sign"></span> Задачи на переделку
 							</a>

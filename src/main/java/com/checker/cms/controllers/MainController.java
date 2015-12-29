@@ -6,7 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.checker.core.dao.service.CheckerService;
+import com.checker.core.dao.service.MainService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MainController {
     
     @Resource
-    private CheckerService checkerService;
+    private MainService checkerService;
     
     @RequestMapping(value = { "/", "/home" })
     public ModelAndView home() {
