@@ -20,15 +20,14 @@
 							<a href="${pageName eq 'report' ? '#' : reportUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-info-sign"></span> Отчеты
 							</a>
 						</li>
-						<li class="${pageName eq 'taskcomplete' ? 'active' : ''}">
-							<spring:url value="/taskcomplete/list" var="taskCompleteUrl" htmlEscape="true" />
-							<a href="${pageName eq 'taskcomplete' ? '#' : taskCompleteUrl}" style="background: #ff0000;"> <span class="glyphicon glyphicon-ok-sign"></span>
-								Проверенные задачи
-							</a>
-						</li>
 						<li class="${pageName eq 'taskcheck' ? 'active' : ''}">
 							<spring:url value="/taskcheck/list" var="taskCheckUrl" htmlEscape="true" />
 							<a href="${pageName eq 'taskcheck' ? '#' : taskCheckUrl}"> <span class="glyphicon glyphicon-question-sign"></span> Проверка задач
+							</a>
+						</li>
+						<li class="${pageName eq 'taskcomplete' ? 'active' : ''}">
+							<spring:url value="/taskcomplete/list" var="taskCompleteUrl" htmlEscape="true" />
+							<a href="${pageName eq 'taskcomplete' ? '#' : taskCompleteUrl}"> <span class="glyphicon glyphicon-ok-sign"></span> Проверенные задачи
 							</a>
 						</li>
 						<li class="${pageName eq 'taskfail' ? 'active' : ''}">

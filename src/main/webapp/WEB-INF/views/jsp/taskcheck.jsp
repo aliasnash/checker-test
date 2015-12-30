@@ -3,6 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="/WEB-INF/tld/customTaglib.tld" prefix="tag"%>
 
 <tiles:insertDefinition name="defaultTemplate">
 	<tiles:putAttribute name="title" value="Checker Task Check" />
@@ -24,17 +25,12 @@
 									<joda:format value="${ta.dateUpdate}" style="SM" />
 								</p>
 								<div class="btn-group" role="group" aria-label="...">
-									<a class=" btn btn-sm btn-success" href="<spring:url value="/taskcheck/complete/${ta.id}" htmlEscape="true" />">
-										<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-										Хорошее
-									</a>
-									<a class=" btn btn-sm btn-primary" data-target="#modal-correct-price" data-toggle="modal" data-element-price="${ta.price}" data-element-id="${ta.id}">
-										<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
-										Исправить
-									</a>
-									<a class="btn btn-sm btn-danger" data-target="#modal-add-task" data-element-id="${ta.id}" data-toggle="modal">
-										<span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
-										Плохое
+									<a class=" btn btn-sm btn-success" href="<spring:url value="/taskcheck/complete/${ta.id}?page=${page}" htmlEscape="true" />"> <span
+											class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span> Хорошее
+									</a> <a class=" btn btn-sm btn-primary" data-target="#modal-correct-price" data-toggle="modal" data-element-price="${ta.price}" data-element-id="${ta.id}">
+										<span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Исправить
+									</a> <a class="btn btn-sm btn-danger" data-target="#modal-add-task" data-element-id="${ta.id}" data-toggle="modal"> <span
+											class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span> Плохое
 									</a>
 								</div>
 							</div>
@@ -44,17 +40,8 @@
 			</div>
 
 			<div class="text-center">
-				<ul class="pagination ">
-					<li><a href="<spring:url value="/taskcheck/list?page=${page-1}" htmlEscape="true" />" aria-label="Previous">
-							<span aria-hidden="true">&laquo;</span>
-						</a></li>
-					<c:forEach var="pageIndex" begin="1" end="${pageCount}">
-						<li class="${page==pageIndex?'active':''}"><a href="<spring:url value="/taskcheck/list?page=${pageIndex}" htmlEscape="true" />">${pageIndex}</a></li>
-					</c:forEach>
-					<li><a href="<spring:url value="/taskcheck/list?page=${page+1}" htmlEscape="true" />" aria-label="Next">
-							<span aria-hidden="true">&raquo;</span>
-						</a></li>
-				</ul>
+				<spring:url value="/taskcheck/list" htmlEscape="true" var="pUrl" />
+				<tag:paginate page="${page}" pageCount="${pageCount}" paginatorSize="10" uri="${pUrl}" next="&raquo;" previous="&laquo;" />
 			</div>
 		</div>
 
@@ -68,7 +55,7 @@
 						</button>
 						<h4 class="modal-title">Исправить цену</h4>
 					</div>
-					<form class="form-horizontal" role="form" action="<spring:url value="/taskcheck/correct" htmlEscape="true" />" method="post">
+					<form class="form-horizontal" role="form" action="<spring:url value="/taskcheck/correct?page=${page}" htmlEscape="true" />" method="post">
 						<input type="hidden" value="" name="id">
 
 						<div class="modal-body">
@@ -102,7 +89,7 @@
 						</button>
 						<h4 class="modal-title">Новая задача</h4>
 					</div>
-					<form class="form-horizontal" role="form" action="<spring:url value="/taskcheck/fail/new" htmlEscape="true" />" method="post">
+					<form class="form-horizontal" role="form" action="<spring:url value="/taskcheck/fail/new?page=${page}" htmlEscape="true" />" method="post">
 						<input type="hidden" value="" name="id">
 
 						<div class="modal-body">
