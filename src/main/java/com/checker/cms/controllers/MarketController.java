@@ -1,5 +1,6 @@
 package com.checker.cms.controllers;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,7 @@ public class MarketController {
                 marketService.updateMarket(idCompany, idMarket, caption, owner);
             } else {
                 Market market = new Market();
+                market.setActive(Boolean.TRUE);
                 market.setIdCompany(idCompany);
                 market.setCaption(caption);
                 market.setOwner(owner);
@@ -83,7 +85,7 @@ public class MarketController {
         log.info("#MarketPointsList method(idCompany:" + idCompany + ",idMarket:" + idMarket + ")#");
         List<MarketPoint> pointsList = marketPointService.findMarketPointByIdMarket(idMarket);
         Market market = marketService.findMarketByIdAndIdCompany(idCompany, idMarket);
-        Map<String, List<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         ModelAndView m = new ModelAndView("marketpoint");
         m.addObject("pageName", "marketpoint");
         m.addObject("market", market);
@@ -111,6 +113,7 @@ public class MarketController {
                 marketPointService.updateMarketPoint(idCompany, idCity, idMarketPoint, description);
             } else {
                 MarketPoint marketPoint = new MarketPoint();
+                marketPoint.setActive(Boolean.TRUE);
                 marketPoint.setIdMarket(idMarket);
                 marketPoint.setIdCity(idCity);
                 marketPoint.setDescription(description);

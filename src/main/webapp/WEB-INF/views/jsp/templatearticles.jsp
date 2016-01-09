@@ -9,15 +9,8 @@
 	<tiles:putAttribute name="body">
 		<script>
 			templateTree = '${templateTree}';
-			selectedArticles = [
-                <c:forEach var="item" items="${templateSelected}" varStatus="status">
-                ${item}
-                <c:if test="${!status.last}">,</c:if>
-			    </c:forEach>
-			    ];
-			
+			selectedArticles = [<c:forEach var="item" items="${templateSelected}" varStatus="status">${item}<c:if test="${!status.last}">,</c:if></c:forEach>];
 		</script>
-
 
 		<div class="panel panel-default">
 			<div class="panel-heading">
@@ -45,11 +38,6 @@
 				<div class="row">
 					<div class="col-md-12">
 						Дата формирования шаблона: <strong>${taskTemplate.currentDate}</strong>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-12">
-						Шаблон <strong>${taskTemplate.priceExist?'с ценами':'без цен'}</strong>
 					</div>
 				</div>
 				<hr>

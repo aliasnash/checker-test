@@ -76,9 +76,16 @@
 										<label for="task-user" class="col-md-2 control-label">Задачи:</label>
 										<div class="col-md-10">
 											<select data-selected-text-format="count" name="idtask[]" class="selectpicker form-control" id="task-user" multiple title="Выберите задачу(и)...">
-												<c:forEach items="${taskListNobody}" var="task">
-													<option data-subtext="${task.marketPoint.market.caption}" value="${task.id}">${task.caption}</option>
-												</c:forEach>
+												<c:choose>
+													<c:when test="${empty taskListNobody}">
+														<option selected value="">Задачи отсутствуют</option>
+													</c:when>
+													<c:otherwise>
+														<c:forEach items="${taskListNobody}" var="task">
+															<option data-subtext="${task.marketPoint.market.caption}" value="${task.id}">${task.caption}</option>
+														</c:forEach>
+													</c:otherwise>
+												</c:choose>
 											</select>
 										</div>
 									</div>

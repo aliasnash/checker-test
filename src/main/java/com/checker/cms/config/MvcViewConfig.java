@@ -21,8 +21,8 @@ public class MvcViewConfig {
         resolver.setContentNegotiationManager(manager);
         List<ViewResolver> resolvers = new ArrayList<ViewResolver>();
         // resolvers.add(jaxb2MarshallingXmlViewResolver());
-        // resolvers.add(jsonViewResolver());
         resolvers.add(jspViewResolver());
+        resolvers.add(jsonViewResolver());
         // resolvers.add(pdfViewResolver());
         // resolvers.add(excelViewResolver());
         
@@ -36,6 +36,12 @@ public class MvcViewConfig {
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix("/WEB-INF/views/jsp/");
         viewResolver.setSuffix(".jsp");
+        return viewResolver;
+    }
+    
+    @Bean
+    public JsonViewResolver jsonViewResolver() {
+        JsonViewResolver viewResolver = new JsonViewResolver();
         return viewResolver;
     }
     

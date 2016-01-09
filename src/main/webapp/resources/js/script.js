@@ -1,5 +1,7 @@
 $(window).on('load', function() {
 
+	$('[data-toggle="tooltip"]').tooltip();
+
 	$('select').selectpicker();
 
 	$('#date').datepicker({
@@ -35,7 +37,7 @@ $(window).on('load', function() {
 	// triggered when modal is about to be shown
 	$('#modal-add-task').on('show.bs.modal', function(e) {
 		var elementId = $(e.relatedTarget).data('element-id');
-		
+
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
 	});
 
@@ -43,7 +45,7 @@ $(window).on('load', function() {
 	$('#modal-correct-price').on('show.bs.modal', function(e) {
 		var elementId = $(e.relatedTarget).data('element-id');
 		var price = $(e.relatedTarget).data('element-price');
-		
+
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
 		$(e.currentTarget).find('input[name="price"]').val(price);
 	});
@@ -191,18 +193,26 @@ $(window).on('load', function() {
 
 	$('#save-city').on('click', function(e) {
 		var regionValue = $('select[name="region_id"]').val();
+		var regionFilterValue = $('select[name="filter_region_id"]').val();
 
 		if (regionValue) {
 			$('input[name="idregion"]').val(regionValue);
+			$('input[name="idregionfilter"]').val(regionFilterValue);
 			return true;
 		} else {
 			return false;
 		}
 	});
 
+	$('#template-save').on('click', function(e) {
+		var dateTemplateValue = $('input[name="filtered_template_date"]').val();
+
+		$('input[name="date-template-filtered"]').val(dateTemplateValue);
+		return true;
+	});
+
 	$('#save-assign-user').on('click', function(e) {
 		var userId = $('select[name="user-id"]').val();
-
 		if (userId) {
 			$('input[name="iduser"]').val(userId);
 			return true;
@@ -219,21 +229,21 @@ $(window).on('load', function() {
 		}
 	});
 
-	$('#only-price').change(function(e) {
-		if ($(this).prop('checked')) {
-			$('#template-listing tr.template-data:not(.with-price)').hide();
-		} else {
-			$('#template-listing tr.template-data:not(.with-price)').show();
-		}
-	});
+	// $('#only-price').change(function(e) {
+	// if ($(this).prop('checked')) {
+	// $('#template-listing tr.template-data:not(.with-price)').hide();
+	// } else {
+	// $('#template-listing tr.template-data:not(.with-price)').show();
+	// }
+	// });
 
-	$('#template-usefilename').change(function(e) {
-		if ($(this).prop('checked')) {
-			$('#template-name').prop('disabled', true);
-		} else {
-			$('#template-name').prop('disabled', false);
-		}
-	});
+	// $('#template-usefilename').change(function(e) {
+	// if ($(this).prop('checked')) {
+	// $('#template-name').prop('disabled', true);
+	// } else {
+	// $('#template-name').prop('disabled', false);
+	// }
+	// });
 
 	$('#select-user-name').change(function(e) {
 		if ($(this).prop('checked')) {
@@ -243,17 +253,86 @@ $(window).on('load', function() {
 		}
 	});
 
-	// $('#select-template-name').change(function(e) {
-	// var usePrice = $(this).find('option:selected').data('element-useprice');
-	//		
-	// if (usePrice) {
-	// $('#market-point option .own-market').show();
-	// } else {
-	// $('#market-point option .own-market').hide();
-	// }
-	//		
-	// $('#market-point').selectpicker('refresh');
-	// $('#market-point').selectpicker('render');
-	// });
+	$('#filter-for-tasks-list select[name=filter_city_id]').change(function(event) {
+		var citySelector = $('#filter-for-tasks-list select#filter_city');
+		var marketSelector = $('#filter-for-tasks-list select#filter_market_point');
+		ajaxMarketPoint(citySelector, marketSelector);
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
 
+	$('#filter-for-tasks-check select[name=filter_city_id]').change(function(event) {
+		var citySelector = $('#filter-for-tasks-check select#filter_city');
+		var marketSelector = $('#filter-for-tasks-check select#filter_market_point');
+		ajaxMarketPoint(citySelector, marketSelector);
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
+
+	$('#filter-for-tasks-fail select[name=filter_city_id]').change(function(event) {
+		var citySelector = $('#filter-for-tasks-fail select#filter_city');
+		var marketSelector = $('#filter-for-tasks-fail select#filter_market_point');
+		ajaxMarketPoint(citySelector, marketSelector);
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
+
+	$('#filter-for-tasks-complete select[name=filter_city_id]').change(function(event) {
+		var citySelector = $('#filter-for-tasks-complete select#filter_city');
+		var marketSelector = $('#filter-for-tasks-complete select#filter_market_point');
+		ajaxMarketPoint(citySelector, marketSelector);
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
+
+	$('#filter-for-tasks-dyn select[name=filter_city_id]').change(function(event) {
+		var citySelector = $('#filter-for-tasks-dyn select#filter_city');
+		var marketSelector = $('#filter-for-tasks-dyn select#filter_market_point');
+		ajaxMarketPoint(citySelector, marketSelector);
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
+
+	function ajaxMarketPoint(citySelector, marketSelector) {
+		if (citySelector) {
+			$.ajax({
+				contentType : "application/json",
+				dataType : 'json',
+				type : "GET",
+				url : contexPath + '/ajax/' + $(citySelector).val() + '/marketpoints.json',
+
+				success : function(data) {
+					var dataCount = 0;
+					var html = '';
+					for ( var i in data) {
+						dataCount++;
+						html = html + '<optgroup label="' + i + '">';
+
+						for ( var k in data[i]) {
+							var marketPoint = data[i][k];
+
+							html = html + '<option';
+							if (marketPoint.market.owner)
+								html = html + '	data-subtext="своя сеть"';
+							else
+								html = html + '	data-subtext=""';
+							html = html + '	value="' + marketPoint.id + '">';
+							html = html + marketPoint.market.caption + '&nbsp;(' + marketPoint.description + ')';
+							html = html + '</option>';
+						}
+					}
+
+					if (dataCount > 0) {
+						marketSelector.html(html);
+						marketSelector.selectpicker('refresh');
+					} else {
+						marketSelector.html('<option selected value="">Сеть отсутствует</option>');
+						marketSelector.selectpicker('refresh');
+					}
+				},
+				error : function(request, status, error) {
+					marketSelector.html('<option selected value="">Ошибка загрузки списка магазинов</option>');
+					marketSelector.selectpicker('refresh');
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+			});
+		}
+	}
 });

@@ -61,6 +61,7 @@ $(window).on('load', function() {
 		selectedArticles = selectedArticles.filter(function(e) {
 			return e;
 		});
+		
 		$('input[id="template_selected_articles"]').val(selectedArticles);
 		$('#template_form').submit();
 	});

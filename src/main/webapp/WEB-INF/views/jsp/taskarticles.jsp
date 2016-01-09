@@ -23,9 +23,10 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 				<div class="row">
-					<div class="col-md-10" id="dataclick">Артикулы в задаче</div>
+					<div class="col-md-10" id="dataclick">Информация о задаче</div>
 					<div class="col-md-2 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true"/>"> <span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true"/>">
+							<span class="glyphicon glyphicon-arrow-left"></span>
 							Назад
 						</a>
 					</div>
@@ -48,6 +49,13 @@
 						Дата создания: <strong><joda:format value="${task.dateAdded}" style="SM" /></strong>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-md-12">
+						Используемый шаблон: <strong>(${task.template.id})&nbsp;${task.template.caption}</strong>
+					</div>
+				</div>
+
+
 				<c:if test="${not empty task.user}">
 					<div class="row">
 						<div class="col-md-12">
@@ -65,8 +73,12 @@
 						</div>
 						<div class="col-md-6 form-group text-right">
 							<div class="btn-group" role="group" aria-label="...">
-								<a class="btn btn-default " id="task_expand_category"><i class="glyphicon glyphicon-list-alt"></i> Раскрыть категории</a> <a class="btn btn-default "
-									id="task_collapse_category"><i class="glyphicon glyphicon-list-alt"></i> Свернуть категории</a>
+								<a class="btn btn-default " id="task_expand_category">
+									<i class="glyphicon glyphicon-list-alt"></i> Раскрыть категории
+								</a>
+								<a class="btn btn-default " id="task_collapse_category">
+									<i class="glyphicon glyphicon-list-alt"></i> Свернуть категории
+								</a>
 							</div>
 						</div>
 						<div class="col-md-2"></div>

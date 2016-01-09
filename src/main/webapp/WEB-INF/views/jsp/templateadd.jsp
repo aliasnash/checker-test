@@ -11,7 +11,8 @@
 				<div class="row">
 					<div class="col-md-6">Добавление файла шаблона</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />"> <span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />">
+							<span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>
 					</div>
@@ -20,23 +21,6 @@
 
 			<form class="form-horizontal" role="form" action="<spring:url value="/template/file/upload" htmlEscape="true" />" method="post" enctype="multipart/form-data">
 				<div class="panel-body">
-					<div class="form-group">
-						<label for="template-usefilename" class="col-md-2 control-label">Название из имени файла:</label>
-						<div class="col-md-1">
-							<input name="usefilename" class="form-control" id="template-usefilename" placeholder="Имя из файла..." type="checkbox">
-						</div>
-
-						<label for="template-useprice" class="col-md-2 control-label">Загружать файл с ценами:</label>
-						<div class="col-md-1">
-							<input name="useprice" class="form-control" id="template-useprice" placeholder="Файл с ценами..." type="checkbox">
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="template-name" class="col-md-2 control-label">Название:</label>
-						<div class="col-md-3">
-							<input name="name" maxlength="128" class="form-control" id="template-name" placeholder="Название шаблона..." type="text">
-						</div>
-					</div>
 					<div class="form-group">
 						<label for="template-upload" class="col-md-2 control-label">Файл:</label>
 						<div class="col-md-6">
@@ -58,14 +42,14 @@
 										<td class="text-right" style="width: 40%;"><strong>Всего добавлено:</strong></td>
 										<td class="text-left">${result.totalAdded}</td>
 									</tr>
-                                    <tr>
-                                        <td class="text-right"><strong>В том числе без цены:</strong></td>
-                                        <td class="text-left">${result.withoutPriceAdded}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-right"><strong>Топов:</strong></td>
-                                        <td class="text-left">${result.topProduct}</td>
-                                    </tr>                                    
+									<tr>
+										<td class="text-right"><strong>В том числе без цены:</strong></td>
+										<td class="text-left">${result.withoutPriceAdded}</td>
+									</tr>
+									<tr>
+										<td class="text-right"><strong>Топов:</strong></td>
+										<td class="text-left">${result.topProduct}</td>
+									</tr>
 									<tr>
 										<td class="text-right"><strong>Создано категорий:</strong></td>
 										<td class="text-left">${result.categoryAdded}</td>

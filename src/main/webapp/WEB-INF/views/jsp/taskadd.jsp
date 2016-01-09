@@ -25,14 +25,14 @@
 						<div class="col-md-7">
 							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true">
 								<c:forEach items="${templateList}" var="template">
-									<option data-subtext="${template.priceExist?'(+цены)':'(без цен)'}" value="${template.id}">${template.caption}</option>
+									<option value="${template.id}">${template.caption}</option>
 								</c:forEach>
 							</select>
 						</div>
 					</div>
 
 					<div class="form-group">
-						<label for="market-point" class="col-md-4 control-label">Выбрать магазины:</label>
+						<label for="market-point" class="col-md-4 control-label">Выбрать сеть:</label>
 						<div class="col-md-7">
 							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true">
 								<c:forEach items="${marketPointMap}" var="map">
@@ -106,7 +106,7 @@
 									<h3 class="panel-title">
 										#${status.index + 1}&nbsp;
 										<c:if test="${not empty taskStatus.taskTemplate}">   
-                                          Шаблон: ${taskStatus.taskTemplate.caption}&nbsp;${taskStatus.taskTemplate.priceExist?'(+цены)':'(без цен)'}
+                                          Шаблон: ${taskStatus.taskTemplate.caption}
                                         </c:if>
 									</h3>
 								</div>

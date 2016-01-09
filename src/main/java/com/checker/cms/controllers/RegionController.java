@@ -46,6 +46,7 @@ public class RegionController {
                 cityService.updateRegion(idCompany, id, caption);
             } else {
                 Region region = new Region();
+                region.setActive(Boolean.TRUE);
                 region.setIdCompany(idCompany);
                 region.setCaption(caption);
                 region.setDateAdded(DateTime.now());

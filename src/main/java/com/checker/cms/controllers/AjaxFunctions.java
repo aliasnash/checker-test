@@ -1,0 +1,108 @@
+package com.checker.cms.controllers;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.checker.core.dao.service.CityService;
+import com.checker.core.dao.service.MainService;
+import com.checker.core.dao.service.MarketPointService;
+import com.checker.core.dao.service.TaskService;
+import com.checker.core.dao.service.UserService;
+import com.checker.core.entity.City;
+import com.checker.core.entity.MarketPoint;
+import com.checker.core.entity.Task;
+import com.checker.core.utilz.Transformer;
+
+@Slf4j
+@Controller
+@ResponseBody
+@RequestMapping("ajax")
+public class AjaxFunctions {
+    
+    @Resource
+    private Transformer        transformer;
+    @Resource
+    private MarketPointService marketPointService;
+    @Resource
+    private CityService        cityService;
+    
+    @Resource
+    private TaskService        taskService;
+    @Resource
+    private MainService        checkerService;
+    @Resource
+    private UserService        userService;
+    
+    private Integer            idCompany = 1;
+    
+    // http://localhost:9090/checker-cms/ajax/2/marketpoints
+    
+    @RequestMapping(value = "{id}/marketpoints.json")
+    public Map<String, Collection<MarketPoint>> selectMarketPoint(@PathVariable("id") Integer idCity) {
+        log.info("#Ajax SelectMarketPoint method(idCompany:" + idCompany + ",idCity:" + idCity + ")#");
+        
+        Map<String, Collection<MarketPoint>> marketPointMap;
+        if (idCity != null)
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCity));
+        else
+            marketPointMap = Collections.emptyMap();
+        
+        return marketPointMap;
+    }
+    
+    @RequestMapping(value = "{id}/cities.json")
+    public List<City> selectCityList(@PathVariable("id") Integer idRegion) {
+        log.info("#Ajax selectCityList method(idCompany:" + idCompany + ",idRegion:" + idRegion + ")#");
+        
+        if (idRegion != null)
+            return cityService.findCitiesByIdCompanyAndIdRegion(idCompany, idRegion);
+        else
+            return Collections.emptyList();
+    }
+    
+    @RequestMapping(value = "{id}/ownmarketpoints.json")
+    public List<MarketPoint> selectOwnMarketPointsList(@PathVariable("id") Integer idCity) {
+        log.info("#Ajax selectCityList method(idCompany:" + idCompany + ",idCity:" + idCity + ")#");
+        
+        if (idCity != null)
+            return marketPointService.findOwnMarketPointByIdCompanyAndIdCity(idCompany, idCity);
+        else
+            return Collections.emptyList();
+    }
+    
+    // http://localhost:9090/checker-cms/ajax/2016-01-04/6/tasks.json
+    @RequestMapping(value = "{date}/{idc}/tasks.json")
+    public List<Task> selectOwnTasksList(@PathVariable("date") String taskCreateDate, @PathVariable("idc") Integer idCity) {
+        log.info("#Ajax selectOwnTasksList method(idCompany:" + idCompany + ",idCity:" + idCity + ",taskCreateDate:" + taskCreateDate + ")#");
+        LocalDate dateTaskCreate = StringUtils.isNotEmpty(taskCreateDate) ? LocalDate.parse(taskCreateDate) : null;
+        
+        if (taskCreateDate != null && idCity != null)
+            return taskService.findOwnTaskByIdCompanyAndIdCityAndDateCreate(idCompany, idCity, dateTaskCreate);
+        else
+            return Collections.emptyList();
+    }
+    
+    @RequestMapping(value = "{idot}/{idc}/others/tasks.json")
+    public List<Task> selectOtherTasksList(@PathVariable("idot") Long idTask, @PathVariable("idc") Integer idCity) {
+        log.info("#Ajax selectOtherTasksList method(idCompany:" + idCompany + ",idTask:" + idTask + ",idCity:" + idCity + ")#");
+        
+        if (idTask != null && idCity != null)
+            return taskService.findOtherTaskByIdCompanyAndIdTemplateAndIdCity(idCompany, idTask, idCity);
+        else
+            return Collections.emptyList();
+    }
+    
+}

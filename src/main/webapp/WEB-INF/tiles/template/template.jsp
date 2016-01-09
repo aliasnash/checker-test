@@ -18,7 +18,6 @@
 <link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-select.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-treeview.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-magnify.min.css" />" rel="stylesheet">
-
 <link href="<spring:url htmlEscape="true" value="/resources/css/fileinput.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site2.css" />" rel="stylesheet">
@@ -45,11 +44,13 @@
 	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-select.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-treeview.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-magnify.min.js" />"></script>
+
 	<script src="<spring:url htmlEscape="true" value="/resources/js/fileinput.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/fileinput_locale_ru.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/site.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/script.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/tasktree.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/templatetree.js" />"></script>
+	<script src="<spring:url htmlEscape="true" value="/resources/js/report.js" />"></script>
 </body>
 </html>

@@ -1,12 +1,19 @@
 package com.checker.cms.config;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -14,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.tiles3.TilesConfigurer;
 
-import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Slf4j
 @EnableWebMvc
@@ -29,13 +36,13 @@ public class MvcCoreConfig extends WebMvcConfigurerAdapter {
     }
     
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("home");
     }
     
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
-        configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.TEXT_HTML);
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
     }
     
     @Bean
@@ -47,8 +54,38 @@ public class MvcCoreConfig extends WebMvcConfigurerAdapter {
     }
     
     @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("home");
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.ignoreAcceptHeader(true);
+        configurer.defaultContentType(MediaType.TEXT_HTML);
+        configurer.mediaType("xml", MediaType.APPLICATION_XML);
+        configurer.mediaType("json", MediaType.APPLICATION_JSON);
+    }
+    
+    @Bean
+    public Jackson2ObjectMapperFactoryBean jackson2ObjectMapperFactoryBean() {
+        Jackson2ObjectMapperFactoryBean bean = new Jackson2ObjectMapperFactoryBean();
+        bean.setIndentOutput(true);
+        bean.setSimpleDateFormat("yyyy-MM-dd");
+        return bean;
+    }
+    
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = jackson2ObjectMapperFactoryBean().getObject();
+        objectMapper.registerModule(new com.fasterxml.jackson.datatype.joda.JodaModule());
+        return objectMapper;
+    }
+    
+    @Bean
+    public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(objectMapper());
+        return converter;
+    }
+    
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(mappingJackson2HttpMessageConverter());
     }
     
     /**
@@ -56,8 +93,7 @@ public class MvcCoreConfig extends WebMvcConfigurerAdapter {
      * for error views.
      * 
      * <p>
-     * View name resolved using bean of type InternalResourceViewResolver
-     * (declared in {@link SpringWebConfig}).
+     * View name resolved using bean of type InternalResourceViewResolver (declared in {@link SpringWebConfig}).
      */
     // @Override
     // public void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> exceptionResolvers) {

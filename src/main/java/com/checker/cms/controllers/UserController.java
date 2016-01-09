@@ -66,7 +66,7 @@ public class UserController {
     public ModelAndView userTasksList(@PathVariable("id") Integer idUser) {
         log.info("#UserTasksList method(idCompany:" + idCompany + ",idUser:" + idUser + ")#");
         List<Task> taskList = taskService.findTaskByIdUserAndIdCompany(idCompany, idUser);
-        List<Task> taskListNobody = taskService.findTaskByIdCompanyWithoutUsers(idCompany);
+        List<Task> taskListNobody = taskService.findOtherTaskByIdCompanyWithoutUsers(idCompany);
         User user = userService.findUserByIdAndIdCompany(idCompany, idUser);
         ModelAndView m = new ModelAndView("usertask");
         m.addObject("pageName", "users");

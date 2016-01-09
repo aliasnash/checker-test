@@ -2,17 +2,51 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%@ taglib uri="/WEB-INF/tld/customTaglib.tld" prefix="tag"%>
 
 <tiles:insertDefinition name="defaultTemplate">
 	<tiles:putAttribute name="title" value="Checker Template" />
 	<tiles:putAttribute name="body">
 		<div class="panel panel-default">
-			<div class="panel-heading">
-				Редактор шаблонов
+			<div class="panel-heading clearfix">
+				Фильтр
 				<span class="pull-right">
-					Только с ценой:&nbsp;
-					<input id="only-price" type="checkbox">
+					<a class="btn btn-default collapse-button collapsed" href="#filter-template-date" data-toggle="collapse" aria-expanded="true">
+						<span class="glyphicon glyphicon-chevron-up"></span>
+						<span class="glyphicon glyphicon-chevron-down"></span>
+					</a>
 				</span>
+			</div>
+			<div class="panel-body collapse" id="filter-template-date">
+				<form class="form-inline" role="form" action="<spring:url value="/template/list" htmlEscape="true" />" method="post">
+					<div class="modal-body">
+						<div class="row">
+							<div class="form-group col-md-3">
+								<label for="date" class="col-md-12  control-label">Дата создания:</label>
+								<div class="col-md-12">
+									<input readonly="readonly" name="filtered_template_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД" value="${templateDate}" type="text">
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<!-- too keep empty space -->
+						</div>
+					</div>
+					<div class="modal-footer">
+						<div class="btn-group">
+							<a href="<spring:url value="/template/reset" htmlEscape="true" />" class="btn btn-default btn-sm">Сбросить</a>
+							<button type="submit" class="btn btn-primary btn-sm">Применить</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				Редактор шаблонов&nbsp;
+				<span class="badge">${recordsCount}</span>
 			</div>
 			<div class="panel-body" id="template-listing">
 				<table class="table">
@@ -20,10 +54,9 @@
 						<tr>
 							<th style="vertical-align: middle" class="col-md-1">#</th>
 							<th style="vertical-align: middle" class="col-md-1">Дата создания</th>
-							<th style="vertical-align: middle" class="col-md-3">Название шаблона</th>
-							<th style="vertical-align: middle" class="col-md-1">Цена</th>
-							<th style="vertical-align: middle" class="col-md-2">Имя загруженного файла</th>
-							<th class="text-right col-md-4">
+							<th style="vertical-align: middle" class="col-md-4">Название шаблона</th>
+							<th style="vertical-align: middle" class="col-md-3">Имя загруженного файла</th>
+							<th class="text-right col-md-3">
 								<a data-element-id="" data-element-name="" data-toggle="modal" data-target="#modal-edit-template" class="btn btn-sm btn-success">
 									<span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span>
 									&nbsp;Шаблон
@@ -38,12 +71,11 @@
 					</thead>
 					<tbody>
 						<c:forEach items="${templateList}" var="template" varStatus="status">
-							<tr class="template-data ${template.priceExist?'with-price':''}">
+							<tr class="template-data">
 								<td>${status.index + 1}</td>
 								<td>${template.currentDate}</td>
-								<td>${template.caption}</td>
-								<td><span class="${template.priceExist?'glyphicon glyphicon-ok':''}" aria-hidden="true"></span></td>
-								<td>${template.fileName}</td>
+								<td>${fn:replace(template.caption, '_', ' ')}</td>
+								<td>${fn:replace(template.fileName, '_', ' ')}</td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<spring:url value="/template/${template.id}/list" var="templateUrl" htmlEscape="true" />
@@ -55,7 +87,7 @@
 											data-toggle="modal" data-target="#modal-edit-template" class=" btn btn-sm btn-primary">
 											<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
 										</a>
-										<spring:url value="/template/${template.id}/delete" var="templateDeleteUrl" htmlEscape="true" />
+										<spring:url value="/template/${template.id}/delete?page=${page}" var="templateDeleteUrl" htmlEscape="true" />
 										<a class="btn btn-sm btn-danger" href="${templateDeleteUrl}"
 											onclick="return confirm('Вы действительно хотите удалить шаблон \'${template.caption}\' со всеми артикулами?')">
 											<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
@@ -76,8 +108,9 @@
 								</button>
 								<h4 class="modal-title">Шаблон</h4>
 							</div>
-							<form class="form-horizontal" role="form" action="<spring:url value="/template/update" htmlEscape="true" />" method="post">
+							<form class="form-horizontal" role="form" action="<spring:url value="/template/update?page=${page}" htmlEscape="true" />" method="post">
 								<input value="" name="id" type="hidden">
+								<input value="" name="date-template-filtered" type="hidden">
 
 								<div class="modal-body">
 									<div class="form-group">
@@ -101,7 +134,7 @@
 								</div>
 								<div class="modal-footer">
 									<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
-									<button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+									<button type="submit" class="btn btn-primary btn-sm" id="template-save">Сохранить</button>
 								</div>
 							</form>
 						</div>
@@ -110,6 +143,10 @@
 					<!-- /.modal-dialog -->
 				</div>
 				<!-- /.modal -->
+			</div>
+			<div class="text-center">
+				<spring:url value="/template/list" htmlEscape="true" var="pUrl" />
+				<tag:paginate page="${page}" pageCount="${pageCount}" paginatorSize="10" uri="${pUrl}" next="&raquo;" previous="&laquo;" />
 			</div>
 		</div>
 	</tiles:putAttribute>
