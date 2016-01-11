@@ -1,14 +1,13 @@
 package com.checker.cms.controllers;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -29,16 +28,24 @@ import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.Promo;
 import com.checker.core.entity.Region;
 import com.checker.core.entity.ReportHistory;
+import com.checker.core.entity.TaskArticle;
+import com.checker.core.model.ReportArticleData;
+import com.checker.core.model.TupleHolder;
+import com.checker.core.parser.excel.ReportBuilder;
 import com.checker.core.utilz.CoreSettings;
 import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
 @RequestMapping("report")
 public class ReportController {
     
+    @Resource
+    private ReportBuilder      reportBuilder;
     @Resource
     private ReportService      reportService;
     @Resource
@@ -57,16 +64,16 @@ public class ReportController {
     private CoreSettings       coreSettings;
     @Resource
     private FileUtilz          fileUtilz;
-    
+                               
     @Resource
     private PagerUtilz         pagerUtilz;
-    
+                               
     private Integer            idCompany     = 1;
-    
+                                             
     private Integer            recordsOnPage = 10;
-    
+                                             
     private DateTimeFormatter  fmt           = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-    
+                                             
     @RequestMapping
     public ModelAndView report(@RequestParam(value = "id", required = false) Long idReport, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",error:" + error + ",page:" + page + ")#");
@@ -95,41 +102,39 @@ public class ReportController {
     }
     
     @RequestMapping(value = "generate", method = RequestMethod.POST)
-    public String reportGenerate(@RequestParam(value = "filter_promo_id", required = false) Integer idPromo, @RequestParam(value = "filter_city_id", required = false) Integer idCity, @RequestParam("filter_task_create_date") String taskCreateDate,
-            @RequestParam(value = "filter_own_task_id", required = false) Long idOwnMarketPoint, @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idMarketPointList)
-    
-    throws UnsupportedEncodingException {
-        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",idCity:" + idCity + ",idOwnMarketPoint:" + idOwnMarketPoint + ",idMarketPointList:" + idMarketPointList + ",idPromo:" + idPromo + ",taskCreateDate:" + taskCreateDate + ")#");
+    public String reportGenerate(@RequestParam(value = "filter_promo_id", required = false) Integer idPromo, @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask,
+            @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks) throws IOException {
+        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromo + ")#");
         
-        LocalDate dateTaskCreate = StringUtils.isNotEmpty(taskCreateDate) ? LocalDate.parse(taskCreateDate) : null;
-        // String errorString = null;
-        
-        if (idCity == null) {
-            // errorString = "Не указан город";
-            // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
-            return "redirect:/report";
-        } else if (idOwnMarketPoint == null) {
+        if (idOwnTask == null) {
             // errorString = "Не указана своя сеть";
             // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
             return "redirect:/report";
-        } else if (idMarketPointList == null || idMarketPointList.size() == 0) {
+        } else if (idsOtherTasks == null || idsOtherTasks.size() == 0) {
             // errorString = "Не указаны сети конкурента";
-            // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
-            return "redirect:/report";
-        } else if (dateTaskCreate == null) {
-            // errorString = "Не указана дата создания задачи";
             // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
             return "redirect:/report";
         } else {
             DateTime dt = new DateTime();
-            File dir = fileUtilz.createDirectory(coreSettings.getPathForReport() + LocalDate.now().toString());
-            // File file = new File(dir.getAbsolutePath() + "/" + fmt.print(dt) + "_" + mFile.getOriginalFilename());
+            String dirDate = LocalDate.now().toString();
+            String fileName = fmt.print(dt) + "_report.xls";
+            
+            File dir = fileUtilz.createDirectory(coreSettings.getPathForReport() + dirDate);
+            File file = new File(dir.getAbsolutePath() + "/" + fileName);
+            
+            TupleHolder<Map<Long, String>, Map<ReportArticleData, Map<Long, TaskArticle>>> tuple = reportService.getTaskData(idCompany, idOwnTask, idsOtherTasks);
+            Map<Long, String> headers = tuple.getValue1();
+            Map<ReportArticleData, Map<Long, TaskArticle>> map = tuple.getValue2();
+            
+            reportBuilder.process(file, headers, map, idOwnTask, idsOtherTasks);
+            
+            long fileSize = FileUtils.sizeOf(file);
             
             ReportHistory reportHistory = new ReportHistory();
-            reportHistory.setIdCompany(1);
-            reportHistory.setCaption(fmt.print(dt) + "_report_v1");
-            reportHistory.setFilePath("report_v1.xls");
-            reportHistory.setFileSize(0L);
+            reportHistory.setIdCompany(idCompany);
+            reportHistory.setCaption(fileName);
+            reportHistory.setFilePath(dirDate + "/" + fileName);
+            reportHistory.setFileSize(fileSize);
             reportHistory.setActive(true);
             reportHistory.setDateAdded(DateTime.now());
             mainService.save(reportHistory);
