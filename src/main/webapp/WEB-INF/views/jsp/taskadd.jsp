@@ -11,7 +11,8 @@
 				<div class="row">
 					<div class="col-md-6">Создать задачу</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />"> <span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />">
+							<span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>
 					</div>
@@ -21,9 +22,16 @@
 			<form class="form-horizontal" role="form" action="<spring:url value="/tasks/upload" htmlEscape="true" />" method="post">
 				<div class="panel-body">
 					<div class="form-group">
+						<label for="id_task_name" class="col-md-4 control-label">Название задачи:</label>
+						<div class="col-md-7">
+							<input name="task_name" maxlength="50" class="form-control" id="id_task_name" placeholder="Название задачи..." type="text">
+						</div>
+					</div>
+
+					<div class="form-group">
 						<label for="select-template-name" class="col-md-4 control-label">Выбрать шаблон:</label>
 						<div class="col-md-7">
-							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true">
+							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true" data-size="15">
 								<c:forEach items="${templateList}" var="template">
 									<option value="${template.id}">${template.caption}</option>
 								</c:forEach>
@@ -34,7 +42,8 @@
 					<div class="form-group">
 						<label for="market-point" class="col-md-4 control-label">Выбрать сеть:</label>
 						<div class="col-md-7">
-							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true">
+							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true" data-size="15"
+								data-actions-box="true">
 								<c:forEach items="${marketPointMap}" var="map">
 									<optgroup label="${map.key}">
 										<c:forEach items="${map.value}" var="marketpoint">
@@ -93,6 +102,12 @@
 									<tr>
 										<td class="text-right" style="width: 40%;"><strong></strong></td>
 										<td class="text-left">Ошибка выбора пользователя</td>
+									</tr>
+								</c:if>
+								<c:if test="${results.taskNameError}">
+									<tr>
+										<td class="text-right" style="width: 40%;"><strong></strong></td>
+										<td class="text-left">Не введено название задачи</td>
 									</tr>
 								</c:if>
 							</table>

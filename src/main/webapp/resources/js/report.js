@@ -1,5 +1,61 @@
 $(window).on('load', function() {
 
+//	$('#filter-for-report-list select[name=filter_region_id]').change(function(event) {
+//		$('#filter-for-report-list #filter_city_visibility').show();
+//		var citySelector = $('#filter-for-report-list select#filter_city');
+//
+//		var taskDate = $('#filter-for-report-list input#date');
+//		taskDate.val('');
+//		taskDate.datepicker('update');
+//		$('#filter-for-report-list #filter_date_visibility').hide();
+//
+//		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks');
+//		ownTaskSelector.html('<option selected value="">Данные отсутствуют</option>');
+//		ownTaskSelector.selectpicker('refresh');
+//		$('#filter-for-report-list #filter_own_task_visibility').hide();
+//
+//		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
+//		otherTasksSelector.html('<option selected value="">Данные отсутствуют</option>');
+//		otherTasksSelector.selectpicker('refresh');
+//		$('#filter-for-report-list #filter_other_task_visibility').hide();
+//
+//		if ($(this)) {
+//			$.ajax({
+//				contentType : "application/json",
+//				dataType : 'json',
+//				type : "GET",
+//				url : contexPath + '/ajax/' + $($(this)).val() + '/cities.json',
+//
+//				success : function(data) {
+//					var dataCount = 0;
+//					var html = '';
+//					for ( var i in data) {
+//						dataCount++;
+//						var city = data[i];
+//						html = html + '<option	value="' + city.id + '">' + city.caption + '</option>';
+//					}
+//
+//					if (dataCount > 0) {
+//						citySelector.html(html);
+//						citySelector.selectpicker('refresh');
+//					} else {
+//						citySelector.html('<option selected value="">Данные отсутствуют</option>');
+//						citySelector.selectpicker('refresh');
+//					}
+//				},
+//				error : function(request, status, error) {
+//					citySelector.html('<option selected value="">Ошибка загрузки списка</option>');
+//					citySelector.selectpicker('refresh');
+//				},
+//				done : function(e) {
+//					console.log("DONE");
+//				}
+//			});
+//		}
+//
+//		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+//	});
+	
 	$('#filter-for-report-list select[name=filter_region_id]').change(function(event) {
 		$('#filter-for-report-list #filter_city_visibility').show();
 		var citySelector = $('#filter-for-report-list select#filter_city');

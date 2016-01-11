@@ -42,12 +42,29 @@ $(window).on('load', function() {
 	});
 
 	// triggered when modal is about to be shown
-	$('#modal-correct-price').on('show.bs.modal', function(e) {
+	$('#modal-correct-check-task').on('show.bs.modal', function(e) {
 		var elementId = $(e.relatedTarget).data('element-id');
 		var price = $(e.relatedTarget).data('element-price');
+		var weight = $(e.relatedTarget).data('element-weight');
+		var availability = $(e.relatedTarget).data('element-availability');
 
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
-		$(e.currentTarget).find('input[name="price"]').val(price);
+		$(e.currentTarget).find('input[name="check-task-price"]').val(price);
+		$(e.currentTarget).find('input[name="check-task-weight"]').val(weight);
+		$(e.currentTarget).find('input[name="check-task-availability"]').prop('checked', availability);
+	});
+
+	// triggered when modal is about to be shown
+	$('#modal-correct-complete-task').on('show.bs.modal', function(e) {
+		var elementId = $(e.relatedTarget).data('element-id');
+		var price = $(e.relatedTarget).data('element-price');
+		var weight = $(e.relatedTarget).data('element-weight');
+		var availability = $(e.relatedTarget).data('element-availability');
+
+		$(e.currentTarget).find('input[name="id"]').val(elementId);
+		$(e.currentTarget).find('input[name="complete-task-price"]').val(price);
+		$(e.currentTarget).find('input[name="complete-task-weight"]').val(weight);
+		$(e.currentTarget).find('input[name="complete-task-availability"]').prop('checked', availability);
 	});
 
 	$('#modal-edit-category, #modal-edit-goods, #modal-edit-promo, #modal-edit-region, #modal-edit-market').on('show.bs.modal', function(e) {

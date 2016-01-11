@@ -105,10 +105,10 @@
 								<p>(#${dyn.idTask})&nbsp;${dyn.caption}</p>
 								<div class="progress">
 									<div class="progress-bar progress-bar-success" data-toggle="tooltip" title="закрытых задач:${dyn.completeCount}" style="width: ${dyn.completeCount * 100 / dyn.sum}%;">${dyn.completeCount}&nbsp;Complete</div>
-									<div class="progress-bar progress-bar-danger" data-toggle="tooltip" title="задач на переделку:${dyn.failCount}" style="width: ${dyn.failCount * 100 / dyn.sum}%;">${dyn.failCount}&nbsp;Fail</div>
+									<!-- <div class="progress-bar progress-bar-danger" data-toggle="tooltip" title="задач на переделку:${dyn.failCount}" style="width: ${dyn.failCount * 100 / dyn.sum}%;">${dyn.failCount}&nbsp;Fail</div> -->
 									<div class="progress-bar progress-bar-info" data-toggle="tooltip" title="прочеканых задач:${dyn.checkCount}" style="width: ${dyn.checkCount * 100 / dyn.sum}%;">${dyn.checkCount}&nbsp;Check</div>
-									<div class="progress-bar progress-bar-warning" data-toggle="tooltip" title="не обработанных задач:${dyn.assignedCount}"
-										style="width: ${dyn.assignedCount * 100 / dyn.sum}%;">${dyn.assignedCount}&nbsp;On&nbsp;user</div>
+									<div class="progress-bar progress-bar-warning" data-toggle="tooltip" title="не обработанных задач:${dyn.assignedCount + dyn.failCount}"
+										style="width: ${(dyn.assignedCount + dyn.failCount) * 100 / dyn.sum}%;">${dyn.assignedCount + dyn.failCount}&nbsp;On&nbsp;user</div>
 								</div>
 							</div>
 						</div>

@@ -125,7 +125,7 @@
 							<th style="vertical-align: middle">Шаблон</th>
 							<th style="vertical-align: middle">Дата</th>
 							<th style="vertical-align: middle">Название</th>
-							<th style="vertical-align: middle">Магазин</th>
+							<th style="vertical-align: middle">Сеть</th>
 							<th style="vertical-align: middle">Статус</th>
 							<th class="text-right">
 								<spring:url value="/tasks/add/form" var="addTaskUrl" htmlEscape="true" />

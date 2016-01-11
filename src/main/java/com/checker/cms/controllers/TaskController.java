@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -186,19 +187,22 @@ public class TaskController {
     
     @RequestMapping(value = "upload", method = RequestMethod.POST)
     public ModelAndView taskAddDone(@RequestParam(value = "template_id", required = false) Long idTemplate, @RequestParam(value = "marketpoint_id[]", required = false) List<Long> idMarketPointList,
-            @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser) throws IllegalStateException, IOException {
-        log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointList:" + idMarketPointList + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
+            @RequestParam(value = "task_name", required = false) String taskName, @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser) throws IllegalStateException,
+            IOException {
+        log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointList:" + idMarketPointList + ",taskName:" + taskName + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
         TaskUploadResult results = new TaskUploadResult();
         
         if (idTemplate == null)
             results.templateError();
+        if (StringUtils.isEmpty(taskName))
+            results.taskNameError();
         if (idMarketPointList == null || idMarketPointList.size() == 0)
             results.marketError();
         if (BooleanUtils.isTrue(useUser) && idUser == null)
             results.userError();
         
         if (!results.isHasError()) {
-            results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList));
+            results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList, taskName));
         }
         
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);

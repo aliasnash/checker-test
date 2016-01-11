@@ -10,7 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -117,5 +119,22 @@ public class CompleteTaskController {
         session.removeAttribute("idMarketPointCompleteSaved");
         session.removeAttribute("completeTaskCreateDate");
         return "redirect:/taskcomplete/list";
+    }
+    
+    @RequestMapping(value = "correct", method = RequestMethod.POST)
+    public String tasksCompleteCorrect(@RequestParam("id") Long idTaskArticle, @RequestParam("complete-task-price") Double price, @RequestParam("complete-task-weight") String weight,
+            @RequestParam(value = "complete-task-availability", required = false) Boolean availability, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        log.info("#TasksCompleteCorrect method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",price:" + price + ",weight:" + weight + ",availability:" + availability + ",page:" + page + ")#");
+        if (idTaskArticle != null && idTaskArticle > 0 && price != null) {
+            TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
+            if (taskArticle != null) {
+                taskArticle.setPrice(price);
+                taskArticle.setWeight(weight);
+                taskArticle.setAvailability(BooleanUtils.isTrue(availability));
+                taskArticle.setDateUpdate(DateTime.now());
+                mainService.update(taskArticle);
+            }
+        }
+        return "redirect:/taskcomplete/list?page=" + page;
     }
 }

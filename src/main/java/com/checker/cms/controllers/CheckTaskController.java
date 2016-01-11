@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import lombok.extern.slf4j.Slf4j;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -158,17 +159,19 @@ public class CheckTaskController {
     }
     
     @RequestMapping(value = "correct", method = RequestMethod.POST)
-    public String tasksCheckCorrect(@RequestParam("id") Long idTaskArticle, @RequestParam("price") Double price, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
-        log.info("#TasksCheckCorrect method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",price:" + price + ",page:" + page + ")#");
+    public String tasksCheckCorrect(@RequestParam("id") Long idTaskArticle, @RequestParam("check-task-price") Double price, @RequestParam("check-task-weight") String weight,
+            @RequestParam(value = "check-task-availability", required = false) Boolean availability, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        log.info("#TasksCheckCorrect method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",price:" + price + ",weight:" + weight + ",availability:" + availability + ",page:" + page + ")#");
         if (idTaskArticle != null && idTaskArticle > 0 && price != null) {
             TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
             if (taskArticle != null) {
                 taskArticle.setPrice(price);
+                taskArticle.setWeight(weight);
+                taskArticle.setAvailability(BooleanUtils.isTrue(availability));
                 taskArticle.setDateUpdate(DateTime.now());
                 mainService.update(taskArticle);
             }
         }
         return "redirect:/taskcheck/list?page=" + page;
     }
-    
 }

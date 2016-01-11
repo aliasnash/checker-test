@@ -106,11 +106,23 @@
 							<div class="caption">
 								<p>${ta.article.caption}</p>
 								<p>
-									ЦЕНА: <strong>${ta.price}</strong>
+									ЦЕНА: <strong>${ta.price}</strong> ${empty ta.weight ? '&nbsp;' : ' ВЕС:' } <strong>${empty ta.weight ? '&nbsp;' : ta.weight }</strong>
 								</p>
 								<p>
 									<joda:format value="${ta.dateUpdate}" style="SM" />
 								</p>
+								<p>${empty ta.promo ? 'без акции' : ta.promo.caption }</p>
+								<p>
+									<strong>${ta.availability ? '&nbsp;' : 'продукт не доступен' }</strong>
+								</p>
+								<p>${ta.taskComment}</p>
+								<div class="btn-group" role="group" aria-label="...">
+									<a class=" btn btn-sm btn-primary" data-target="#modal-correct-complete-task" data-toggle="modal" data-element-price="${ta.price}" data-element-weight="${ta.weight}"
+										data-element-availability="${ta.availability}" data-element-id="${ta.id}">
+										<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+										Исправить
+									</a>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -122,6 +134,55 @@
 				<tag:paginate page="${page}" pageCount="${pageCount}" paginatorSize="10" uri="${pUrl}" next="&raquo;" previous="&laquo;" />
 			</div>
 		</div>
+
+		<!-- modal -->
+		<div class="modal fade" id="modal-correct-complete-task">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<h4 class="modal-title">Исправить информацию</h4>
+					</div>
+					<form class="form-horizontal" role="form" action="<spring:url value="/taskcomplete/correct?page=${page}" htmlEscape="true" />" method="post">
+						<input type="hidden" value="" name="id">
+
+						<div class="modal-body">
+							<div class="form-group">
+								<label for="complete-task-price" class="col-md-4 control-label">Новая цена:</label>
+
+								<div class="col-md-7">
+									<input id="complete-task-price" class="form-control" type="text" name="complete-task-price" value="" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="complete-task-weight" class="col-md-4 control-label">Вес:</label>
+
+								<div class="col-md-7">
+									<input id="complete-task-weight" class="form-control" type="text" name="complete-task-weight" maxlength="8" value="" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="complete-task-availability" class="col-md-4 control-label">Доступность:</label>
+
+								<div class="col-md-7">
+									<input name="complete-task-availability" class="form-control" id="complete-task-availability" placeholder="..." type="checkbox">
+								</div>
+							</div>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Закрыть</button>
+							<button type="submit" class="btn btn-primary btn-sm">Сохранить</button>
+						</div>
+					</form>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- /.modal -->
 	</tiles:putAttribute>
 </tiles:insertDefinition>
 

@@ -2,10 +2,13 @@ package com.checker.cms.controllers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
 import org.joda.time.DateTime;
@@ -25,8 +28,8 @@ import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.PromoService;
 import com.checker.core.dao.service.ReportService;
 import com.checker.core.dao.service.UserService;
+import com.checker.core.entity.City;
 import com.checker.core.entity.Promo;
-import com.checker.core.entity.Region;
 import com.checker.core.entity.ReportHistory;
 import com.checker.core.entity.TaskArticle;
 import com.checker.core.model.ReportArticleData;
@@ -36,8 +39,6 @@ import com.checker.core.utilz.CoreSettings;
 import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -64,16 +65,16 @@ public class ReportController {
     private CoreSettings       coreSettings;
     @Resource
     private FileUtilz          fileUtilz;
-                               
+    
     @Resource
     private PagerUtilz         pagerUtilz;
-                               
+    
     private Integer            idCompany     = 1;
-                                             
+    
     private Integer            recordsOnPage = 10;
-                                             
+    
     private DateTimeFormatter  fmt           = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-                                             
+    
     @RequestMapping
     public ModelAndView report(@RequestParam(value = "id", required = false) Long idReport, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",error:" + error + ",page:" + page + ")#");
@@ -83,13 +84,15 @@ public class ReportController {
         page = pagerUtilz.getPage(page, pageCount);
         
         List<ReportHistory> reportList = reportService.findReportHistoryByIdCompany(idCompany, page, recordsOnPage);
-        List<Region> regionList = cityService.findRegionsByIdCompany(idCompany);
+        // List<Region> regionList = cityService.findRegionsByIdCompany(idCompany);
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         List<Promo> promoList = promoService.findPromosByIdCompany(idCompany);
         
         ModelAndView m = new ModelAndView("report");
         m.addObject("pageName", "report");
         m.addObject("reportList", reportList);
-        m.addObject("regionList", regionList);
+        // m.addObject("regionList", regionList);
+        m.addObject("cityMap", cityMap);
         m.addObject("promoList", promoList);
         m.addObject("rootUrl", coreSettings.getRootUrlReport());
         m.addObject("idReport", idReport);
@@ -102,9 +105,9 @@ public class ReportController {
     }
     
     @RequestMapping(value = "generate", method = RequestMethod.POST)
-    public String reportGenerate(@RequestParam(value = "filter_promo_id", required = false) Integer idPromo, @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask,
-            @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks) throws IOException {
-        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromo + ")#");
+    public String reportGenerate(@RequestParam(value = "filter_promo_id[]", required = false) List<Integer> idPromoList, @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask,
+            @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks, @RequestParam(value = "filter_task_create_date", required = false) String taskDateCreate) throws IOException {
+        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromoList + ",taskDateCreate:" + taskDateCreate + ")#");
         
         if (idOwnTask == null) {
             // errorString = "Не указана своя сеть";
@@ -132,7 +135,7 @@ public class ReportController {
             
             ReportHistory reportHistory = new ReportHistory();
             reportHistory.setIdCompany(idCompany);
-            reportHistory.setCaption(fileName);
+            reportHistory.setCaption("Отчет за " + taskDateCreate);
             reportHistory.setFilePath(dirDate + "/" + fileName);
             reportHistory.setFileSize(fileSize);
             reportHistory.setActive(true);

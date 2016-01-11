@@ -21,7 +21,7 @@
 							<div class="form-group col-md-3">
 								<label for="filter_promo" class="col-md-12 danger control-label">Промоакции:</label>
 								<div class="col-md-12">
-									<select name="filter_promo_id" class="selectpicker form-control" id="filter_promo" title="Выберите промо" data-size="15">
+									<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15" data-actions-box="true">
 										<c:choose>
 											<c:when test="${empty promoList}">
 												<option selected value="">Промо отсутствуют</option>
@@ -35,6 +35,22 @@
 									</select>
 								</div>
 							</div>
+
+							<div class="form-group col-md-3">
+								<label for="filter_city" class="col-md-12  control-label">Город:</label>
+								<div class="col-md-12">
+									<select name="filter_city_id" class="selectpicker form-control" id="filter_city" title="Выберите город" data-size="15">
+										<c:forEach items="${cityMap}" var="map">
+											<optgroup label="${map.key}">
+												<c:forEach items="${map.value}" var="city">
+													<option value="${city.id}">${city.caption}</option>
+												</c:forEach>
+											</optgroup>
+										</c:forEach>
+									</select>
+								</div>
+							</div>
+							<!-- 
 							<div class="form-group col-md-3">
 								<label for="filter_region" class="col-md-12 control-label">Регион:</label>
 								<div class="col-md-12">
@@ -71,6 +87,7 @@
 									</div>
 								</div>
 							</div>
+							-->
 						</div>
 						<div class="row">
 							<div class="form-group col-md-3">
@@ -104,7 +121,7 @@
 								<div id="filter_other_task_visibility" style="display: none;">
 									<label for="filter_other_tasks" class="col-md-12  control-label">Задачи конкурента:</label>
 									<div class="col-md-12">
-										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15">
+										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15" data-actions-box="true">
 											<c:choose>
 												<c:when test="${empty otherTaskList}">
 													<option selected value="">Задачи отсутствуют</option>
@@ -153,7 +170,7 @@
 					<thead>
 						<tr>
 							<th style="vertical-align: middle">#</th>
-							<th style="vertical-align: middle">Дата</th>
+							<!-- <th style="vertical-align: middle">Дата</th> -->
 							<th style="vertical-align: middle">Название</th>
 							<th style="vertical-align: middle">Файл</th>
 							<th style="vertical-align: middle">Размер</th>
@@ -164,7 +181,7 @@
 						<c:forEach items="${reportList}" var="report">
 							<tr class="${not empty idReport and idReport eq report.id ? 'success' : ''}">
 								<td>${report.id}</td>
-								<td><joda:format value="${report.dateAdded}" style="SM" /></td>
+								<!--<td><joda:format value="${report.dateAdded}" style="SM" /></td>-->
 								<td>${report.caption}</td>
 								<td><a href="${rootUrl}${report.filePath}">${report.filePath}</a></td>
 								<td>${report.fileSize}</td>

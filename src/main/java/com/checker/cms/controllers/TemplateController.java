@@ -83,7 +83,7 @@ public class TemplateController {
         
         ModelAndView m = new ModelAndView("template");
         m.addObject("pageName", "template");
-//        m.addObject("templateDate", templateDate);
+        // m.addObject("templateDate", templateDate);
         m.addObject("templateList", templateList);
         m.addObject("recordsCount", recordsCount);
         m.addObject("pageCount", pageCount);
