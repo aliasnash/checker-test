@@ -3,14 +3,15 @@ package com.checker.cms.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -27,10 +28,12 @@ import com.checker.core.dao.service.MainService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.PromoService;
 import com.checker.core.dao.service.ReportService;
+import com.checker.core.dao.service.TaskService;
 import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.Promo;
 import com.checker.core.entity.ReportHistory;
+import com.checker.core.entity.Task;
 import com.checker.core.entity.TaskArticle;
 import com.checker.core.model.ReportArticleData;
 import com.checker.core.model.TupleHolder;
@@ -40,6 +43,8 @@ import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 @RequestMapping("report")
@@ -47,6 +52,8 @@ public class ReportController {
     
     @Resource
     private ReportBuilder      reportBuilder;
+    @Resource
+    private TaskService        taskService;
     @Resource
     private ReportService      reportService;
     @Resource
@@ -65,38 +72,66 @@ public class ReportController {
     private CoreSettings       coreSettings;
     @Resource
     private FileUtilz          fileUtilz;
-    
+                               
     @Resource
     private PagerUtilz         pagerUtilz;
-    
+                               
     private Integer            idCompany     = 1;
-    
+                                             
     private Integer            recordsOnPage = 10;
-    
+                                             
     private DateTimeFormatter  fmt           = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-    
+                                             
+    @SuppressWarnings("unchecked")
     @RequestMapping
-    public ModelAndView report(@RequestParam(value = "id", required = false) Long idReport, @RequestParam(value = "error", required = false) String error, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
-        log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",error:" + error + ",page:" + page + ")#");
+    public ModelAndView report(HttpSession session, @RequestParam(value = "id", required = false) Long idReport, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        String reportTaskDate = (String) session.getAttribute("reportTaskDate");
+        Integer idCity = (Integer) session.getAttribute("idCityReportSaved");
+        Long idOwnTask = (Long) session.getAttribute("idOwnTaskReportSaved");
+        List<Long> idsOtherTasks = (List<Long>) session.getAttribute("idOtherTaskReportSaved");
+        List<Integer> idPromoList = (List<Integer>) session.getAttribute("idPromoReportSaved");
         
-        Long recordsCount = reportService.countReportHistoryByIdCompany(idCompany);
+        log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",reportTaskDate:" + reportTaskDate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromoList:" + idPromoList + ",page:"
+                + page + ")#");
+                
+        LocalDate dateTaskCreate = StringUtils.isNotEmpty(reportTaskDate) ? LocalDate.parse(reportTaskDate) : null;
+        
+        Map<String, Collection<City>> cityMap;
+        if (dateTaskCreate != null) {
+            List<Integer> idsCity = taskService.findIdCitiesTaskByIdCompanyAndDateCreate(idCompany, dateTaskCreate);
+            cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
+        } else {
+            cityMap = Collections.emptyMap();
+        }
+        
+        List<Task> ownTaskList;
+        if (idCity != null && dateTaskCreate != null)
+            ownTaskList = taskService.findOwnTaskByIdCompanyAndIdCityAndDateCreate(idCompany, idCity, dateTaskCreate);
+        else
+            ownTaskList = Collections.emptyList();
+            
+        List<Task> otherTaskList;
+        if (idCity != null && idOwnTask != null)
+            otherTaskList = taskService.findOtherTaskByIdCompanyAndIdTemplateAndIdCity(idCompany, idOwnTask, idCity);
+        else
+            otherTaskList = Collections.emptyList();
+            
+        Long recordsCount = reportService.countReportHistoryByIdCompanyAndDateAndIdCityAndIdTasks(idCompany, dateTaskCreate, idCity, idOwnTask, idsOtherTasks);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
-        List<ReportHistory> reportList = reportService.findReportHistoryByIdCompany(idCompany, page, recordsOnPage);
-        // List<Region> regionList = cityService.findRegionsByIdCompany(idCompany);
-        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
+        List<ReportHistory> reportList = reportService.findReportHistoryByIdCompanyAndDateAndIdCityAndIdTasks(idCompany, dateTaskCreate, idCity, idOwnTask, idsOtherTasks, page, recordsOnPage);
         List<Promo> promoList = promoService.findPromosByIdCompany(idCompany);
         
         ModelAndView m = new ModelAndView("report");
         m.addObject("pageName", "report");
         m.addObject("reportList", reportList);
-        // m.addObject("regionList", regionList);
         m.addObject("cityMap", cityMap);
+        m.addObject("ownTaskList", ownTaskList);
+        m.addObject("otherTaskList", otherTaskList);
         m.addObject("promoList", promoList);
         m.addObject("rootUrl", coreSettings.getRootUrlReport());
         m.addObject("idReport", idReport);
-        m.addObject("error", error);
         m.addObject("recordsCount", recordsCount);
         m.addObject("pageCount", pageCount);
         m.addObject("page", page);
@@ -105,17 +140,18 @@ public class ReportController {
     }
     
     @RequestMapping(value = "generate", method = RequestMethod.POST)
-    public String reportGenerate(@RequestParam(value = "filter_promo_id[]", required = false) List<Integer> idPromoList, @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask,
-            @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks, @RequestParam(value = "filter_task_create_date", required = false) String taskDateCreate) throws IOException {
-        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromoList + ",taskDateCreate:" + taskDateCreate + ")#");
+    public String reportGenerate(HttpSession session, @RequestParam(value = "filter_task_create_date", required = false) String taskDateCreate, @RequestParam(value = "filter_city_id", required = false) Integer idCity,
+            @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask, @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks,
+            @RequestParam(value = "filter_promo_id[]", required = false) List<Integer> idPromoList) throws IOException {
+        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",taskDateCreate:" + taskDateCreate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromoList + ")#");
         
-        if (idOwnTask == null) {
-            // errorString = "Не указана своя сеть";
-            // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
-            return "redirect:/report";
-        } else if (idsOtherTasks == null || idsOtherTasks.size() == 0) {
-            // errorString = "Не указаны сети конкурента";
-            // return "redirect:/report?error=" + URLDecoder.decode(errorString, "UTF-8");
+        session.setAttribute("reportTaskDate", taskDateCreate);
+        session.setAttribute("idCityReportSaved", idCity);
+        session.setAttribute("idOwnTaskReportSaved", idOwnTask);
+        session.setAttribute("idOtherTaskReportSaved", idsOtherTasks);
+        session.setAttribute("idPromoReportSaved", idPromoList);
+        
+        if (taskDateCreate == null || idOwnTask == null || idsOtherTasks == null || idsOtherTasks.size() == 0) {
             return "redirect:/report";
         } else {
             DateTime dt = new DateTime();
@@ -140,10 +176,25 @@ public class ReportController {
             reportHistory.setFileSize(fileSize);
             reportHistory.setActive(true);
             reportHistory.setDateAdded(DateTime.now());
+            reportHistory.setIdTask(idOwnTask);
+            reportHistory.setTaskDate(LocalDate.parse(taskDateCreate));
+            reportHistory.setIdCity(idCity);
+            reportHistory.setIdsTaskOther(String.valueOf(idsOtherTasks));
             mainService.save(reportHistory);
             
             return "redirect:/report?id=" + reportHistory.getId();
         }
+    }
+    
+    @RequestMapping(value = "reset")
+    public String reportReset(HttpSession session) {
+        log.info("#ReportReset method(idCompany:" + idCompany + ")#");
+        session.removeAttribute("reportTaskDate");
+        session.removeAttribute("idCityReportSaved");
+        session.removeAttribute("idOwnTaskReportSaved");
+        session.removeAttribute("idOtherTaskReportSaved");
+        session.removeAttribute("idPromoReportSaved");
+        return "redirect:/report";
     }
     
     @RequestMapping("{id}/delete")

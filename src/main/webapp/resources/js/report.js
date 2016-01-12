@@ -1,94 +1,43 @@
 $(window).on('load', function() {
 
-//	$('#filter-for-report-list select[name=filter_region_id]').change(function(event) {
-//		$('#filter-for-report-list #filter_city_visibility').show();
-//		var citySelector = $('#filter-for-report-list select#filter_city');
-//
-//		var taskDate = $('#filter-for-report-list input#date');
-//		taskDate.val('');
-//		taskDate.datepicker('update');
-//		$('#filter-for-report-list #filter_date_visibility').hide();
-//
-//		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks');
-//		ownTaskSelector.html('<option selected value="">Данные отсутствуют</option>');
-//		ownTaskSelector.selectpicker('refresh');
-//		$('#filter-for-report-list #filter_own_task_visibility').hide();
-//
-//		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
-//		otherTasksSelector.html('<option selected value="">Данные отсутствуют</option>');
-//		otherTasksSelector.selectpicker('refresh');
-//		$('#filter-for-report-list #filter_other_task_visibility').hide();
-//
-//		if ($(this)) {
-//			$.ajax({
-//				contentType : "application/json",
-//				dataType : 'json',
-//				type : "GET",
-//				url : contexPath + '/ajax/' + $($(this)).val() + '/cities.json',
-//
-//				success : function(data) {
-//					var dataCount = 0;
-//					var html = '';
-//					for ( var i in data) {
-//						dataCount++;
-//						var city = data[i];
-//						html = html + '<option	value="' + city.id + '">' + city.caption + '</option>';
-//					}
-//
-//					if (dataCount > 0) {
-//						citySelector.html(html);
-//						citySelector.selectpicker('refresh');
-//					} else {
-//						citySelector.html('<option selected value="">Данные отсутствуют</option>');
-//						citySelector.selectpicker('refresh');
-//					}
-//				},
-//				error : function(request, status, error) {
-//					citySelector.html('<option selected value="">Ошибка загрузки списка</option>');
-//					citySelector.selectpicker('refresh');
-//				},
-//				done : function(e) {
-//					console.log("DONE");
-//				}
-//			});
-//		}
-//
-//		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-//	});
-	
-	$('#filter-for-report-list select[name=filter_region_id]').change(function(event) {
-		$('#filter-for-report-list #filter_city_visibility').show();
+	$('#filter-for-report-list input[name=filter_task_create_date]').change(function(event) {
 		var citySelector = $('#filter-for-report-list select#filter_city');
 
-		var taskDate = $('#filter-for-report-list input#date');
-		taskDate.val('');
-		taskDate.datepicker('update');
-		$('#filter-for-report-list #filter_date_visibility').hide();
-
+		// прячем и обнуляем свои задачи
 		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks');
 		ownTaskSelector.html('<option selected value="">Данные отсутствуют</option>');
 		ownTaskSelector.selectpicker('refresh');
 		$('#filter-for-report-list #filter_own_task_visibility').hide();
 
+		// прячем и обнуляем задачи конкурента
 		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
 		otherTasksSelector.html('<option selected value="">Данные отсутствуют</option>');
 		otherTasksSelector.selectpicker('refresh');
 		$('#filter-for-report-list #filter_other_task_visibility').hide();
 
-		if ($(this)) {
+		// прячем промо акции
+		$('#filter-for-report-list #filter_promo_visibility').hide();
+
+		$('#filter-for-report-list #filter_city_visibility').show();
+
+		if ($(this) && $(this).val()) {
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',
 				type : "GET",
-				url : contexPath + '/ajax/' + $($(this)).val() + '/cities.json',
+				url : contexPath + '/ajax/' + $(this).val() + '/citiesbydate.json',
 
 				success : function(data) {
 					var dataCount = 0;
 					var html = '';
 					for ( var i in data) {
 						dataCount++;
-						var city = data[i];
-						html = html + '<option	value="' + city.id + '">' + city.caption + '</option>';
+						html = html + '<optgroup label="' + i + '">';
+
+						for ( var k in data[i]) {
+							var city = data[i][k];
+							html = html + '<option value="' + city.id + '">' + city.caption + '</option>';
+						}
 					}
 
 					if (dataCount > 0) {
@@ -100,7 +49,7 @@ $(window).on('load', function() {
 					}
 				},
 				error : function(request, status, error) {
-					citySelector.html('<option selected value="">Ошибка загрузки списка</option>');
+					citySelector.html('<option selected value="">Ошибка загрузки списка магазинов</option>');
 					citySelector.selectpicker('refresh');
 				},
 				done : function(e) {
@@ -112,42 +61,27 @@ $(window).on('load', function() {
 		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 	});
 
-	$('#filter-for-report-list select[name=filter_city_id]').change(function(event) {
-		$('#filter-for-report-list #filter_date_visibility').show();
-
-		var taskDate = $('#filter-for-report-list input#date');
-		taskDate.datepicker('update', '');
-
+	$('#filter-for-report-list select#filter_city').change(function(event) {
+		var taskDate = $('#filter-for-report-list input[name=filter_task_create_date]');
 		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks');
-		ownTaskSelector.html('<option selected value="">Данные отсутствуют</option>');
-		ownTaskSelector.selectpicker('refresh');
-		$('#filter-for-report-list #filter_own_task_visibility').hide();
 
+		// прячем и обнуляем задачи конкурента
 		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
 		otherTasksSelector.html('<option selected value="">Данные отсутствуют</option>');
 		otherTasksSelector.selectpicker('refresh');
 		$('#filter-for-report-list #filter_other_task_visibility').hide();
 
-		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-	});
+		// прячем промо акции
+		$('#filter-for-report-list #filter_promo_visibility').hide();
 
-	$('#filter-for-report-list input[name=filter_task_create_date]').change(function(event) {
-		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks');
-		var citySelector = $('#filter-for-report-list select#filter_city');
+		$('#filter-for-report-list #filter_own_task_visibility').show();
 
-		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
-		otherTasksSelector.html('<option selected value="">Данные отсутствуют</option>');
-		otherTasksSelector.selectpicker('refresh');
-		$('#filter-for-report-list #filter_other_task_visibility').hide();
-
-		if ($(this) && $(this).val()) {
-			$('#filter-for-report-list #filter_own_task_visibility').show();
-
+		if ($(this)) {
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',
 				type : "GET",
-				url : contexPath + '/ajax/' + $($(this)).val() + '/' + citySelector.val() + '/tasks.json',
+				url : contexPath + '/ajax/' + taskDate.val() + '/' + $(this).val() + '/tasks.json',
 
 				success : function(data) {
 					var dataCount = 0;
@@ -155,7 +89,7 @@ $(window).on('load', function() {
 					for ( var i in data) {
 						dataCount++;
 						var task = data[i];
-						html = html + '<option	value="' + task.id + '">' + task.caption + '</option>';
+						html = html + '<option value="' + task.id + '">' + task.caption + '</option>';
 					}
 
 					if (dataCount > 0) {
@@ -179,18 +113,21 @@ $(window).on('load', function() {
 		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 	});
 
-	$('#filter-for-report-list select[name=filter_own_task_id]').change(function(event) {
-
-		$('#filter-for-report-list #filter_other_task_visibility').show();
+	$('#filter-for-report-list select#filter_own_tasks').change(function(event) {
 		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks');
 		var citySelector = $('#filter-for-report-list select#filter_city');
+
+		// прячем промо акции
+		$('#filter-for-report-list #filter_promo_visibility').hide();
+
+		$('#filter-for-report-list #filter_other_task_visibility').show();
 
 		if ($(this)) {
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',
 				type : "GET",
-				url : contexPath + '/ajax/' + $($(this)).val() + '/' + citySelector.val() + '/others/tasks.json',
+				url : contexPath + '/ajax/' + $(this).val() + '/' + citySelector.val() + '/others/tasks.json',
 
 				success : function(data) {
 					var dataCount = 0;
@@ -222,13 +159,21 @@ $(window).on('load', function() {
 		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 	});
 
+	$('#filter-for-report-list select#filter_other_tasks').change(function(event) {
+		if ($(this).val() && $(this).val().length > 0)
+			$('#filter-for-report-list #filter_promo_visibility').show();
+		else
+			$('#filter-for-report-list #filter_promo_visibility').hide();
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
+
 	$('#filter-for-report-list #generate_report').on('click', function(e) {
-		var citySelector = $('#filter-for-report-list select#filter_city').val();
 		var taskDate = $('#filter-for-report-list input[name=filter_task_create_date]').val();
+		var citySelector = $('#filter-for-report-list select#filter_city').val();
 		var ownTaskSelector = $('#filter-for-report-list select#filter_own_tasks').val();
 		var otherTasksSelector = $('#filter-for-report-list select#filter_other_tasks').val();
 
-		if (citySelector && taskDate && ownTaskSelector && otherTasksSelector) {
+		if (taskDate && citySelector && ownTaskSelector && otherTasksSelector) {
 			return true;
 		} else {
 			alert('Введены не все параметры');

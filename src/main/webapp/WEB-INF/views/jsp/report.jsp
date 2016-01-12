@@ -2,8 +2,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
 <%@ taglib uri="/WEB-INF/tld/customTaglib.tld" prefix="tag"%>
+<%@ taglib uri="/WEB-INF/tld/functions.tld" prefix="myf"%>
 
 <tiles:insertDefinition name="defaultTemplate">
 	<tiles:putAttribute name="title" value="Checker Report" />
@@ -19,87 +21,34 @@
 					<div class="modal-body">
 						<div class="row">
 							<div class="form-group col-md-3">
-								<label for="filter_promo" class="col-md-12 danger control-label">Промоакции:</label>
-								<div class="col-md-12">
-									<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15" data-actions-box="true">
-										<c:choose>
-											<c:when test="${empty promoList}">
-												<option selected value="">Промо отсутствуют</option>
-											</c:when>
-											<c:otherwise>
-												<c:forEach items="${promoList}" var="promo">
-													<option value="${promo.id}">${promo.caption}</option>
-												</c:forEach>
-											</c:otherwise>
-										</c:choose>
-									</select>
-								</div>
-							</div>
-
-							<div class="form-group col-md-3">
-								<label for="filter_city" class="col-md-12  control-label">Город:</label>
-								<div class="col-md-12">
-									<select name="filter_city_id" class="selectpicker form-control" id="filter_city" title="Выберите город" data-size="15">
-										<c:forEach items="${cityMap}" var="map">
-											<optgroup label="${map.key}">
-												<c:forEach items="${map.value}" var="city">
-													<option value="${city.id}">${city.caption}</option>
-												</c:forEach>
-											</optgroup>
-										</c:forEach>
-									</select>
-								</div>
-							</div>
-							<!-- 
-							<div class="form-group col-md-3">
-								<label for="filter_region" class="col-md-12 control-label">Регион:</label>
-								<div class="col-md-12">
-									<select name="filter_region_id" class="selectpicker form-control" id="filter_region" title="Выберите регион" data-size="15">
-										<c:choose>
-											<c:when test="${empty regionList}">
-												<option selected value="">Регионы отсутствуют</option>
-											</c:when>
-											<c:otherwise>
-												<c:forEach items="${regionList}" var="region">
-													<option value="${region.id}">${region.caption}</option>
-												</c:forEach>
-											</c:otherwise>
-										</c:choose>
-									</select>
+								<div id="filter_date_visibility">
+									<label for="date" class="col-md-12  control-label">Дата создания задачи:</label>
+									<div class="col-md-12">
+										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД"
+											value="${reportTaskDate}" type="text">
+									</div>
 								</div>
 							</div>
 							<div class="form-group col-md-3">
-								<div id="filter_city_visibility" style="display: none;">
-									<label for="filter_city" class="col-md-12  control-label" id="filter_city_label">Город:</label>
+								<div id="filter_city_visibility" style="${empty idCityReportSaved ? 'display: none;' : '' }">
+									<label for="filter_city" class="col-md-12  control-label">Город:</label>
 									<div class="col-md-12">
 										<select name="filter_city_id" class="selectpicker form-control" id="filter_city" title="Выберите город" data-size="15">
-											<c:choose>
-												<c:when test="${empty cityList}">
-													<option selected value="">Города отсутствуют</option>
-												</c:when>
-												<c:otherwise>
-													<c:forEach items="${cityList}" var="city">
-														<option value="${city.id}">${city.caption}</option>
+											<c:forEach items="${cityMap}" var="map">
+												<optgroup label="${map.key}">
+													<c:forEach items="${map.value}" var="city">
+														<option ${idCityReportSaved == city.id ? 'selected' : ''} value="${city.id}">${city.caption}</option>
 													</c:forEach>
-												</c:otherwise>
-											</c:choose>
+												</optgroup>
+											</c:forEach>
 										</select>
 									</div>
 								</div>
 							</div>
-							-->
 						</div>
 						<div class="row">
 							<div class="form-group col-md-3">
-								<div id="filter_date_visibility" style="display: none;">
-									<label for="date" class="col-md-12  control-label">Дата создания задачи:</label>
-									<div class="col-md-12">
-										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД" type="text">
-									</div>
-								</div>
-							</div>
-							<div class="form-group col-md-3">
-								<div id="filter_own_task_visibility" style="display: none;">
+								<div id="filter_own_task_visibility" style="${empty idOwnTaskReportSaved ? 'display: none;' : '' }">
 									<label for="filter_own_tasks" class="col-md-12  control-label">Задачи своей сети:</label>
 									<div class="col-md-12">
 										<select name="filter_own_task_id" class="selectpicker form-control" id="filter_own_tasks" title="Выберите задачу" data-size="15">
@@ -109,7 +58,7 @@
 												</c:when>
 												<c:otherwise>
 													<c:forEach items="${ownTaskList}" var="task">
-														<option value="${task.id}">${task.caption}</option>
+														<option ${idOwnTaskReportSaved == task.id ? 'selected' : ''} value="${task.id}">${task.caption}</option>
 													</c:forEach>
 												</c:otherwise>
 											</c:choose>
@@ -118,17 +67,18 @@
 								</div>
 							</div>
 							<div class="form-group col-md-3">
-								<div id="filter_other_task_visibility" style="display: none;">
+								<div id="filter_other_task_visibility" style="${empty idOtherTaskReportSaved ? 'display: none;' : '' }">
 									<label for="filter_other_tasks" class="col-md-12  control-label">Задачи конкурента:</label>
 									<div class="col-md-12">
-										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15" data-actions-box="true">
+										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15"
+											data-actions-box="true" data-selected-text-format="count > 3">
 											<c:choose>
 												<c:when test="${empty otherTaskList}">
 													<option selected value="">Задачи отсутствуют</option>
 												</c:when>
 												<c:otherwise>
 													<c:forEach items="${otherTaskList}" var="task">
-														<option value="${task.id}">${task.caption}</option>
+														<option ${myf:contains(idOtherTaskReportSaved, task.id) ? 'selected' : '' } value="${task.id}">${task.caption}</option>
 													</c:forEach>
 												</c:otherwise>
 											</c:choose>
@@ -136,23 +86,43 @@
 									</div>
 								</div>
 							</div>
-						</div>
-						<c:if test="${not empty error}">
-							<div class="form-group"></div>
-							<div class="row">
-								<div class="col-md-3"></div>
-								<div class="col-md-6 panel panel-danger text-center">
-									<div class="panel-heading">${error}</div>
+							<div class="form-group col-md-3">
+								<div id="filter_promo_visibility" style="${empty idPromoReportSaved ? 'display: none;' : '' }">
+									<label for="filter_promo" class="col-md-12 danger control-label">Промоакции:</label>
+									<div class="col-md-12">
+										<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15"
+											data-actions-box="true" data-selected-text-format="count > 3">
+											<c:choose>
+												<c:when test="${empty promoList}">
+													<option selected value="">Промо отсутствуют</option>
+												</c:when>
+												<c:otherwise>
+													<c:choose>
+														<c:when test="${empty idPromoReportSaved}">
+                                                            <c:forEach items="${promoList}" var="promo">
+                                                                <option selected value="${promo.id}">${promo.caption}</option>
+                                                            </c:forEach>
+														</c:when>
+														<c:otherwise>
+															<c:forEach items="${promoList}" var="promo">
+																<option ${myf:contains(idPromoReportSaved, promo.id) ? 'selected' : '' } value="${promo.id}">${promo.caption}</option>
+															</c:forEach>
+														</c:otherwise>
+													</c:choose>
+												</c:otherwise>
+											</c:choose>
+										</select>
+									</div>
 								</div>
-								<div class="col-md-3"></div>
 							</div>
-						</c:if>
+						</div>
 						<div class="form-group">
 							<!-- too keep empty space -->
 						</div>
 					</div>
 					<div class="modal-footer">
 						<div class="btn-group">
+							<a href="<spring:url value="/report/reset" htmlEscape="true" />" class="btn btn-default btn-sm">Сбросить</a>
 							<button type="submit" class="btn btn-primary btn-sm" id="generate_report">Применить</button>
 						</div>
 					</div>
