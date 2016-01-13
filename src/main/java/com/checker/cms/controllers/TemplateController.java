@@ -3,7 +3,9 @@ package com.checker.cms.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -24,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.checker.core.dao.service.ArticleService;
+import com.checker.core.dao.service.CityService;
 import com.checker.core.dao.service.TemplateService;
 import com.checker.core.entity.Article;
+import com.checker.core.entity.City;
 import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.TaskTemplateArticle;
 import com.checker.core.model.TupleHolder;
@@ -35,12 +39,17 @@ import com.checker.core.utilz.CoreSettings;
 import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.JsonTemplateTransformer;
 import com.checker.core.utilz.PagerUtilz;
+import com.checker.core.utilz.Transformer;
 
 @Slf4j
 @Controller
 @RequestMapping("template")
 public class TemplateController {
     
+    @Resource
+    private CityService             cityService;
+    @Resource
+    private Transformer             transformer;
     @Resource
     private CoreSettings            coreSettings;
     @Resource
@@ -62,28 +71,32 @@ public class TemplateController {
     
     private Integer                 recordsOnPage = 10;
     
-    @RequestMapping("list")
+    @RequestMapping()
     public ModelAndView templateList(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         String templateDate = (String) session.getAttribute("templateDate");
-        log.info("#TemplateList GET method(idCompany:" + idCompany + ",date:" + templateDate + ",page:" + page + ")#");
+        Integer idCity = (Integer) session.getAttribute("templateIdCity");
+        log.info("#TemplateList GET method(idCompany:" + idCompany + ",date:" + templateDate + ",idCity:" + idCity + ",page:" + page + ")#");
+        
         Long recordsCount = 0L;
         if (StringUtils.isNotEmpty(templateDate))
-            recordsCount = templateService.countTemplatesByIdCompanyAndDate(idCompany, LocalDate.parse(templateDate));
+            recordsCount = templateService.countTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, LocalDate.parse(templateDate));
         else
-            recordsCount = templateService.countTemplatesByIdCompany(idCompany);
+            recordsCount = templateService.countTemplatesByIdCompanyAndIdCity(idCompany, idCity);
         
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
         List<TaskTemplate> templateList = null;
         if (StringUtils.isNotEmpty(templateDate))
-            templateList = templateService.findTemplatesByIdCompanyAndDate(idCompany, LocalDate.parse(templateDate), page, recordsOnPage);
+            templateList = templateService.findTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, LocalDate.parse(templateDate), page, recordsOnPage);
         else
-            templateList = templateService.findTemplatesByIdCompany(idCompany, page, recordsOnPage);
+            templateList = templateService.findTemplatesByIdCompanyAndIdCity(idCompany, idCity, page, recordsOnPage);
+        
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         
         ModelAndView m = new ModelAndView("template");
         m.addObject("pageName", "template");
-        // m.addObject("templateDate", templateDate);
+        m.addObject("cityMap", cityMap);
         m.addObject("templateList", templateList);
         m.addObject("recordsCount", recordsCount);
         m.addObject("pageCount", pageCount);
@@ -91,24 +104,26 @@ public class TemplateController {
         return m;
     }
     
-    @RequestMapping(value = "list", method = RequestMethod.POST)
-    public String templateList(HttpSession session, @RequestParam(value = "filtered_template_date") String templateDate) {
-        log.info("#TemplateList POST method(idCompany:" + idCompany + ",date:" + templateDate + ")#");
+    @RequestMapping(method = RequestMethod.POST)
+    public String templateList(HttpSession session, @RequestParam(value = "filtered_template_date") String templateDate, @RequestParam(value = "filtered_template_city") Integer idCity) {
+        log.info("#TemplateList POST method(idCompany:" + idCompany + ",date:" + templateDate + ",idCity:" + idCity + ")#");
         session.setAttribute("templateDate", templateDate);
-        return "redirect:/template/list";
+        session.setAttribute("templateIdCity", idCity);
+        return "redirect:/template";
     }
     
     @RequestMapping(value = "reset")
     public String templateReset(HttpSession session) {
         log.info("#TemplateReset method(idCompany:" + idCompany + ")#");
         session.removeAttribute("templateDate");
-        return "redirect:/template/list";
+        session.removeAttribute("templateIdCity");
+        return "redirect:/template";
     }
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public String templateUpdate(HttpSession session, @RequestParam("id") Long idTemplate, @RequestParam("name") String caption, @RequestParam("date-template-filtered") String templateDate,
-            @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
-        log.info("#TemplateUpdate method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",caption:" + caption + ",date:" + templateDate + ",page:" + page + ")#");
+    public String templateUpdate(/* HttpSession session, */@RequestParam("id") Long idTemplate, @RequestParam(value = "template-save-city", required = false) Integer idCity, @RequestParam("name") String caption,
+            @RequestParam("date-template-filtered") String templateDate, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+        log.info("#TemplateUpdate method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idCity:" + idCity + ",caption:" + caption + ",date:" + templateDate + ",page:" + page + ")#");
         if (StringUtils.isNotEmpty(caption)) {
             if (idTemplate != null && idTemplate > 0) {
                 templateService.updateTemplate(idCompany, idTemplate, caption);
@@ -118,13 +133,14 @@ public class TemplateController {
                 template.setCaption(caption);
                 template.setDateAdded(DateTime.now());
                 template.setCurrentDate(LocalDate.now());
+                template.setIdCity(idCity);
                 // template.setPriceExist(Boolean.FALSE);
                 template.setActive(Boolean.TRUE);
                 templateService.saveTemplate(template);
             }
         }
-        session.setAttribute("templateDate", templateDate);
-        return "redirect:/template/list?page=" + page;
+        // session.setAttribute("templateDate", templateDate);
+        return "redirect:/template?page=" + page;
     }
     
     @RequestMapping("{id}/delete")
@@ -132,7 +148,7 @@ public class TemplateController {
         log.info("#TemplateDelete method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",page:" + page + ")#");
         if (idTemplate != null && idTemplate > 0)
             templateService.deleteTemplate(idCompany, idTemplate);
-        return "redirect:/template/list?page=" + page;
+        return "redirect:/template?page=" + page;
     }
     
     @RequestMapping(value = "file/upload", method = RequestMethod.GET)
@@ -142,8 +158,8 @@ public class TemplateController {
     }
     
     @RequestMapping(value = "file/upload", headers = "content-type=multipart/*", method = RequestMethod.POST)
-    public ModelAndView templateFileAddDone(@RequestParam("templates[]") List<MultipartFile> mFileList) throws IllegalStateException, IOException {
-        log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ",file:" + mFileList.size() + ")#");
+    public ModelAndView templateFileAddDone(@RequestParam("template-upload-city") Integer idCity, @RequestParam("templates[]") List<MultipartFile> mFileList) throws IllegalStateException, IOException {
+        log.info("#TemplateFileAddDone method(idCompany:" + idCompany + ",idCity:" + idCity + ",file:" + mFileList.size() + ")#");
         List<ParsingResult> results = new ArrayList<>();
         DateTime dt = new DateTime();
         File dir = fileUtilz.createDirectory(coreSettings.getPathForTemplate() + LocalDate.now().toString());
@@ -153,7 +169,7 @@ public class TemplateController {
             String caption = mFile.getOriginalFilename().substring(0, mFile.getOriginalFilename().lastIndexOf('.') - 1);
             if (caption.length() > 128)
                 caption = caption.substring(0, 127);
-            ParsingResult result = templateParser.process(idCompany, file, caption);
+            ParsingResult result = templateParser.process(idCompany, idCity, file, caption);
             result.setFileName(mFile.getOriginalFilename());
             results.add(result);
         }
@@ -167,8 +183,11 @@ public class TemplateController {
     @RequestMapping("file/add/form")
     public ModelAndView templateFileAddForm() {
         log.info("#TemplateFileAddForm method(idCompany:" + idCompany + ")#");
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
+        
         ModelAndView m = new ModelAndView("templateadd");
         m.addObject("pageName", "template");
+        m.addObject("cityMap", cityMap);
         return m;
     }
     

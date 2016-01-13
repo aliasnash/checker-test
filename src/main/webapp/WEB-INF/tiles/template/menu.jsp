@@ -32,7 +32,7 @@
 							</a>
 						</li>
 						<li class="${pageName eq 'template' ? 'active' : ''}">
-							<spring:url value="/template/list" var="templatesUrl" htmlEscape="true" />
+							<spring:url value="/template" var="templatesUrl" htmlEscape="true" />
 							<a href="${pageName eq 'template' ? '#' : templatesUrl}">
 								<span class="glyphicon glyphicon-duplicate"></span>
 								Шаблоны

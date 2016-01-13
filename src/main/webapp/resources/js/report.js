@@ -25,7 +25,7 @@ $(window).on('load', function() {
 				contentType : "application/json",
 				dataType : 'json',
 				type : "GET",
-				url : contexPath + '/ajax/' + $(this).val() + '/citiesbydate.json',
+				url : contexPath + '/ajax/task/' + $(this).val() + '/citiesbydate.json',
 
 				success : function(data) {
 					var dataCount = 0;
@@ -49,7 +49,7 @@ $(window).on('load', function() {
 					}
 				},
 				error : function(request, status, error) {
-					citySelector.html('<option selected value="">Ошибка загрузки списка магазинов</option>');
+					citySelector.html('<option selected value="">Ошибка загрузки списка</option>');
 					citySelector.selectpicker('refresh');
 				},
 				done : function(e) {

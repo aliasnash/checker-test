@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
@@ -18,13 +20,12 @@ import com.checker.core.dao.service.CityService;
 import com.checker.core.dao.service.MainService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskService;
+import com.checker.core.dao.service.TemplateService;
 import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.MarketPoint;
 import com.checker.core.entity.Task;
 import com.checker.core.utilz.Transformer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -38,16 +39,17 @@ public class AjaxFunctions {
     private MarketPointService marketPointService;
     @Resource
     private CityService        cityService;
-                               
+    @Resource
+    private TemplateService    templateService;
     @Resource
     private TaskService        taskService;
     @Resource
     private MainService        checkerService;
     @Resource
     private UserService        userService;
-                               
+    
     private Integer            idCompany = 1;
-                                         
+    
     // http://localhost:9090/checker-cms/ajax/2/marketpoints
     
     @RequestMapping(value = "{id}/marketpoints.json")
@@ -59,24 +61,39 @@ public class AjaxFunctions {
             marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCity));
         else
             marketPointMap = Collections.emptyMap();
-            
+        
         return marketPointMap;
     }
     
-    @RequestMapping(value = "{date}/citiesbydate.json")
-    public Map<String, Collection<City>> selectCityByDate(@PathVariable("date") String taskCreateDate) {
-        log.info("#Ajax selectCityByDate method(idCompany:" + idCompany + ",taskCreateDate:" + taskCreateDate + ")#");
+    @RequestMapping(value = "task/{date}/citiesbydate.json")
+    public Map<String, Collection<City>> selectCityTaskByDate(@PathVariable("date") String taskCreateDate) {
+        log.info("#Ajax selectCityTaskByDate method(idCompany:" + idCompany + ",taskCreateDate:" + taskCreateDate + ")#");
         
         LocalDate taskDate = StringUtils.isNotEmpty(taskCreateDate) ? LocalDate.parse(taskCreateDate) : null;
         
         Map<String, Collection<City>> cityMap;
-        if (taskDate != null){
+        if (taskDate != null) {
             List<Integer> idsCity = taskService.findIdCitiesTaskByIdCompanyAndDateCreate(idCompany, taskDate);
             cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
-        }
-        else
+        } else
             cityMap = Collections.emptyMap();
-            
+        
+        return cityMap;
+    }
+    
+    @RequestMapping(value = "template/{date}/citiesbydate.json")
+    public Map<String, Collection<City>> selectCityTemplateByDate(@PathVariable("date") String taskCreateTemplate) {
+        log.info("#Ajax selectCityTemplateByDate method(idCompany:" + idCompany + ",taskCreateTemplate:" + taskCreateTemplate + ")#");
+        
+        LocalDate templateDate = StringUtils.isNotEmpty(taskCreateTemplate) ? LocalDate.parse(taskCreateTemplate) : null;
+        
+        Map<String, Collection<City>> cityMap;
+        if (templateDate != null) {
+            List<Integer> idsCity = templateService.findIdCitiesTemplateByIdCompanyAndDateCreate(idCompany, templateDate);
+            cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
+        } else
+            cityMap = Collections.emptyMap();
+        
         return cityMap;
     }
     

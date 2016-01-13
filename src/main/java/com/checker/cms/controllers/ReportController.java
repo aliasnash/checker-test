@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -43,8 +45,6 @@ import com.checker.core.utilz.FileUtilz;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @RequestMapping("report")
@@ -72,16 +72,16 @@ public class ReportController {
     private CoreSettings       coreSettings;
     @Resource
     private FileUtilz          fileUtilz;
-                               
+    
     @Resource
     private PagerUtilz         pagerUtilz;
-                               
+    
     private Integer            idCompany     = 1;
-                                             
+    
     private Integer            recordsOnPage = 10;
-                                             
+    
     private DateTimeFormatter  fmt           = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-                                             
+    
     @SuppressWarnings("unchecked")
     @RequestMapping
     public ModelAndView report(HttpSession session, @RequestParam(value = "id", required = false) Long idReport, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
@@ -93,7 +93,7 @@ public class ReportController {
         
         log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",reportTaskDate:" + reportTaskDate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromoList:" + idPromoList + ",page:"
                 + page + ")#");
-                
+        
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(reportTaskDate) ? LocalDate.parse(reportTaskDate) : null;
         
         Map<String, Collection<City>> cityMap;
@@ -109,13 +109,13 @@ public class ReportController {
             ownTaskList = taskService.findOwnTaskByIdCompanyAndIdCityAndDateCreate(idCompany, idCity, dateTaskCreate);
         else
             ownTaskList = Collections.emptyList();
-            
+        
         List<Task> otherTaskList;
         if (idCity != null && idOwnTask != null)
             otherTaskList = taskService.findOtherTaskByIdCompanyAndIdTemplateAndIdCity(idCompany, idOwnTask, idCity);
         else
             otherTaskList = Collections.emptyList();
-            
+        
         Long recordsCount = reportService.countReportHistoryByIdCompanyAndDateAndIdCityAndIdTasks(idCompany, dateTaskCreate, idCity, idOwnTask, idsOtherTasks);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
@@ -165,7 +165,11 @@ public class ReportController {
             Map<Long, String> headers = tuple.getValue1();
             Map<ReportArticleData, Map<Long, TaskArticle>> map = tuple.getValue2();
             
-            reportBuilder.process(file, headers, map, idOwnTask, idsOtherTasks);
+            if (idPromoList == null)
+                idPromoList = Collections.emptyList();
+            boolean isWithoutPromo = idPromoList.contains(-1);
+            
+            reportBuilder.process(file, headers, map, idOwnTask, idsOtherTasks, isWithoutPromo, idPromoList);
             
             long fileSize = FileUtils.sizeOf(file);
             
@@ -180,6 +184,8 @@ public class ReportController {
             reportHistory.setTaskDate(LocalDate.parse(taskDateCreate));
             reportHistory.setIdCity(idCity);
             reportHistory.setIdsTaskOther(String.valueOf(idsOtherTasks));
+            if (idPromoList != null)
+                reportHistory.setIdsPromo(String.valueOf(idPromoList));
             mainService.save(reportHistory);
             
             return "redirect:/report?id=" + reportHistory.getId();

@@ -3,9 +3,15 @@
 	<tlib-version>1.0</tlib-version>
 	<short-name>functions</short-name>
 	<uri>/WEB-INF/tld/functions.tld</uri>
-	<function>
-		<name>contains</name>
-		<function-class>com.checker.cms.tools.FunctionsTaglib</function-class>
-		<function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
-	</function>
+    <function>
+        <name>containsInt</name>
+        <function-class>com.checker.cms.tools.FunctionsTaglib</function-class>
+        <function-signature>boolean containsInt(java.util.Collection, java.lang.Integer)</function-signature>
+    </function>
+    
+    <function>
+        <name>containsLong</name>
+        <function-class>com.checker.cms.tools.FunctionsTaglib</function-class>
+        <function-signature>boolean containsLong(java.util.Collection, java.lang.Long)</function-signature>
+    </function>    
 </taglib>

@@ -24,8 +24,7 @@
 								<div id="filter_date_visibility">
 									<label for="date" class="col-md-12  control-label">Дата создания задачи:</label>
 									<div class="col-md-12">
-										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД"
-											value="${reportTaskDate}" type="text">
+										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД" value="${reportTaskDate}" type="text">
 									</div>
 								</div>
 							</div>
@@ -70,15 +69,15 @@
 								<div id="filter_other_task_visibility" style="${empty idOtherTaskReportSaved ? 'display: none;' : '' }">
 									<label for="filter_other_tasks" class="col-md-12  control-label">Задачи конкурента:</label>
 									<div class="col-md-12">
-										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15"
-											data-actions-box="true" data-selected-text-format="count > 3">
+										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15" data-actions-box="true"
+											data-selected-text-format="count > 3">
 											<c:choose>
 												<c:when test="${empty otherTaskList}">
 													<option selected value="">Задачи отсутствуют</option>
 												</c:when>
 												<c:otherwise>
 													<c:forEach items="${otherTaskList}" var="task">
-														<option ${myf:contains(idOtherTaskReportSaved, task.id) ? 'selected' : '' } value="${task.id}">${task.caption}</option>
+														<option ${myf:containsLong(idOtherTaskReportSaved, task.id) ? 'selected' : '' } value="${task.id}">${task.caption}</option>
 													</c:forEach>
 												</c:otherwise>
 											</c:choose>
@@ -90,25 +89,22 @@
 								<div id="filter_promo_visibility" style="${empty idPromoReportSaved ? 'display: none;' : '' }">
 									<label for="filter_promo" class="col-md-12 danger control-label">Промоакции:</label>
 									<div class="col-md-12">
-										<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15"
-											data-actions-box="true" data-selected-text-format="count > 3">
+										<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15" data-actions-box="true"
+											data-selected-text-format="count > 3">
 											<c:choose>
-												<c:when test="${empty promoList}">
-													<option selected value="">Промо отсутствуют</option>
+												<c:when test="${empty idPromoReportSaved}">
+													<option selected value="-1">Без промо</option>
+													<option data-divider="true"></option>
+													<c:forEach items="${promoList}" var="promo">
+														<option selected value="${promo.id}">${promo.caption}</option>
+													</c:forEach>
 												</c:when>
 												<c:otherwise>
-													<c:choose>
-														<c:when test="${empty idPromoReportSaved}">
-                                                            <c:forEach items="${promoList}" var="promo">
-                                                                <option selected value="${promo.id}">${promo.caption}</option>
-                                                            </c:forEach>
-														</c:when>
-														<c:otherwise>
-															<c:forEach items="${promoList}" var="promo">
-																<option ${myf:contains(idPromoReportSaved, promo.id) ? 'selected' : '' } value="${promo.id}">${promo.caption}</option>
-															</c:forEach>
-														</c:otherwise>
-													</c:choose>
+													<option ${myf:containsInt(idPromoReportSaved, -1) ? 'selected' : '' } value="-1">Без промо</option>
+													<option data-divider="true"></option>
+													<c:forEach items="${promoList}" var="promo">
+														<option ${myf:containsInt(idPromoReportSaved, promo.id) ? 'selected' : '' } value="${promo.id}">${promo.caption}</option>
+													</c:forEach>
 												</c:otherwise>
 											</c:choose>
 										</select>
@@ -140,7 +136,7 @@
 					<thead>
 						<tr>
 							<th style="vertical-align: middle">#</th>
-							<!-- <th style="vertical-align: middle">Дата</th> -->
+							<th style="vertical-align: middle">Дата создания</th>
 							<th style="vertical-align: middle">Название</th>
 							<th style="vertical-align: middle">Файл</th>
 							<th style="vertical-align: middle">Размер</th>
@@ -151,7 +147,7 @@
 						<c:forEach items="${reportList}" var="report">
 							<tr class="${not empty idReport and idReport eq report.id ? 'success' : ''}">
 								<td>${report.id}</td>
-								<!--<td><joda:format value="${report.dateAdded}" style="SM" /></td>-->
+								<td><joda:format value="${report.dateAdded}" style="SM" /></td>
 								<td>${report.caption}</td>
 								<td><a href="${rootUrl}${report.filePath}">${report.filePath}</a></td>
 								<td>${report.fileSize}</td>

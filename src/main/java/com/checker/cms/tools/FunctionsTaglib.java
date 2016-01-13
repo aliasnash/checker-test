@@ -9,7 +9,11 @@ import lombok.Setter;
 @Setter
 public class FunctionsTaglib {
     
-    public static boolean contains(Collection<?> coll, Object o) {
+    public static boolean containsInt(Collection<Integer> coll, Integer o) {
+        return coll != null && coll.contains(o);
+    }
+    
+    public static boolean containsLong(Collection<Long> coll, Long o) {
         return coll != null && coll.contains(o);
     }
 }

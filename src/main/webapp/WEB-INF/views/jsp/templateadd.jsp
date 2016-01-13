@@ -21,9 +21,25 @@
 
 			<form class="form-horizontal" role="form" action="<spring:url value="/template/file/upload" htmlEscape="true" />" method="post" enctype="multipart/form-data">
 				<div class="panel-body">
+
+					<div class="form-group">
+						<label for="template-upload-city" class="col-md-2 control-label">Город:</label>
+						<div class="col-md-4">
+							<select name="template-upload-city" class="selectpicker form-control" id="template-upload-city" title="Выберите город" data-size="15">
+								<c:forEach items="${cityMap}" var="map">
+									<optgroup label="${map.key}">
+										<c:forEach items="${map.value}" var="city">
+											<option value="${city.id}">${city.caption}</option>
+										</c:forEach>
+									</optgroup>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+
 					<div class="form-group">
 						<label for="template-upload" class="col-md-2 control-label">Файл:</label>
-						<div class="col-md-6">
+						<div class="col-md-4">
 							<input name="templates[]" class="file-loading" id="template-upload" placeholder="Файл шаблона..." multiple type="file">
 							<div id="errorBlock" class="help-block"></div>
 						</div>

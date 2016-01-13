@@ -137,6 +137,15 @@ $(window).on('load', function() {
 		var elementName = $(e.relatedTarget).data('element-name');
 		var elementDate = $(e.relatedTarget).data('element-date');
 		var elementFile = $(e.relatedTarget).data('element-file');
+		var elementIdCity = $(e.relatedTarget).data('element-idcity');
+
+		var cityBlock = $('#template-save-city-block');
+
+		if (elementIdCity) {
+			cityBlock.hide();
+		} else {
+			cityBlock.show();
+		}
 
 		// populate the textbox
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
@@ -352,4 +361,48 @@ $(window).on('load', function() {
 			});
 		}
 	}
+
+	$('#filter-template-build input[name=filtered_template_date]').change(function(event) {
+		var citySelector = $('#filter-template-build select#filtered_template_city');
+
+		if ($(this) && $(this).val()) {
+			$.ajax({
+				contentType : "application/json",
+				dataType : 'json',
+				type : "GET",
+				url : contexPath + '/ajax/template/' + $(this).val() + '/citiesbydate.json',
+
+				success : function(data) {
+					var dataCount = 0;
+					var html = '';
+					for ( var i in data) {
+						dataCount++;
+						html = html + '<optgroup label="' + i + '">';
+
+						for ( var k in data[i]) {
+							var city = data[i][k];
+							html = html + '<option value="' + city.id + '">' + city.caption + '</option>';
+						}
+					}
+
+					if (dataCount > 0) {
+						citySelector.html(html);
+						citySelector.selectpicker('refresh');
+					} else {
+						citySelector.html('<option selected value="">Данные отсутствуют</option>');
+						citySelector.selectpicker('refresh');
+					}
+				},
+				error : function(request, status, error) {
+					citySelector.html('<option selected value="">Ошибка загрузки списка</option>');
+					citySelector.selectpicker('refresh');
+				},
+				done : function(e) {
+					console.log("DONE");
+				}
+			});
+		}
+
+		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
+	});
 });
