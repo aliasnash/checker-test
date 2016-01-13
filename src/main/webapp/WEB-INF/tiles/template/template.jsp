@@ -24,6 +24,9 @@
 
 <script src="<spring:url htmlEscape="true" value="/resources/js/variables.js" />"></script>
 <script src="<spring:url htmlEscape="true" value="/resources/js/components.js" />"></script>
+<script>
+	contexPath = "${pageContext.servletContext.contextPath}";
+</script>
 </head>
 
 <body style="">
@@ -52,5 +55,6 @@
 	<script src="<spring:url htmlEscape="true" value="/resources/js/tasktree.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/templatetree.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/report.js" />"></script>
+	<script src="<spring:url htmlEscape="true" value="/resources/js/taskgenerate.js" />"></script>
 </body>
 </html>

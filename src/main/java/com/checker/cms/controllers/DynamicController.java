@@ -9,8 +9,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
@@ -30,6 +28,8 @@ import com.checker.core.model.DynamicTaskInfoStacked;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 @RequestMapping("dynamic")
@@ -37,7 +37,7 @@ public class DynamicController {
     
     @Resource
     private DynamicService     dynamicService;
-    
+                               
     @Resource
     private Transformer        transformer;
     @Resource
@@ -46,16 +46,16 @@ public class DynamicController {
     private CityService        cityService;
     @Resource
     private UserService        userService;
-    
+                               
     @Resource
     private PagerUtilz         pagerUtilz;
-    
+                               
     private Integer            idCompany     = 1;
-    
+                                             
     private Integer            recordsOnPage = 9;
-    
+                                             
     @RequestMapping
-    public ModelAndView dynamic(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+    public ModelAndView dynamic(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) throws NoSuchMethodException, SecurityException {
         Integer idUserDynSaved = (Integer) session.getAttribute("idUserDynSaved");
         Integer idCityDynSaved = (Integer) session.getAttribute("idCityDynSaved");
         Long idMarketPointDynSaved = (Long) session.getAttribute("idMarketPointDynSaved");
@@ -69,7 +69,7 @@ public class DynamicController {
             marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityDynSaved));
         else
             marketPointMap = Collections.emptyMap();
-        
+            
         if (StringUtils.isEmpty(dynTaskCreateDate)) {
             dynTaskCreateDate = LocalDate.now().toString("yyyy-MM-dd");
             session.setAttribute("dynTaskCreateDate", dynTaskCreateDate);

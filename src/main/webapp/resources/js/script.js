@@ -101,6 +101,15 @@ $(window).on('load', function() {
 		var elementName = $(e.relatedTarget).data('element-name');
 		var elementEmail = $(e.relatedTarget).data('element-email');
 		var elementPwd = $(e.relatedTarget).data('element-pwd');
+		var elementIdCity = $(e.relatedTarget).data('element-idcity');
+
+		var cityBlock = $('#user-save-city-block');
+
+		if (elementIdCity) {
+			cityBlock.hide();
+		} else {
+			cityBlock.show();
+		}
 
 		// populate the textbox
 		$(e.currentTarget).find('input[name="id"]').val(elementId);
@@ -232,8 +241,30 @@ $(window).on('load', function() {
 
 	$('#template-save').on('click', function(e) {
 		var dateTemplateValue = $('input[name="filtered_template_date"]').val();
-
 		$('input[name="date-template-filtered"]').val(dateTemplateValue);
+
+		var elementIdCity = $(e.relatedTarget).data('element-idcity');
+		if (!elementIdCity) {
+			var idCity = $('select[name="template-save-city"]').val();
+
+			if (idCity) {
+				$('input[name="idcity-template-filtered"]').val(idCity);
+			}
+		}
+
+		return true;
+	});
+
+	$('#user-save').on('click', function(e) {
+		var elementIdCity = $(e.relatedTarget).data('element-idcity');
+		if (!elementIdCity) {
+			var idCity = $('select[name="user-save-city"]').val();
+
+			if (idCity) {
+				$('input[name="idcity-user-filtered"]').val(idCity);
+			}
+		}
+
 		return true;
 	});
 
@@ -252,30 +283,6 @@ $(window).on('load', function() {
 			$('#articul-listing tr.articul:not(.top-product)').hide();
 		} else {
 			$('#articul-listing tr.articul:not(.top-product)').show();
-		}
-	});
-
-	// $('#only-price').change(function(e) {
-	// if ($(this).prop('checked')) {
-	// $('#template-listing tr.template-data:not(.with-price)').hide();
-	// } else {
-	// $('#template-listing tr.template-data:not(.with-price)').show();
-	// }
-	// });
-
-	// $('#template-usefilename').change(function(e) {
-	// if ($(this).prop('checked')) {
-	// $('#template-name').prop('disabled', true);
-	// } else {
-	// $('#template-name').prop('disabled', false);
-	// }
-	// });
-
-	$('#select-user-name').change(function(e) {
-		if ($(this).prop('checked')) {
-			$('#block-user-name').show();
-		} else {
-			$('#block-user-name').hide();
 		}
 	});
 

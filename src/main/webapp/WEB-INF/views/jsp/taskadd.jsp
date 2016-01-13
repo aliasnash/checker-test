@@ -11,8 +11,7 @@
 				<div class="row">
 					<div class="col-md-6">Создать задачу</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />">
-							<span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />"> <span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>
 					</div>
@@ -20,7 +19,7 @@
 			</div>
 
 			<form class="form-horizontal" role="form" action="<spring:url value="/tasks/upload" htmlEscape="true" />" method="post">
-				<div class="panel-body">
+				<div class="panel-body" id="data-for-generate-task">
 					<div class="form-group">
 						<label for="id_task_name" class="col-md-4 control-label">Название задачи:</label>
 						<div class="col-md-7">
@@ -29,25 +28,13 @@
 					</div>
 
 					<div class="form-group">
-						<label for="select-template-name" class="col-md-4 control-label">Выбрать шаблон:</label>
-						<div class="col-md-7">
-							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true" data-size="15">
-								<c:forEach items="${templateList}" var="template">
-									<option value="${template.id}">${template.caption}</option>
-								</c:forEach>
-							</select>
-						</div>
-					</div>
-
-					<div class="form-group">
-						<label for="market-point" class="col-md-4 control-label">Выбрать сеть:</label>
-						<div class="col-md-7">
-							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true" data-size="15"
-								data-actions-box="true">
-								<c:forEach items="${marketPointMap}" var="map">
+						<label for="select-city-name" class="col-md-4 control-label">Город:</label>
+						<div class="col-md-6">
+							<select name="select-city-name" class="selectpicker form-control" id="select-city-name" title="Выберите город" data-size="15">
+								<c:forEach items="${cityMap}" var="map">
 									<optgroup label="${map.key}">
-										<c:forEach items="${map.value}" var="marketpoint">
-											<option data-subtext="${marketpoint.market.owner?'своя сеть':''}" value="${marketpoint.id}">${marketpoint.market.caption}&nbsp;(${marketpoint.description})</option>
+										<c:forEach items="${map.value}" var="city">
+											<option value="${city.id}">${city.caption}</option>
 										</c:forEach>
 									</optgroup>
 								</c:forEach>
@@ -55,9 +42,28 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="form-group" id="select-template-name-block" style="display: none;">
+						<label for="select-template-name" class="col-md-4 control-label">Выбрать шаблон:</label>
+						<div class="col-md-6">
+							<select name="template_id" class="selectpicker form-control" id="select-template-name" title="Выберите шаблон" data-show-subtext="true" data-size="15">
+								<option selected value="">Данные отсутствуют</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group" id="select-market-template-block" style="display: none;">
+						<label for="market-point" class="col-md-4 control-label">Выбрать сеть:</label>
+						<div class="col-md-6">
+							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true"
+								data-size="15" data-actions-box="true">
+								<option selected value="">Данные отсутствуют</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="form-group" id="block-user-name-checker" style="display: none;">
 						<label for="select-user-name" class="col-md-4 control-label">Назначить на пользователя:</label>
-						<div class="col-md-7 text-left">
+						<div class="col-md-6 text-left">
 							<input name="useuser" class="form-control" id="select-user-name" placeholder="..." type="checkbox">
 						</div>
 					</div>

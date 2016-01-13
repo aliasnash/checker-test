@@ -10,8 +10,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -41,6 +39,8 @@ import com.checker.core.utilz.JsonTemplateTransformer;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 @RequestMapping("template")
@@ -64,39 +64,44 @@ public class TemplateController {
     private JsonTemplateTransformer jsonTemplateTransformer;
     @Resource
     private PagerUtilz              pagerUtilz;
-    
+                                    
     private DateTimeFormatter       fmt           = DateTimeFormat.forPattern("yyyyMMddHHmmss");
-    
+                                                  
     private Integer                 idCompany     = 1;
-    
+                                                  
     private Integer                 recordsOnPage = 10;
-    
+                                                  
     @RequestMapping()
     public ModelAndView templateList(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         String templateDate = (String) session.getAttribute("templateDate");
         Integer idCity = (Integer) session.getAttribute("templateIdCity");
         log.info("#TemplateList GET method(idCompany:" + idCompany + ",date:" + templateDate + ",idCity:" + idCity + ",page:" + page + ")#");
         
+        LocalDate localDate = StringUtils.isNotEmpty(templateDate) ? LocalDate.parse(templateDate) : null;
+        
         Long recordsCount = 0L;
-        if (StringUtils.isNotEmpty(templateDate))
-            recordsCount = templateService.countTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, LocalDate.parse(templateDate));
+        if (localDate != null)
+            recordsCount = templateService.countTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, localDate);
         else
             recordsCount = templateService.countTemplatesByIdCompanyAndIdCity(idCompany, idCity);
-        
+            
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
         List<TaskTemplate> templateList = null;
-        if (StringUtils.isNotEmpty(templateDate))
-            templateList = templateService.findTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, LocalDate.parse(templateDate), page, recordsOnPage);
+        if (localDate != null)
+            templateList = templateService.findTemplatesByIdCompanyAndIdCityAndDate(idCompany, idCity, localDate, page, recordsOnPage);
         else
             templateList = templateService.findTemplatesByIdCompanyAndIdCity(idCompany, idCity, page, recordsOnPage);
-        
-        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
+            
+        List<Integer> idsCity = templateService.findIdCitiesTemplateByIdCompanyAndDateCreate(idCompany, localDate);
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
+        Map<String, Collection<City>> cityMapForFilter = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         
         ModelAndView m = new ModelAndView("template");
         m.addObject("pageName", "template");
         m.addObject("cityMap", cityMap);
+        m.addObject("cityMapForFilter", cityMapForFilter);
         m.addObject("templateList", templateList);
         m.addObject("recordsCount", recordsCount);
         m.addObject("pageCount", pageCount);
@@ -121,12 +126,13 @@ public class TemplateController {
     }
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public String templateUpdate(/* HttpSession session, */@RequestParam("id") Long idTemplate, @RequestParam(value = "template-save-city", required = false) Integer idCity, @RequestParam("name") String caption,
-            @RequestParam("date-template-filtered") String templateDate, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+    public String templateUpdate(@RequestParam("id") Long idTemplate,
+            /* @RequestParam(value = "template-save-city", required = false) Integer idCity, */ @RequestParam("name") String caption, @RequestParam("date-template-filtered") String templateDate,
+            @RequestParam("idcity-template-filtered") Integer idCity, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         log.info("#TemplateUpdate method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idCity:" + idCity + ",caption:" + caption + ",date:" + templateDate + ",page:" + page + ")#");
         if (StringUtils.isNotEmpty(caption)) {
             if (idTemplate != null && idTemplate > 0) {
-                templateService.updateTemplate(idCompany, idTemplate, caption);
+                templateService.updateTemplate(idCompany, idTemplate, caption, idCity);
             } else {
                 TaskTemplate template = new TaskTemplate();
                 template.setIdCompany(idCompany);
@@ -139,7 +145,6 @@ public class TemplateController {
                 templateService.saveTemplate(template);
             }
         }
-        // session.setAttribute("templateDate", templateDate);
         return "redirect:/template?page=" + page;
     }
     

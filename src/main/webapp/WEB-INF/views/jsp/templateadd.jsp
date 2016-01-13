@@ -11,7 +11,7 @@
 				<div class="row">
 					<div class="col-md-6">Добавление файла шаблона</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true" />">
+						<a class="btn btn-default btn-sm" href="<spring:url value="/template" htmlEscape="true" />">
 							<span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>

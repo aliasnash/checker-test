@@ -8,9 +8,6 @@
 <tiles:insertDefinition name="defaultTemplate">
 	<tiles:putAttribute name="title" value="Checker Task Complete" />
 	<tiles:putAttribute name="body">
-		<script>
-			contexPath = "${pageContext.servletContext.contextPath}";
-		</script>
 		<div class="panel panel-default">
 			<div class="panel-heading clearfix">
 				Фильтр

@@ -18,9 +18,8 @@ $(window).on('load', function() {
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
 
-		$('#filter-for-report-list #filter_city_visibility').show();
-
 		if ($(this) && $(this).val()) {
+			$('#filter-for-report-list #filter_city_visibility').show();
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',
@@ -74,9 +73,8 @@ $(window).on('load', function() {
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
 
-		$('#filter-for-report-list #filter_own_task_visibility').show();
-
 		if ($(this)) {
+			$('#filter-for-report-list #filter_own_task_visibility').show();
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',
@@ -120,9 +118,8 @@ $(window).on('load', function() {
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
 
-		$('#filter-for-report-list #filter_other_task_visibility').show();
-
 		if ($(this)) {
+			$('#filter-for-report-list #filter_other_task_visibility').show();
 			$.ajax({
 				contentType : "application/json",
 				dataType : 'json',

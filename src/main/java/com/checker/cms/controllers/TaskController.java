@@ -9,8 +9,6 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -19,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.checker.core.dao.service.CityService;
 import com.checker.core.dao.service.MainService;
@@ -39,6 +38,8 @@ import com.checker.core.utilz.JsonTaskTransformer;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 @RequestMapping("tasks")
@@ -50,7 +51,7 @@ public class TaskController {
     private MarketPointService  marketPointService;
     @Resource
     private CityService         cityService;
-    
+                                
     @Resource
     private TaskService         taskService;
     @Resource
@@ -63,11 +64,11 @@ public class TaskController {
     private JsonTaskTransformer jsonTaskTransformer;
     @Resource
     private PagerUtilz          pagerUtilz;
-    
+                                
     private Integer             idCompany     = 1;
-    
+                                              
     private Integer             recordsOnPage = 15;
-    
+                                              
     @RequestMapping("list")
     public ModelAndView tasksList(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         Integer idUserTaskSaved = (Integer) session.getAttribute("idUserTaskSaved");
@@ -86,7 +87,7 @@ public class TaskController {
             marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityTaskSaved));
         else
             marketPointMap = Collections.emptyMap();
-        
+            
         Long recordsCount = taskService.countOtherTaskByIdCompanyAndFilterParams(idCompany, idUserTaskSaved, idCityTaskSaved, idMarketPointTaskSaved, idTaskStatusSaved, idTaskTemplateSaved);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
@@ -165,30 +166,37 @@ public class TaskController {
         return m;
     }
     
+    /*
+     * #####################################################
+     * #####################################################
+     * #####################################################
+     * #####################################################
+     * #####################################################
+     * #####################################################
+     * #####################################################
+     */
+    
     @RequestMapping("add/form")
     public ModelAndView taskAddForm() {
         log.info("#TaskAddForm method(idCompany:" + idCompany + ")#");
+        
+        // Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
+        
+        List<Integer> idsCity = templateService.findIdCitiesTemplateByIdCompanyAndDateCreate(idCompany, null);
+        Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);
-        List<TaskTemplate> templateList = templateService.findTemplatesByIdCompany(idCompany, null, null);
-        Map<String, Collection<MarketPoint>> marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompany(idCompany));
+        
         ModelAndView m = new ModelAndView("taskadd");
         m.addObject("pageName", "task");
+        m.addObject("cityMap", cityMap);
         m.addObject("userList", userList);
-        m.addObject("templateList", templateList);
-        m.addObject("marketPointMap", marketPointMap);
         return m;
     }
     
-    @RequestMapping(value = "upload", method = RequestMethod.GET)
-    public String taskAddDone() throws IllegalStateException, IOException {
-        log.info("#TaskAddDone method(idCompany:" + idCompany + ")#");
-        return "redirect:/tasks/add/form";
-    }
-    
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public ModelAndView taskAddDone(@RequestParam(value = "template_id", required = false) Long idTemplate, @RequestParam(value = "marketpoint_id[]", required = false) List<Long> idMarketPointList,
-            @RequestParam(value = "task_name", required = false) String taskName, @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser) throws IllegalStateException,
-            IOException {
+    public String taskAddDone(RedirectAttributes rm, @RequestParam(value = "template_id", required = false) Long idTemplate, @RequestParam(value = "marketpoint_id[]", required = false) List<Long> idMarketPointList,
+            @RequestParam(value = "task_name", required = false) String taskName, @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser)
+                    throws IllegalStateException, IOException {
         log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointList:" + idMarketPointList + ",taskName:" + taskName + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
         TaskUploadResult results = new TaskUploadResult();
         
@@ -200,21 +208,15 @@ public class TaskController {
             results.marketError();
         if (BooleanUtils.isTrue(useUser) && idUser == null)
             results.userError();
-        
+            
+        if ((useUser == null || BooleanUtils.isFalse(useUser)) && idUser != null)
+            idUser = null;
+            
         if (!results.isHasError()) {
             results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList, taskName));
         }
         
-        List<User> userList = userService.findMobileUserByIdCompany(idCompany);
-        List<TaskTemplate> templateList = templateService.findTemplatesByIdCompany(idCompany, null, null);
-        Map<String, Collection<MarketPoint>> marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompany(idCompany));
-        
-        ModelAndView m = new ModelAndView("taskadd");
-        m.addObject("pageName", "task");
-        m.addObject("userList", userList);
-        m.addObject("templateList", templateList);
-        m.addObject("marketPointMap", marketPointMap);
-        m.addObject("results", results);
-        return m;
+        rm.addFlashAttribute("results", results);
+        return "redirect:/tasks/add/form";
     }
 }

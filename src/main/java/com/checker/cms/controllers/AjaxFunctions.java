@@ -7,8 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import lombok.extern.slf4j.Slf4j;
-
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
@@ -25,7 +23,11 @@ import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.MarketPoint;
 import com.checker.core.entity.Task;
+import com.checker.core.entity.TaskTemplate;
+import com.checker.core.entity.User;
 import com.checker.core.utilz.Transformer;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -47,13 +49,13 @@ public class AjaxFunctions {
     private MainService        checkerService;
     @Resource
     private UserService        userService;
-    
+                               
     private Integer            idCompany = 1;
-    
+                                         
     // http://localhost:9090/checker-cms/ajax/2/marketpoints
     
-    @RequestMapping(value = "{id}/marketpoints.json")
-    public Map<String, Collection<MarketPoint>> selectMarketPoint(@PathVariable("id") Integer idCity) {
+    @RequestMapping(value = "{idc}/marketpoints.json")
+    public Map<String, Collection<MarketPoint>> selectMarketPoint(@PathVariable("idc") Integer idCity) {
         log.info("#Ajax SelectMarketPoint method(idCompany:" + idCompany + ",idCity:" + idCity + ")#");
         
         Map<String, Collection<MarketPoint>> marketPointMap;
@@ -61,7 +63,7 @@ public class AjaxFunctions {
             marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCity));
         else
             marketPointMap = Collections.emptyMap();
-        
+            
         return marketPointMap;
     }
     
@@ -77,8 +79,34 @@ public class AjaxFunctions {
             cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         } else
             cityMap = Collections.emptyMap();
-        
+            
         return cityMap;
+    }
+    
+    @RequestMapping(value = "city/{idc}/templates.json")
+    public List<TaskTemplate> selectTemplateByCity(@PathVariable("idc") Integer idCity) {
+        log.info("#Ajax selectTemplateByCity method(idCompany:" + idCompany + ",idCity:" + idCity + ")#");
+        
+        List<TaskTemplate> templateList;
+        if (idCity != null)
+            templateList = templateService.findTemplatesByIdCompanyAndIdCity(idCompany, idCity, null, null);
+        else
+            templateList = Collections.emptyList();
+            
+        return templateList;
+    }
+    
+    @RequestMapping(value = "city/{idc}/users.json")
+    public List<User> selectUserByCity(@PathVariable("idc") Integer idCity) {
+        log.info("#Ajax selectUserByCity method(idCompany:" + idCompany + ",idCity:" + idCity + ")#");
+        
+        List<User> userList;
+        if (idCity != null)
+            userList = userService.findMobileUserByIdCompanyAndIdCity(idCompany, idCity);
+        else
+            userList = Collections.emptyList();
+            
+        return userList;
     }
     
     @RequestMapping(value = "template/{date}/citiesbydate.json")
@@ -93,7 +121,7 @@ public class AjaxFunctions {
             cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         } else
             cityMap = Collections.emptyMap();
-        
+            
         return cityMap;
     }
     

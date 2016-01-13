@@ -17,7 +17,7 @@
 				<div class="row">
 					<div class="col-md-10" id="dataclick">Редактор артикулов в шаблоне</div>
 					<div class="col-md-2 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/template/list" htmlEscape="true"/>"> <span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/template" htmlEscape="true"/>"> <span class="glyphicon glyphicon-arrow-left"></span>
 							Назад
 						</a>
 					</div>
