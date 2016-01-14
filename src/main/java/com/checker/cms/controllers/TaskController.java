@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -38,8 +40,6 @@ import com.checker.core.utilz.JsonTaskTransformer;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @RequestMapping("tasks")
@@ -51,7 +51,7 @@ public class TaskController {
     private MarketPointService  marketPointService;
     @Resource
     private CityService         cityService;
-                                
+    
     @Resource
     private TaskService         taskService;
     @Resource
@@ -64,11 +64,11 @@ public class TaskController {
     private JsonTaskTransformer jsonTaskTransformer;
     @Resource
     private PagerUtilz          pagerUtilz;
-                                
+    
     private Integer             idCompany     = 1;
-                                              
+    
     private Integer             recordsOnPage = 15;
-                                              
+    
     @RequestMapping("list")
     public ModelAndView tasksList(HttpSession session, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         Integer idUserTaskSaved = (Integer) session.getAttribute("idUserTaskSaved");
@@ -84,15 +84,15 @@ public class TaskController {
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         Map<String, Collection<MarketPoint>> marketPointMap;
         if (idCityTaskSaved != null)
-            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityTaskSaved));
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCityTaskSaved));
         else
             marketPointMap = Collections.emptyMap();
-            
-        Long recordsCount = taskService.countOtherTaskByIdCompanyAndFilterParams(idCompany, idUserTaskSaved, idCityTaskSaved, idMarketPointTaskSaved, idTaskStatusSaved, idTaskTemplateSaved);
+        
+        Long recordsCount = taskService.countAllTaskByIdCompanyAndFilterParams(idCompany, idUserTaskSaved, idCityTaskSaved, idMarketPointTaskSaved, idTaskStatusSaved, idTaskTemplateSaved);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
-        List<Task> taskList = taskService.findOtherTaskByIdCompanyAndFilterParams(idCompany, idUserTaskSaved, idCityTaskSaved, idMarketPointTaskSaved, idTaskStatusSaved, idTaskTemplateSaved, page, recordsOnPage);
+        List<Task> taskList = taskService.findAllTaskByIdCompanyAndFilterParams(idCompany, idUserTaskSaved, idCityTaskSaved, idMarketPointTaskSaved, idTaskStatusSaved, idTaskTemplateSaved, page, recordsOnPage);
         
         ModelAndView m = new ModelAndView("task");
         m.addObject("pageName", "task");
@@ -180,8 +180,6 @@ public class TaskController {
     public ModelAndView taskAddForm() {
         log.info("#TaskAddForm method(idCompany:" + idCompany + ")#");
         
-        // Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
-        
         List<Integer> idsCity = templateService.findIdCitiesTemplateByIdCompanyAndDateCreate(idCompany, null);
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         List<User> userList = userService.findMobileUserByIdCompany(idCompany);
@@ -194,26 +192,34 @@ public class TaskController {
     }
     
     @RequestMapping(value = "upload", method = RequestMethod.POST)
-    public String taskAddDone(RedirectAttributes rm, @RequestParam(value = "template_id", required = false) Long idTemplate, @RequestParam(value = "marketpoint_id[]", required = false) List<Long> idMarketPointList,
-            @RequestParam(value = "task_name", required = false) String taskName, @RequestParam(value = "useuser", required = false) Boolean useUser, @RequestParam(value = "user_id", required = false) Integer idUser)
-                    throws IllegalStateException, IOException {
-        log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointList:" + idMarketPointList + ",taskName:" + taskName + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
+    public String taskAddDone(RedirectAttributes rm, 
+            @RequestParam(value = "task_name", required = false) String taskName, 
+            @RequestParam(value = "template_id", required = false) Long idTemplate, 
+            @RequestParam(value = "marketpoint_own_id", required = false) Long idMarketPointOwn,
+            @RequestParam(value = "marketpoint_other_id[]", required = false) List<Long> idMarketPointOtherList,
+            
+            @RequestParam(value = "useuser", required = false) Boolean useUser, 
+            @RequestParam(value = "user_id", required = false) Integer idUser) 
+                    throws IllegalStateException,
+            IOException {
+        log.info("#TaskAddDone method(idCompany:" + idCompany + ",idTemplate:" + idTemplate + ",idMarketPointOwn:" + idMarketPointOwn + ",idMarketPointOtherList:" + idMarketPointOtherList + ",taskName:" + taskName + ",useUser:" + useUser + ",idUser:" + idUser + ")#");
         TaskUploadResult results = new TaskUploadResult();
         
         if (idTemplate == null)
             results.templateError();
         if (StringUtils.isEmpty(taskName))
             results.taskNameError();
-        if (idMarketPointList == null || idMarketPointList.size() == 0)
+        if (idMarketPointOwn == null || idMarketPointOtherList == null || idMarketPointOtherList.size() == 0)
             results.marketError();
         if (BooleanUtils.isTrue(useUser) && idUser == null)
             results.userError();
-            
+        
         if ((useUser == null || BooleanUtils.isFalse(useUser)) && idUser != null)
             idUser = null;
-            
+        
         if (!results.isHasError()) {
-            results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointList, taskName));
+            idMarketPointOtherList.add(idMarketPointOwn);
+            results.setTaskStatus(taskService.saveTaskAndArticles(idCompany, idTemplate, idUser, idMarketPointOtherList, taskName));
         }
         
         rm.addFlashAttribute("results", results);

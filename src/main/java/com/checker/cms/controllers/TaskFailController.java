@@ -63,12 +63,12 @@ public class TaskFailController {
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         Map<String, Collection<MarketPoint>> marketPointMap;
         if (idCityFailSaved != null)
-            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityFailSaved));
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCityFailSaved));
         else
             marketPointMap = Collections.emptyMap();
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(failTaskCreateDate) ? LocalDate.parse(failTaskCreateDate) : null;
         
-        List<TaskArticleFail> taskFailList = taskFailService.findTaskFailByIdCompanyAndFilterParams(idCompany, idUserFailSaved, idCityFailSaved, idMarketPointFailSaved, dateTaskCreate);
+        List<TaskArticleFail> taskFailList = taskFailService.findAllTaskFailByIdCompanyAndFilterParams(idCompany, idUserFailSaved, idCityFailSaved, idMarketPointFailSaved, dateTaskCreate);
         
         ModelAndView m = new ModelAndView("taskfail");
         m.addObject("pageName", "taskfail");

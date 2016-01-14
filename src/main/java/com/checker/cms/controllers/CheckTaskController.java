@@ -76,16 +76,16 @@ public class CheckTaskController {
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         Map<String, Collection<MarketPoint>> marketPointMap;
         if (idCityCheckSaved != null)
-            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityCheckSaved));
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCityCheckSaved));
         else
             marketPointMap = Collections.emptyMap();
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(checkTaskCreateDate) ? LocalDate.parse(checkTaskCreateDate) : null;
         
-        Long recordsCount = checkService.countOtherTaskArticleByIdCompanyAndStatus(idCompany, TaskStatus.CHECK, idUserCheckSaved, idCityCheckSaved, idMarketPointCheckSaved, dateTaskCreate);
+        Long recordsCount = checkService.countAllTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.CHECK, idUserCheckSaved, idCityCheckSaved, idMarketPointCheckSaved, dateTaskCreate);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
-        List<TaskArticle> taskArticleCheckList = checkService.findOtherTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.CHECK, idUserCheckSaved, idCityCheckSaved, idMarketPointCheckSaved, dateTaskCreate, page, recordsOnPage);
+        List<TaskArticle> taskArticleCheckList = checkService.findAllTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.CHECK, idUserCheckSaved, idCityCheckSaved, idMarketPointCheckSaved, dateTaskCreate, page, recordsOnPage);
         
         ModelAndView m = new ModelAndView("taskcheck");
         m.addObject("pageName", "taskcheck");

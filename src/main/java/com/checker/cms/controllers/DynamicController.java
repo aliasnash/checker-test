@@ -9,6 +9,8 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
@@ -27,8 +29,6 @@ import com.checker.core.entity.User;
 import com.checker.core.model.DynamicTaskInfoStacked;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -66,7 +66,7 @@ public class DynamicController {
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         Map<String, Collection<MarketPoint>> marketPointMap;
         if (idCityDynSaved != null)
-            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityDynSaved));
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCityDynSaved));
         else
             marketPointMap = Collections.emptyMap();
             

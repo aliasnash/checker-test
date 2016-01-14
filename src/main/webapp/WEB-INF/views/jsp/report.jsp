@@ -20,8 +20,7 @@
 								<div id="filter_date_visibility">
 									<label for="date" class="col-md-12  control-label">Дата создания задачи:</label>
 									<div class="col-md-12">
-										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД"
-											value="${reportTaskDate}" type="text">
+										<input readonly="readonly" name="filter_task_create_date" maxlength="50" class="form-control" id="date" placeholder="ГГГГ-ММ-ДД" value="${reportTaskDate}" type="text">
 									</div>
 								</div>
 							</div>
@@ -66,8 +65,8 @@
 								<div id="filter_other_task_visibility" style="${empty idOtherTaskReportSaved ? 'display: none;' : '' }">
 									<label for="filter_other_tasks" class="col-md-12  control-label">Задачи конкурента:</label>
 									<div class="col-md-12">
-										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15"
-											data-actions-box="true" data-selected-text-format="count > 3">
+										<select name="filter_other_task_id[]" class="selectpicker form-control" id="filter_other_tasks" title="Выберите задачу" multiple data-size="15" data-actions-box="true"
+											data-selected-text-format="count > 3">
 											<c:choose>
 												<c:when test="${empty otherTaskList}">
 													<option selected value="">Задачи отсутствуют</option>
@@ -86,8 +85,8 @@
 								<div id="filter_promo_visibility" style="${empty idPromoReportSaved ? 'display: none;' : '' }">
 									<label for="filter_promo" class="col-md-12 danger control-label">Промоакции:</label>
 									<div class="col-md-12">
-										<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15"
-											data-actions-box="true" data-selected-text-format="count > 3">
+										<select name="filter_promo_id[]" class="selectpicker form-control" id="filter_promo" title="Выберите промо" multiple data-size="15" data-actions-box="true"
+											data-selected-text-format="count > 3">
 											<c:choose>
 												<c:when test="${empty idPromoReportSaved}">
 													<option selected value="-1">Без промо</option>
@@ -147,7 +146,7 @@
 								<td><joda:format value="${report.dateAdded}" style="SM" /></td>
 								<td>${report.caption}</td>
 								<td><a href="${rootUrl}${report.filePath}">${report.filePath}</a></td>
-								<td>${report.fileSize}</td>
+								<td>${report.fileSize/1024/1024} Mb</td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<spring:url value="/report/${report.id}/delete?page=${page}" var="reportDeleteUrl" htmlEscape="true" />

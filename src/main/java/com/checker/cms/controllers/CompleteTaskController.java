@@ -73,16 +73,16 @@ public class CompleteTaskController {
         Map<String, Collection<City>> cityMap = transformer.doCityTransformer(cityService.findCitiesByIdCompany(idCompany));
         Map<String, Collection<MarketPoint>> marketPointMap;
         if (idCityCompleteSaved != null)
-            marketPointMap = transformer.doMarketTransformer(marketPointService.findOtherMarketPointByIdCompanyAndIdCity(idCompany, idCityCompleteSaved));
+            marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCityCompleteSaved));
         else
             marketPointMap = Collections.emptyMap();
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(completeTaskCreateDate) ? LocalDate.parse(completeTaskCreateDate) : null;
         
-        Long recordsCount = checkService.countOtherTaskArticleByIdCompanyAndStatus(idCompany, TaskStatus.COMPLETED, idUserCompleteSaved, idCityCompleteSaved, idMarketPointCompleteSaved, dateTaskCreate);
+        Long recordsCount = checkService.countAllTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.COMPLETED, idUserCompleteSaved, idCityCompleteSaved, idMarketPointCompleteSaved, dateTaskCreate);
         Integer pageCount = pagerUtilz.getPageCount(recordsCount, recordsOnPage);
         page = pagerUtilz.getPage(page, pageCount);
         
-        List<TaskArticle> taskArticleCompleteList = checkService.findOtherTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.COMPLETED, idUserCompleteSaved, idCityCompleteSaved, idMarketPointCompleteSaved, dateTaskCreate, page,
+        List<TaskArticle> taskArticleCompleteList = checkService.findAllTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.COMPLETED, idUserCompleteSaved, idCityCompleteSaved, idMarketPointCompleteSaved, dateTaskCreate, page,
                 recordsOnPage);
         
         ModelAndView m = new ModelAndView("taskcomplete");

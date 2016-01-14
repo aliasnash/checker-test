@@ -9,6 +9,8 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Controller;
@@ -28,8 +30,6 @@ import com.checker.core.enums.UserAccess;
 import com.checker.core.model.TupleHolder;
 import com.checker.core.model.UserHolder;
 import com.checker.core.utilz.Transformer;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Controller
@@ -92,7 +92,7 @@ public class UserController {
         log.info("#UserTasksList method(idCompany:" + idCompany + ",idUser:" + idUser + ")#");
         
         List<Task> taskList = taskService.findTaskByIdUserAndIdCompany(idCompany, idUser);
-        List<Task> taskListNobody = taskService.findOtherTaskByIdCompanyWithoutUsers(idCompany);
+        List<Task> taskListNobody = taskService.findAllTaskByIdCompanyWithoutUsers(idCompany);
         User user = userService.findUserByIdAndIdCompany(idCompany, idUser);
         
         ModelAndView m = new ModelAndView("usertask");

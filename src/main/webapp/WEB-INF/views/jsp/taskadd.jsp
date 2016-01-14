@@ -11,7 +11,8 @@
 				<div class="row">
 					<div class="col-md-6">Создать задачу</div>
 					<div class="col-md-6 text-right">
-						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />"> <span class="glyphicon glyphicon-arrow-left"></span>
+						<a class="btn btn-default btn-sm" href="<spring:url value="/tasks/list" htmlEscape="true" />">
+							<span class="glyphicon glyphicon-arrow-left"></span>
 							&nbsp;Назад
 						</a>
 					</div>
@@ -50,16 +51,47 @@
 							</select>
 						</div>
 					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 
-					<div class="form-group" id="select-market-template-block" style="display: none;">
-						<label for="market-point" class="col-md-4 control-label">Выбрать сеть:</label>
+					<div class="form-group" id="select-market-own-template-block" style="display: none;">
+						<label for="market-point-own" class="col-md-4 control-label">Выбрать свою сеть:</label>
 						<div class="col-md-6">
-							<select name="marketpoint_id[]" class="selectpicker form-control" id="market-point" title="Выберите сеть" multiple data-show-subtext="true"
-								data-size="15" data-actions-box="true">
+							<select name="marketpoint_own_id" class="selectpicker form-control" id="market-point-own" title="Выберите сеть" data-show-subtext="true" data-size="15"
+								data-actions-box="true">
 								<option selected value="">Данные отсутствуют</option>
 							</select>
 						</div>
 					</div>
+					<div class="form-group" id="select-market-other-template-block" style="display: none;">
+						<label for="market-point-other" class="col-md-4 control-label">Выбрать сеть конкурента:</label>
+						<div class="col-md-6">
+							<select name="marketpoint_other_id[]" class="selectpicker form-control" id="market-point-other" title="Выберите сеть" multiple data-show-subtext="true" data-size="15"
+								data-actions-box="true">
+								<option selected value="">Данные отсутствуют</option>
+							</select>
+						</div>
+					</div>
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
 
 					<div class="form-group" id="block-user-name-checker" style="display: none;">
 						<label for="select-user-name" class="col-md-4 control-label">Назначить на пользователя:</label>
