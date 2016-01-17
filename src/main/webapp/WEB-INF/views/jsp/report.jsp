@@ -4,6 +4,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
 <%@ taglib uri="http://www.joda.org/joda/time/tags" prefix="joda"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/tld/customTaglib.tld" prefix="tag"%>
 <%@ taglib uri="/WEB-INF/tld/functions.tld" prefix="myf"%>
 
@@ -107,6 +108,15 @@
 									</div>
 								</div>
 							</div>
+
+							<div class="form-group col-md-3">
+								<div id="filter_use_photo_visibility" style="${empty idPromoReportSaved ? 'display: none;' : '' }">
+									<label for="filter_use_photo" class="col-md-12 danger control-label">Без фотографий:</label>
+									<div class="col-md-12">
+										<input name="filter_use_photo" class="form-control" id="filter_use_photo" placeholder="..." type="checkbox" ${withoutPhoto ? 'checked' : ''}>
+									</div>
+								</div>
+							</div>
 						</div>
 						<div class="form-group">
 							<!-- too keep empty space -->
@@ -146,7 +156,7 @@
 								<td><joda:format value="${report.dateAdded}" style="SM" /></td>
 								<td>${report.caption}</td>
 								<td><a href="${rootUrl}${report.filePath}">${report.filePath}</a></td>
-								<td>${report.fileSize/1024/1024} Mb</td>
+								<td><fmt:formatNumber type="number" groupingUsed="false" value="${report.fileSize/1024/1024}" /> Mb</td>
 								<td>
 									<div class="btn-group pull-right" role="group" aria-label="...">
 										<spring:url value="/report/${report.id}/delete?page=${page}" var="reportDeleteUrl" htmlEscape="true" />

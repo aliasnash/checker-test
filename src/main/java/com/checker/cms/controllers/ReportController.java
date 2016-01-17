@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -90,9 +91,10 @@ public class ReportController {
         Long idOwnTask = (Long) session.getAttribute("idOwnTaskReportSaved");
         List<Long> idsOtherTasks = (List<Long>) session.getAttribute("idOtherTaskReportSaved");
         List<Integer> idPromoList = (List<Integer>) session.getAttribute("idPromoReportSaved");
+        Boolean withoutPhoto = (Boolean) session.getAttribute("withoutPhoto");
         
-        log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",reportTaskDate:" + reportTaskDate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromoList:" + idPromoList + ",page:"
-                + page + ")#");
+        log.info("#Report method(idCompany:" + idCompany + ",idReport:" + idReport + ",withoutPhoto:" + withoutPhoto + ",reportTaskDate:" + reportTaskDate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks
+                + ",idPromoList:" + idPromoList + ",page:" + page + ")#");
         
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(reportTaskDate) ? LocalDate.parse(reportTaskDate) : null;
         
@@ -142,14 +144,16 @@ public class ReportController {
     @RequestMapping(value = "generate", method = RequestMethod.POST)
     public String reportGenerate(HttpSession session, @RequestParam(value = "filter_task_create_date", required = false) String taskDateCreate, @RequestParam(value = "filter_city_id", required = false) Integer idCity,
             @RequestParam(value = "filter_own_task_id", required = false) Long idOwnTask, @RequestParam(value = "filter_other_task_id[]", required = false) List<Long> idsOtherTasks,
-            @RequestParam(value = "filter_promo_id[]", required = false) List<Integer> idPromoList) throws IOException {
-        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",taskDateCreate:" + taskDateCreate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:" + idPromoList + ")#");
+            @RequestParam(value = "filter_promo_id[]", required = false) List<Integer> idPromoList, @RequestParam(value = "filter_use_photo", required = false) Boolean withoutPhoto) throws IOException {
+        log.info("#ReportGenerate POST method(idCompany:" + idCompany + ",withoutPhoto:" + withoutPhoto + ",taskDateCreate:" + taskDateCreate + ",idCity:" + idCity + ",idOwnTask:" + idOwnTask + ",idsOtherTasks:" + idsOtherTasks + ",idPromo:"
+                + idPromoList + ")#");
         
         session.setAttribute("reportTaskDate", taskDateCreate);
         session.setAttribute("idCityReportSaved", idCity);
         session.setAttribute("idOwnTaskReportSaved", idOwnTask);
         session.setAttribute("idOtherTaskReportSaved", idsOtherTasks);
         session.setAttribute("idPromoReportSaved", idPromoList);
+        session.setAttribute("withoutPhoto", withoutPhoto);
         
         if (taskDateCreate == null || idOwnTask == null || idsOtherTasks == null || idsOtherTasks.size() == 0) {
             return "redirect:/report";
@@ -169,7 +173,7 @@ public class ReportController {
                 idPromoList = Collections.emptyList();
             boolean isWithoutPromo = idPromoList.contains(-1);
             
-            reportBuilder.process(file, headers, map, idOwnTask, idsOtherTasks, isWithoutPromo, idPromoList);
+            reportBuilder.process(file, headers, map, idOwnTask, idsOtherTasks, isWithoutPromo, idPromoList, !BooleanUtils.isTrue(withoutPhoto));
             
             long fileSize = FileUtils.sizeOf(file);
             
@@ -200,6 +204,7 @@ public class ReportController {
         session.removeAttribute("idOwnTaskReportSaved");
         session.removeAttribute("idOtherTaskReportSaved");
         session.removeAttribute("idPromoReportSaved");
+        session.removeAttribute("withoutPhoto");
         return "redirect:/report";
     }
     

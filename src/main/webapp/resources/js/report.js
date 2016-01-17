@@ -17,6 +17,8 @@ $(window).on('load', function() {
 
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
+		// прячем фото
+		$('#filter-for-report-list #filter_use_photo_visibility').hide();
 
 		if ($(this) && $(this).val()) {
 			$('#filter-for-report-list #filter_city_visibility').show();
@@ -72,6 +74,8 @@ $(window).on('load', function() {
 
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
+		// прячем фото
+		$('#filter-for-report-list #filter_use_photo_visibility').hide();
 
 		if ($(this)) {
 			$('#filter-for-report-list #filter_own_task_visibility').show();
@@ -117,6 +121,8 @@ $(window).on('load', function() {
 
 		// прячем промо акции
 		$('#filter-for-report-list #filter_promo_visibility').hide();
+		// прячем фото
+		$('#filter-for-report-list #filter_use_photo_visibility').hide();
 
 		if ($(this)) {
 			$('#filter-for-report-list #filter_other_task_visibility').show();
@@ -157,9 +163,10 @@ $(window).on('load', function() {
 	});
 
 	$('#filter-for-report-list select#filter_other_tasks').change(function(event) {
-		if ($(this).val() && $(this).val().length > 0)
+		if ($(this).val() && $(this).val().length > 0) {
 			$('#filter-for-report-list #filter_promo_visibility').show();
-		else
+			$('#filter-for-report-list #filter_use_photo_visibility').show();
+		} else
 			$('#filter-for-report-list #filter_promo_visibility').hide();
 		event.preventDefault ? event.preventDefault() : (event.returnValue = false);
 	});

@@ -51,16 +51,6 @@
 							</select>
 						</div>
 					</div>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
 
 					<div class="form-group" id="select-market-own-template-block" style="display: none;">
 						<label for="market-point-own" class="col-md-4 control-label">Выбрать свою сеть:</label>
@@ -80,18 +70,6 @@
 							</select>
 						</div>
 					</div>
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
 
 					<div class="form-group" id="block-user-name-checker" style="display: none;">
 						<label for="select-user-name" class="col-md-4 control-label">Назначить на пользователя:</label>

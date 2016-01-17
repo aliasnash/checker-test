@@ -48,7 +48,6 @@
 					<artifactId>joda-time</artifactId>
 				</exclusion>
 			</exclusions>
-
 		</dependency>
 
 		<!-- tiles -->

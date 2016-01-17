@@ -106,14 +106,14 @@
 						</tr>
 					</thead>
 					<tbody>
-						<c:forEach items="${taskFailList}" var="taskFail" varStatus="status">
+						<c:forEach items="${taskFailList}" var="taskArticle" varStatus="status">
 							<tr>
-								<td>${status.index + 1}&nbsp;(${taskFail.idTasksArticle})</td>
-								<td>${taskFail.taskArticle.tasks.user.title}</td>
-								<td>${taskFail.taskArticle.article.caption}</td>
-								<td>${taskFail.description}</td>
-								<td><joda:format value="${taskFail.dateAdded}" style="SM" /></td>
-								<td>${taskFail.taskArticle.taskStatus.status}</td>
+								<td>${status.index + 1}&nbsp;(${taskArticle.id})</td>
+								<td>${taskArticle.tasks.user.title}</td>
+								<td>${taskArticle.article.caption}</td>
+								<td>${taskArticle.statusComment}</td>
+								<td><joda:format value="${taskArticle.dateUpdate}" style="SM" /></td>
+								<td>${taskArticle.taskStatus.status}</td>
 							</tr>
 						</c:forEach>
 					</tbody>

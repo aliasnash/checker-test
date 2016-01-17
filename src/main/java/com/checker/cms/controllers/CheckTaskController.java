@@ -29,7 +29,6 @@ import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.MarketPoint;
 import com.checker.core.entity.TaskArticle;
-import com.checker.core.entity.TaskArticleFail;
 import com.checker.core.entity.User;
 import com.checker.core.enums.TaskStatus;
 import com.checker.core.utilz.CoreSettings;
@@ -131,13 +130,8 @@ public class CheckTaskController {
                 if (taskArticle != null) {
                     taskArticle.setTaskStatus(TaskStatus.FAIL);
                     taskArticle.setDateUpdate(DateTime.now());
+                    taskArticle.setStatusComment(description);
                     mainService.update(taskArticle);
-                    
-                    TaskArticleFail taskArticleFail = new TaskArticleFail();
-                    taskArticleFail.setIdTasksArticle(taskArticle.getId());
-                    taskArticleFail.setDescription(description);
-                    taskArticleFail.setDateAdded(DateTime.now());
-                    mainService.save(taskArticleFail);
                 }
             }
         }

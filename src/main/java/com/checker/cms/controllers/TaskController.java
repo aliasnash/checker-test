@@ -197,7 +197,6 @@ public class TaskController {
             @RequestParam(value = "template_id", required = false) Long idTemplate, 
             @RequestParam(value = "marketpoint_own_id", required = false) Long idMarketPointOwn,
             @RequestParam(value = "marketpoint_other_id[]", required = false) List<Long> idMarketPointOtherList,
-            
             @RequestParam(value = "useuser", required = false) Boolean useUser, 
             @RequestParam(value = "user_id", required = false) Integer idUser) 
                     throws IllegalStateException,

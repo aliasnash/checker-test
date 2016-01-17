@@ -18,14 +18,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.checker.core.dao.service.CheckService;
 import com.checker.core.dao.service.CityService;
 import com.checker.core.dao.service.MarketPointService;
 import com.checker.core.dao.service.TaskFailService;
 import com.checker.core.dao.service.UserService;
 import com.checker.core.entity.City;
 import com.checker.core.entity.MarketPoint;
-import com.checker.core.entity.TaskArticleFail;
+import com.checker.core.entity.TaskArticle;
 import com.checker.core.entity.User;
+import com.checker.core.enums.TaskStatus;
 import com.checker.core.utilz.PagerUtilz;
 import com.checker.core.utilz.Transformer;
 
@@ -34,6 +36,8 @@ import com.checker.core.utilz.Transformer;
 @RequestMapping("tasksfail")
 public class TaskFailController {
     
+    @Resource
+    private CheckService       checkService;
     @Resource
     private TaskFailService    taskFailService;
     
@@ -68,7 +72,8 @@ public class TaskFailController {
             marketPointMap = Collections.emptyMap();
         LocalDate dateTaskCreate = StringUtils.isNotEmpty(failTaskCreateDate) ? LocalDate.parse(failTaskCreateDate) : null;
         
-        List<TaskArticleFail> taskFailList = taskFailService.findAllTaskFailByIdCompanyAndFilterParams(idCompany, idUserFailSaved, idCityFailSaved, idMarketPointFailSaved, dateTaskCreate);
+//        List<TaskArticleFail> taskFailList = taskFailService.findAllTaskFailByIdCompanyAndFilterParams(idCompany, idUserFailSaved, idCityFailSaved, idMarketPointFailSaved, dateTaskCreate);
+        List<TaskArticle> taskFailList = checkService.findAllTaskArticleByIdCompanyAndStatusAndFilterParams(idCompany, TaskStatus.FAIL, idUserFailSaved, idCityFailSaved, idMarketPointFailSaved, dateTaskCreate, null, null);
         
         ModelAndView m = new ModelAndView("taskfail");
         m.addObject("pageName", "taskfail");
