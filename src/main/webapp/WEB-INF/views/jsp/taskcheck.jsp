@@ -211,7 +211,7 @@
 								<label for="fail-task-description" class="col-md-4 control-label">Задание:</label>
 
 								<div class="col-md-7">
-									<textarea rows="4" maxlength="255" class="form-control" id="fail-task-description" name="fail-description" placeholder="Что не так на фото?"></textarea>
+									<textarea rows="4" maxlength="128" class="form-control" id="fail-task-description" name="fail-description" placeholder="Что не так на фото?"></textarea>
 								</div>
 							</div>
 						</div>
