@@ -8,7 +8,7 @@
 	</context-param>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
-		<param-value>com.checker.core.config.RootApplicationContextConfig</param-value>
+		<param-value>com.checker.core.config.RootApplicationContextConfig, com.checker.cms.config.SecurityConfig</param-value>
 	</context-param>
 
 	<listener>
@@ -65,8 +65,5 @@
 		<error-code>404</error-code>
 		<location>/404</location>
 	</error-page>
-	<!-- <error-page>
-		<error-code>500</error-code>
-		<location>/500</location>
-	</error-page> -->
+	<!-- <error-page> <error-code>500</error-code> <location>/500</location> </error-page> -->
 </web-app>
