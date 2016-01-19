@@ -10,9 +10,7 @@ import javax.servlet.http.HttpSession;
 
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -126,28 +124,17 @@ public class CheckTaskController {
         log.info("#TasksCheckFail method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",description:" + description + ",page:" + page + ")#");
         if (StringUtils.isNotEmpty(description)) {
             if (idTaskArticle != null && idTaskArticle > 0) {
-                TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
-                if (taskArticle != null) {
-                    taskArticle.setTaskStatus(TaskStatus.FAIL);
-                    taskArticle.setDateUpdate(DateTime.now());
-                    taskArticle.setStatusComment(description);
-                    mainService.update(taskArticle);
-                }
+                checkService.updateTaskArticleAsFail(idCompany, idTaskArticle, description);
             }
         }
         return "redirect:/taskcheck/list?page=" + page;
     }
     
     @RequestMapping(value = "complete/{id}")
-    public String tasksCheckComplete(@PathVariable("id") Long idTaskArticle, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
+    public String tasksCheckComplete(@PathVariable("id") Long idTaskArticle, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) throws NoSuchMethodException, SecurityException {
         log.info("#TasksCheckComplete method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",page:" + page + ")#");
         if (idTaskArticle != null && idTaskArticle > 0) {
-            TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
-            if (taskArticle != null) {
-                taskArticle.setTaskStatus(TaskStatus.COMPLETED);
-                taskArticle.setDateUpdate(DateTime.now());
-                mainService.update(taskArticle);
-            }
+            checkService.updateTaskArticleAsCompleted(idCompany, idTaskArticle);
         }
         return "redirect:/taskcheck/list?page=" + page;
     }
@@ -157,14 +144,7 @@ public class CheckTaskController {
             @RequestParam(value = "check-task-availability", required = false) Boolean availability, @RequestParam(value = "page", required = false, defaultValue = "1") Integer page) {
         log.info("#TasksCheckCorrect method(idCompany:" + idCompany + ",idTaskArticle:" + idTaskArticle + ",price:" + price + ",weight:" + weight + ",availability:" + availability + ",page:" + page + ")#");
         if (idTaskArticle != null && idTaskArticle > 0 && price != null) {
-            TaskArticle taskArticle = checkService.findTaskArticleByIdAndIdCompany(idCompany, idTaskArticle);
-            if (taskArticle != null) {
-                taskArticle.setPrice(price);
-                taskArticle.setWeight(weight);
-                taskArticle.setAvailability(BooleanUtils.isTrue(availability));
-                taskArticle.setDateUpdate(DateTime.now());
-                mainService.update(taskArticle);
-            }
+            checkService.updateTaskArticleAsCorrect(idCompany, idTaskArticle, price, weight, availability);
         }
         return "redirect:/taskcheck/list?page=" + page;
     }

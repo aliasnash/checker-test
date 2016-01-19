@@ -165,7 +165,7 @@ public class ReportController {
             File dir = fileUtilz.createDirectory(coreSettings.getPathForReport() + dirDate);
             File file = new File(dir.getAbsolutePath() + "/" + fileName);
             
-            TupleHolder<Map<Long, String>, Map<ReportArticleData, Map<Long, TaskArticle>>> tuple = reportService.getTaskData(idCompany, idOwnTask, idsOtherTasks);
+            TupleHolder<Map<Long, String>, Map<ReportArticleData, Map<Long, TaskArticle>>> tuple = reportService.getTaskDataForReport(idCompany, idOwnTask, idsOtherTasks);
             Map<Long, String> headers = tuple.getValue1();
             Map<ReportArticleData, Map<Long, TaskArticle>> map = tuple.getValue2();
             
