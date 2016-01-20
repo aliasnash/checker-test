@@ -1,5 +1,9 @@
 $(window).on('load', function() {
 
+	// if (window.location.href.indexOf("failed") != -1) {
+	// $("#login_message").toggle();
+	// }
+
 	$('[data-toggle="tooltip"]').tooltip();
 
 	$('select').selectpicker();

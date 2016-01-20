@@ -10,4 +10,9 @@
 		<put-attribute name="footer" value="/WEB-INF/tiles/template/footer.jsp" />
 	</definition>
 
+	<definition name="loginTemplate" template="/WEB-INF/tiles/template/templateLogin.jsp">
+		<put-attribute name="header" value="/WEB-INF/tiles/template/headerLogin.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/tiles/template/footer.jsp" />
+	</definition>
+
 </tiles-definitions>
