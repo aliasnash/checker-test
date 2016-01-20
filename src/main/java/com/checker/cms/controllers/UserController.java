@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,16 +38,18 @@ import com.checker.core.utilz.Transformer;
 public class UserController {
     
     @Resource
-    private CityService cityService;
+    private CityService        cityService;
     @Resource
-    private Transformer transformer;
+    private Transformer        transformer;
     @Resource
-    private UserService userService;
+    private UserService        userService;
     @Resource
-    private TaskService taskService;
-                        
-    private Integer     idCompany = 1;
-                                  
+    private TaskService        taskService;
+    @Resource
+    private ShaPasswordEncoder shaPasswordEncoder;
+    
+    private Integer            idCompany = 1;
+    
     @RequestMapping("list")
     public ModelAndView userList(HttpSession session) {
         Integer idCityUserSaved = (Integer) session.getAttribute("idCityUserSaved");
@@ -111,8 +114,7 @@ public class UserController {
     }
     
     @RequestMapping(value = "update", method = RequestMethod.POST)
-    public String userUpdate(@RequestParam(value = "id", required = false) Integer idUser, @RequestParam("idcity-user-filtered") Integer idCity, @RequestParam("title") String title, @RequestParam("email") String email,
-            @RequestParam("pwd") String pwd) {
+    public String userUpdate(@RequestParam(value = "id", required = false) Integer idUser, @RequestParam("idcity-user-filtered") Integer idCity, @RequestParam("title") String title, @RequestParam("email") String email, @RequestParam("pwd") String pwd) {
         log.info("#UserUpdate method(idCompany:" + idCompany + ",idUser:" + idUser + ",idCity:" + idCity + ",title:" + title + ",email:" + email + ",pwd:" + pwd + ")#");
         if (StringUtils.isNotEmpty(title) && StringUtils.isNotEmpty(email) && StringUtils.isNotEmpty(pwd)) {
             if (idUser != null && idUser > 0) {
@@ -123,7 +125,7 @@ public class UserController {
                 user.setTitle(title);
                 user.setEmail(email);
                 user.setIdCity(idCity);
-                user.setPwd(pwd);
+                user.setPwd(shaPasswordEncoder.encodePassword(pwd, null));
                 user.setDateAdded(DateTime.now());
                 user.setAccessType(UserAccess.MOBILE.id());
                 userService.saveUser(user);

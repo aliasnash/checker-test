@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.springframework.http.MediaType;
@@ -28,8 +30,6 @@ import com.checker.core.entity.TaskTemplate;
 import com.checker.core.entity.User;
 import com.checker.core.utilz.Transformer;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Controller
 @ResponseBody
@@ -50,9 +50,9 @@ public class AjaxFunctions {
     private MainService        checkerService;
     @Resource
     private UserService        userService;
-                               
+    
     private Integer            idCompany = 1;
-                                         
+    
     // http://localhost:9090/checker-cms/ajax/2/marketpoints
     
     @RequestMapping(value = "{idc}/marketpoints.json", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +64,7 @@ public class AjaxFunctions {
             marketPointMap = transformer.doMarketTransformer(marketPointService.findAllMarketPointByIdCompanyAndIdCity(idCompany, idCity));
         else
             marketPointMap = Collections.emptyMap();
-            
+        
         return marketPointMap;
     }
     
@@ -100,7 +100,7 @@ public class AjaxFunctions {
             cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         } else
             cityMap = Collections.emptyMap();
-            
+        
         return cityMap;
     }
     
@@ -113,7 +113,7 @@ public class AjaxFunctions {
             templateList = templateService.findTemplatesByIdCompanyAndIdCity(idCompany, idCity, null, null);
         else
             templateList = Collections.emptyList();
-            
+        
         return templateList;
     }
     
@@ -126,7 +126,7 @@ public class AjaxFunctions {
             userList = userService.findMobileUserByIdCompanyAndIdCity(idCompany, idCity);
         else
             userList = Collections.emptyList();
-            
+        
         return userList;
     }
     
@@ -142,7 +142,7 @@ public class AjaxFunctions {
             cityMap = transformer.doCityTransformer(cityService.findCityByIdsAndIdCompany(idCompany, idsCity));
         } else
             cityMap = Collections.emptyMap();
-            
+        
         return cityMap;
     }
     

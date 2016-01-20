@@ -1,10 +1,13 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+
 <div class="navbar navbar-default navbar-static-top">
 	<div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#"> <strong>[COMPANY]</strong>
+			<a class="navbar-brand" href="#">
+				<strong>[COMPANY]</strong>
 			</a>
 		</div>
 		<!-- Collect the nav links, forms, and other content for toggling -->
@@ -15,7 +18,9 @@
 					<a href="${pageName eq 'home' ? '#' : homeUrl}">Dashboard</a>
 				</li>
 				<li class="dropdown ">
-					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"> Настройки <span class="caret"></span>
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+						Настройки
+						<span class="caret"></span>
 					</a>
 					<ul class="dropdown-menu" role="menu">
 						<li class="dropdown-header">Настройки</li>

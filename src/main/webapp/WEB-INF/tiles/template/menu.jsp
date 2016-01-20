@@ -1,5 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/security/tags" prefix="sec"%>
+
 <div class="col-md-2 sidebar">
 	<div class="row">
 		<!-- uncomment code for absolute positioning tweek see top comment in css -->
@@ -17,20 +19,24 @@
 								Dashboard
 							</a>
 						</li>
-						<li class="${pageName eq 'dynamic' ? 'active' : ''}">
-							<spring:url value="/dynamic" var="dynamicUrl" htmlEscape="true" />
-							<a href="${pageName eq 'dynamic' ? '#' : dynamicUrl}">
-								<span class="glyphicon glyphicon-signal"></span>
-								Динамика
-							</a>
-						</li>
-						<li class="${pageName eq 'report' ? 'active' : ''}">
-							<spring:url value="/report" var="reportUrl" htmlEscape="true" />
-							<a href="${pageName eq 'report' ? '#' : reportUrl}">
-								<span class="glyphicon glyphicon-info-sign"></span>
-								Отчеты
-							</a>
-						</li>
+						<sec:authorize access="isAuthenticated() and hasRole('ROLE_ADMIN')">
+							<li class="${pageName eq 'dynamic' ? 'active' : ''}">
+								<spring:url value="/dynamic" var="dynamicUrl" htmlEscape="true" />
+								<a href="${pageName eq 'dynamic' ? '#' : dynamicUrl}">
+									<span class="glyphicon glyphicon-signal"></span>
+									Динамика
+								</a>
+							</li>
+						</sec:authorize>
+						<sec:authorize access="isAuthenticated() and hasRole('ROLE_MODERATOR')">
+							<li class="${pageName eq 'report' ? 'active' : ''}">
+								<spring:url value="/report" var="reportUrl" htmlEscape="true" />
+								<a href="${pageName eq 'report' ? '#' : reportUrl}">
+									<span class="glyphicon glyphicon-info-sign"></span>
+									Отчеты
+								</a>
+							</li>
+						</sec:authorize>
 						<li class="${pageName eq 'template' ? 'active' : ''}">
 							<spring:url value="/template" var="templatesUrl" htmlEscape="true" />
 							<a href="${pageName eq 'template' ? '#' : templatesUrl}">
