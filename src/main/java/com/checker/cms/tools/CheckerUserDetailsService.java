@@ -3,7 +3,7 @@ package com.checker.cms.tools;
 import java.util.HashSet;
 import java.util.Set;
 
-import lombok.extern.slf4j.Slf4j;
+import javax.annotation.Resource;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,9 +12,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.checker.core.dao.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Service
 public class CheckerUserDetailsService implements UserDetailsService {
+    
+    @Resource
+    private UserService userService;
     
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
