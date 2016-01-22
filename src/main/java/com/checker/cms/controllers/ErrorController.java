@@ -28,5 +28,4 @@ public class ErrorController {
         m.addObject("class", "");
         return m;
     }
-    
 }

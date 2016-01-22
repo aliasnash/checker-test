@@ -14,10 +14,7 @@
 <link href="<spring:url htmlEscape="true" value="/resources/ico/favicon.ico" />" rel="shortcut icon">
 <link href="<spring:url htmlEscape="true" value="/resources/css/jquery-ui.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap.min.css" />" rel="stylesheet" id="bootstrap-css">
-<link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-datepicker3.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-select.min.css" />" rel="stylesheet">
-<link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-treeview.min.css" />" rel="stylesheet">
-<link href="<spring:url htmlEscape="true" value="/resources/css/bootstrap-magnify.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/fileinput.min.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site.css" />" rel="stylesheet">
 <link href="<spring:url htmlEscape="true" value="/resources/css/site2.css" />" rel="stylesheet">
@@ -40,21 +37,10 @@
 
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-1.11.3.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery-ui.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/jquery.mjs.nestedSortable.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-datepicker.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-datepicker.ru.min.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-select.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-treeview.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/bootstrap-magnify.min.js" />"></script>
 
-	<script src="<spring:url htmlEscape="true" value="/resources/js/fileinput.min.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/fileinput_locale_ru.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/site.js" />"></script>
 	<script src="<spring:url htmlEscape="true" value="/resources/js/script.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/tasktree.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/templatetree.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/report.js" />"></script>
-	<script src="<spring:url htmlEscape="true" value="/resources/js/taskgenerate.js" />"></script>
 </body>
 </html>
