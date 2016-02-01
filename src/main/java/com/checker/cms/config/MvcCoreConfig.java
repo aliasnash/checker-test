@@ -37,6 +37,7 @@ public class MvcCoreConfig extends WebMvcConfigurerAdapter {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("home");
+        registry.addViewController("/photo").setViewName("photo");
     }
     
     @Override

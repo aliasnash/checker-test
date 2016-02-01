@@ -26,12 +26,12 @@ public class MainController {
         return m;
     }
     
-    @RequestMapping(value = { "/photo" })
-    public ModelAndView photo() {
-        log.info("Photo page !");
-        
-        ModelAndView m = new ModelAndView("photo");
-        m.addObject("pageName", "photo");
-        return m;
-    }
+//    @RequestMapping(value = { "/photo" })
+//    public ModelAndView photo() {
+//        log.info("Photo page !");
+//        
+//        ModelAndView m = new ModelAndView("photo");
+//        m.addObject("pageName", "photo");
+//        return m;
+//    }
 }
